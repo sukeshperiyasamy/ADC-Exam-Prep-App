@@ -12,6 +12,9 @@ async function requireAdmin() {
   if ((session?.user as any)?.role !== 'ADMIN') throw new Error('forbidden');
 }
 
+// Retained as an admin-only server action for a future reviewed workflow;
+// the ADC demo intentionally does not expose automated content lookup.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function autoFillFromWeb(formData: FormData) {
   'use server';
   const session = await auth();
@@ -90,6 +93,9 @@ async function updateExam(formData: FormData) {
   revalidatePath('/admin-dashboard/exams');
 }
 
+// Retained as an admin-only server action for a future reviewed workflow;
+// the ADC demo intentionally does not expose automated content generation.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function runSeoAssist(formData: FormData) {
   'use server';
   const session = await auth();

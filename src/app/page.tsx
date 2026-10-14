@@ -100,7 +100,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-300">A simpler study flow</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-950 dark:text-white">Everything you need for focused practice</h2>
-          <p className="mt-4 text-slate-600 dark:text-slate-400">Move from the question catalogue to a completed attempt without unnecessary product or certification noise.</p>
+          <p className="mt-4 text-slate-600 dark:text-slate-400">Move from the question catalogue to a completed attempt without unnecessary product noise.</p>
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">

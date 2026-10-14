@@ -10,6 +10,7 @@ export default {
           DEFAULT: '#0f766e',
           50: '#f0fdfa',
           100: '#ccfbf1',
+          300: '#5eead4',
           500: '#14b8a6',
           600: '#0d9488',
           700: '#0f766e',
