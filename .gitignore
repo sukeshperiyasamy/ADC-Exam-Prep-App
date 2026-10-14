@@ -1,0 +1,69 @@
+node_modules
+.next
+.env
+.env.local
+.env.*.local
+.env.prod
+.env.production
+# Ad-hoc local env dumps (contain real secrets — never commit)
+env_*
+*.env
+# Skill-manager install artifacts
+.agents/
+skills-lock.json
+.DS_Store
+dist
+*.log
+*.tsbuildinfo
+.playwright-mcp/
+.mcp.json
+*.pdf
+# Source PDFs and any artifacts under those folders — never commit
+practice-exams-pdfs-*/
+
+# Selectively commit .claude/skills + agents + commands (project context). Ignore the rest.
+.claude/*
+!.claude/skills/
+!.claude/agents/
+!.claude/commands/
+!.claude/skills/**
+!.claude/agents/**
+!.claude/commands/**
+
+# Personal skills symlinked into ignored .agents/ — broken links on GitHub, keep local-only
+.claude/skills/find-skills
+.claude/skills/frontend-design
+.claude/skills/ui-ux-designer
+
+# Local debug screenshots from playwright-mcp runs
+/ai-assist-before.png
+/edit-ai-assist.png
+/page-editor.png
+/page-editor-v2.png
+/faq-admin.png
+/admin-ckad.png
+/ckad-page.png
+/screenshot.png
+
+# Reference repositories cloned locally for question authoring
+/ckad-prep-master/
+
+# transient audit artifacts
+scripts/_*
+/bundles-after.png
+/ckad-runner.png
+/home-after.png
+/home-final.png
+/home-light.png
+/login-icons-row.png
+/login-social.png
+
+# Vendor course material / exam-objective source PDFs dropped in for
+# authoring reference. Third-party copyrighted courseware — never commit.
+/Comptia CySA+ exam infomation/
+
+# Distribution archives (rebuildable — never pushed to GitHub)
+*.zip
+
+# Source material the project was derived from — not ours to republish.
+**/reference/
