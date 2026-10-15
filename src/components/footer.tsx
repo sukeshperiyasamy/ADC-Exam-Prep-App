@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { MapPin, Mail, Phone } from 'lucide-react';
+import { BrandLogo } from './brand-logo';
 import { getCompanyInfo } from '@/lib/settings';
 import { getFooterPages } from '@/lib/pages';
 
@@ -102,17 +102,8 @@ export async function Footer() {
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3">
           {/* Column 1: About */}
           <div>
-            <div className="mb-4 flex items-center gap-2.5">
-              <Image
-                src="/logo-mark.png"
-                alt="ADC Exam Prep"
-                width={36}
-                height={36}
-                className="h-9 w-9 shrink-0 object-contain"
-              />
-              <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
-                ADC Exam Prep
-              </span>
+            <div className="mb-4">
+              <BrandLogo variant="full" size="md" hideSubtitle />
             </div>
             <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
               An independent dental exam preparation workspace providing structured clinical scenario practice,

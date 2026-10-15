@@ -1,10 +1,10 @@
 'use client';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { UserMenu } from './user-menu';
 import { ThemeToggle } from './theme-toggle';
+import { BrandLogo } from './brand-logo';
 import { BookOpen, HelpCircle, Info, LifeBuoy, Menu, Search, X } from 'lucide-react';
 
 export function Nav() {
@@ -23,10 +23,10 @@ export function Nav() {
         {/* Brand Logo & Title */}
         <Link
           href="/"
-          className="flex items-center gap-2 sm:gap-2.5 md:gap-3 font-semibold tracking-tight min-w-0"
+          className="flex items-center font-semibold tracking-tight min-w-0"
           aria-label="ADC Exam Prep home"
         >
-          <Logo />
+          <BrandLogo size="md" />
         </Link>
 
         {/* Desktop Navigation Links (>= md) */}
@@ -128,23 +128,5 @@ export function Nav() {
         </div>
       )}
     </header>
-  );
-}
-
-function Logo() {
-  return (
-    <div className="flex items-center gap-2 sm:gap-2.5 md:gap-3 min-w-0">
-      <Image
-        src="/logo-mark.png"
-        alt="ADC Exam Prep"
-        width={40}
-        height={40}
-        className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 shrink-0 object-contain"
-        priority
-      />
-      <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white sm:text-base md:text-lg whitespace-nowrap">
-        ADC Exam Prep
-      </span>
-    </div>
   );
 }

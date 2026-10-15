@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="tealGradLight" x1="180" y1="310" x2="340" y2="160" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#14B8A6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Molar Tooth Silhouette -->
+  <path
+    d="M152 72
+       C102 72 82 122 82 176
+       C82 240 98 290 114 344
+       C126 384 144 440 172 440
+       C194 440 206 398 220 348
+       C232 305 244 286 256 286
+       C268 286 280 305 292 348
+       C306 398 318 440 340 440
+       C368 440 386 384 398 344
+       C414 290 430 240 430 176
+       C430 122 410 72 360 72
+       C322 72 292 98 256 122
+       C220 98 190 72 152 72 Z"
+    fill="#0F172A"
+  />
+
+  <!-- Subtle crown developmental groove -->
+  <path
+    d="M165 112 C195 112 226 128 256 150 C286 128 317 112 347 112"
+    stroke="#CBD5E1"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-opacity="0.4"
+  />
+
+  <!-- Precision Checkmark: Knockout Underlay -->
+  <path
+    d="M182 248 L236 304 L342 168"
+    stroke="#FFFFFF"
+    stroke-width="56"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Precision Checkmark: Vibrant Teal Fill -->
+  <path
+    d="M182 248 L236 304 L342 168"
+    stroke="url(#tealGradLight)"
+    stroke-width="38"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
