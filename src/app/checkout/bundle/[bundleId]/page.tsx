@@ -22,8 +22,13 @@ export default async function BundleCheckoutPage({
   // query-string parsing on the login page.
   if (!session?.user) redirect(`/login?next=${encodeURIComponent(`/checkout/bundle/${bundleId}${tierQuery}`)}`);
 
-  const bundle = await db.bundle.findUnique({
-    where: { id: bundleId },
+  const bundle = await db.bundle.findFirst({
+    where: {
+      OR: [
+        { id: bundleId },
+        { slug: bundleId }
+      ]
+    },
     include: { items: { orderBy: { position: 'asc' }, include: { exam: { include: { vendor: true } } } } }
   });
   if (!bundle || !bundle.published) notFound();

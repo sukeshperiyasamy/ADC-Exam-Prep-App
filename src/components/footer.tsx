@@ -89,76 +89,122 @@ function Contact({
  * lives in <PersistentCopyright> and is shown on every page.
  */
 export async function Footer() {
-  const [company, footerPages] = await Promise.all([safeCompany(), safeFooterPages()]);
+  const company = await safeCompany();
 
-  const pageBySlug = new Map(footerPages.map((p) => [p.slug, p]));
-  const usefulLinks = [
-    { href: '/practice-exams', label: 'Browse exams' },
-    ...Object.entries(USEFUL_LINK_FALLBACKS).map(([slug, fallback]) => ({
-      href: `/p/${slug}`,
-      label: pageBySlug.get(slug)?.title ?? fallback
-    }))
-  ];
+  // Filter out any placeholder address/phone
+  const hasRealAddress = company.address && !company.address.toLowerCase().includes('healthcare practice way');
+  const hasRealTel = company.tel && !company.tel.includes('9000 0000');
+  const email = company.email || 'support@adcexamprep.com';
 
   return (
     <footer className="border-t border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
-      <div className="container-app grid grid-cols-1 gap-x-8 gap-y-10 py-12 sm:grid-cols-2 md:grid-cols-12">
-        {/* Brand */}
-        <div className="sm:col-span-2 md:col-span-4">
-          <div className="mb-3 flex items-center gap-2">
-            <Image src="/logo-mark.png" alt="ADC Exam Prep Demo" width={40} height={40} className="h-10 w-10 shrink-0 object-contain" />
-            <span className="text-base font-semibold text-slate-900 dark:text-white">ADC Exam Prep Demo</span>
+      <div className="container-app py-12">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3">
+          {/* Column 1: About */}
+          <div>
+            <div className="mb-4 flex items-center gap-2.5">
+              <Image
+                src="/logo-mark.png"
+                alt="ADC Exam Prep"
+                width={36}
+                height={36}
+                className="h-9 w-9 shrink-0 object-contain"
+              />
+              <span className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
+                ADC Exam Prep
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+              An independent dental exam preparation workspace providing structured clinical scenario practice,
+              timed mock tests, and detailed answer explanations for ADC candidates.
+            </p>
+            <div className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <Contact icon={Mail} href={`mailto:${email}`}>
+                {email}
+              </Contact>
+              {hasRealTel && (
+                <Contact icon={Phone} href={`tel:${company.tel.replace(/\s+/g, '')}`}>
+                  {displayPhone(company.tel)}
+                </Contact>
+              )}
+              {hasRealAddress && <Contact icon={MapPin}>{company.address}</Contact>}
+            </div>
           </div>
-          <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-            Prepare with confidence for your dental exams.
-          </p>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-            A focused practice environment for dental clinical scenarios, mock tests, and review.
-          </p>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-            This is an independent demonstration interface and does not imply Australian Dental Council endorsement.
-          </p>
-        </div>
 
-        {/* Useful Links */}
-        <nav className="md:col-span-2" aria-label="Footer">
-          <FooterHeading>Useful Links</FooterHeading>
-          <ul className="mt-2 space-y-1 text-sm text-slate-600 dark:text-slate-400">
-            {usefulLinks.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href} className={linkClass}>
-                  {l.label}
+          {/* Column 2: Platform */}
+          <nav aria-label="Platform navigation">
+            <FooterHeading>Platform</FooterHeading>
+            <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <Link href="/practice-exams" className={linkClass}>
+                  Mock Tests
                 </Link>
               </li>
-            ))}
-          </ul>
-        </nav>
+              <li>
+                <Link href="/#how-it-works" className={linkClass}>
+                  How It Works
+                </Link>
+              </li>
+              <li>
+                <Link href="/#pricing" className={linkClass}>
+                  Preparation Bundle (₹1,499)
+                </Link>
+              </li>
+              <li>
+                <Link href="/#faq" className={linkClass}>
+                  Frequently Asked Questions
+                </Link>
+              </li>
+              <li>
+                <Link href="/user-dashboard" className={linkClass}>
+                  Candidate Dashboard
+                </Link>
+              </li>
+            </ul>
+          </nav>
 
-        {/* Company */}
-        <div className="md:col-span-3">
-          <FooterHeading>Company</FooterHeading>
-          <ul className="mt-2 space-y-2 text-sm text-slate-600 dark:text-slate-400">
-            <li className="font-medium text-slate-700 dark:text-slate-300">{company.name}</li>
-            {company.address && <Contact icon={MapPin}>{company.address}</Contact>}
-            {company.email && (
-              <Contact icon={Mail} href={`mailto:${company.email}`}>
-                {company.email}
-              </Contact>
-            )}
-            {company.tel && (
-              <Contact icon={Phone} href={`tel:${company.tel.replace(/\s+/g, '')}`}>
-                {displayPhone(company.tel)}
-              </Contact>
-            )}
-          </ul>
+          {/* Column 3: Support & Legal */}
+          <nav aria-label="Support and legal links">
+            <FooterHeading>Support & Legal</FooterHeading>
+            <ul className="mt-3 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <Link href="/p/support" className={linkClass}>
+                  Contact Support
+                </Link>
+              </li>
+              <li>
+                <Link href="/p/privacy-policy" className={linkClass}>
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/p/refund-policy" className={linkClass}>
+                  Refund Policy (7 Days)
+                </Link>
+              </li>
+              <li>
+                <Link href="/p/terms-of-service" className={linkClass}>
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/p/about-us" className={linkClass}>
+                  About ADC Exam Prep
+                </Link>
+              </li>
+            </ul>
+          </nav>
         </div>
 
-        {/* Legal */}
-        <div className="md:col-span-3">
-          <FooterHeading>Legal</FooterHeading>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            Demo content is provided for learning and product evaluation. This platform is independent and is not an
-            official ADC website or examination service.
+        {/* Independence Disclaimer & Copyright Bar */}
+        <div className="mt-10 border-t border-slate-200/80 pt-6 text-xs leading-relaxed text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex sm:items-center sm:justify-between sm:gap-6">
+          <p className="max-w-3xl">
+            This is an independent exam-preparation platform and is not affiliated with or endorsed by the
+            Australian Dental Council. Practice materials are for educational purposes and do not guarantee
+            examination outcomes.
+          </p>
+          <p className="mt-3 shrink-0 sm:mt-0 font-medium">
+            © {new Date().getFullYear()} ADC Exam Prep. All rights reserved.
           </p>
         </div>
       </div>
@@ -166,9 +212,6 @@ export async function Footer() {
   );
 }
 
-/**
- * Single-line copyright bar removed per request.
- */
 export async function PersistentCopyright() {
   return null;
 }

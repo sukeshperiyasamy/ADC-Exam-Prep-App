@@ -188,13 +188,13 @@ export type CompanyInfo = {
 };
 
 export const COMPANY_DEFAULTS: CompanyInfo = {
-  name: process.env.COMPANY_NAME || 'ADC Exam Preparation Institute',
+  name: process.env.COMPANY_NAME || 'ADC Exam Prep',
   shortName: process.env.COMPANY_SHORT_NAME || 'ADC Exam Prep',
-  uen: process.env.COMPANY_UEN || 'REG-2026-ADC01',
-  address: process.env.COMPANY_ADDRESS || '123 Healthcare Practice Way, Suite 400, Sydney, NSW 2000',
+  uen: process.env.COMPANY_UEN || '',
+  address: process.env.COMPANY_ADDRESS || '',
   email: process.env.COMPANY_EMAIL || 'support@adcexamprep.com',
-  tel: process.env.COMPANY_TEL || '+61 2 9000 0000',
-  website: process.env.COMPANY_WEBSITE || 'https://adcexamprep.com'
+  tel: process.env.COMPANY_TEL || '',
+  website: process.env.COMPANY_WEBSITE || 'https://adc-exam-prep-app.vercel.app'
 };
 
 export async function getCompanyInfo(): Promise<CompanyInfo> {

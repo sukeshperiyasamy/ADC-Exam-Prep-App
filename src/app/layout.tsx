@@ -25,13 +25,13 @@ const SITE_URL =
   process.env.NEXTAUTH_URL?.replace(/\/$/, '') || 'http://localhost:3040';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const fallbackTitle = 'ADC Exam Prep — Independent Demo';
+  const fallbackTitle = 'ADC Exam Prep — Dental Exam Preparation Platform';
   const fallbackDescription =
-    'An independent demo workspace for Australian Dental Council exam preparation, mock tests, and progress review. Not affiliated with or endorsed by the ADC.';
+    'An independent exam preparation platform for Australian Dental Council candidates featuring clinical scenario practice, timed mock tests, and detailed rationales.';
   const fallbackOgDescription =
-    'Independent ADC exam preparation demo for dental candidates.';
+    'Independent ADC exam preparation platform for dental candidates.';
   const fallbackKeywords =
-    'ADC exam preparation, Australian Dental Council exam, dental mock tests, clinical scenario questions';
+    'ADC exam preparation, Australian Dental Council exam, dental mock tests, clinical scenario questions, ADC Part 1 written exam';
   const siteName = 'ADC Exam Prep';
 
   try {
@@ -120,14 +120,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {
                 '@context': 'https://schema.org',
                 '@type': 'Organization',
-                name: 'ADC Exam Prep Demo',
+                name: 'ADC Exam Prep',
                 url: SITE_URL,
                 logo: `${SITE_URL}/logo-mark.png`
               },
               {
                 '@context': 'https://schema.org',
                 '@type': 'WebSite',
-                name: 'ADC Exam Prep Demo',
+                name: 'ADC Exam Prep',
                 url: SITE_URL,
                 potentialAction: {
                   '@type': 'SearchAction',

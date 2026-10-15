@@ -75,7 +75,7 @@ export function WhatsAppWidget() {
               <WhatsAppGlyph className="h-5 w-5" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold leading-tight">ADC Exam Prep Demo</p>
+              <p className="text-sm font-semibold leading-tight">ADC Exam Prep</p>
               <p className="text-xs text-white/80">Typically replies within minutes</p>
             </div>
             <button

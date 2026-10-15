@@ -31,11 +31,12 @@ export function Nav() {
 
         {/* Desktop Navigation Links (>= md) */}
         {!inBackend && (
-          <nav className="hidden items-center gap-1 md:flex">
-            <Link href="/practice-exams" className="btn-ghost">Mock Tests</Link>
-            <Link href="/p/about-us" className="btn-ghost">About Us</Link>
-            <Link href="/#faq" className="btn-ghost">FAQ</Link>
-            <Link href="/p/support" className="btn-ghost">Support</Link>
+          <nav className="hidden items-center gap-1 lg:gap-2 md:flex">
+            <Link href="/practice-exams" className="btn-ghost text-sm">Mock Tests</Link>
+            <Link href="/#how-it-works" className="btn-ghost text-sm">How It Works</Link>
+            <Link href="/#pricing" className="btn-ghost text-sm">Pricing</Link>
+            <Link href="/#faq" className="btn-ghost text-sm">FAQ</Link>
+            <Link href="/p/support" className="btn-ghost text-sm">Support</Link>
           </nav>
         )}
 
@@ -89,11 +90,18 @@ export function Nav() {
               Mock Tests
             </Link>
             <Link
-              href="/p/about-us"
+              href="/#how-it-works"
               className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               <Info className="h-4 w-4 text-slate-500" />
-              About Us
+              How It Works
+            </Link>
+            <Link
+              href="/#pricing"
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              <BookOpen className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              Pricing (₹1,499)
             </Link>
             <Link
               href="/#faq"
@@ -108,6 +116,13 @@ export function Nav() {
             >
               <LifeBuoy className="h-4 w-4 text-slate-500" />
               Contact & Support
+            </Link>
+            <Link
+              href="/p/about-us"
+              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              <Info className="h-4 w-4 text-slate-500" />
+              About ADC Exam Prep
             </Link>
           </nav>
         </div>
@@ -127,14 +142,9 @@ function Logo() {
         className="h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 shrink-0 object-contain"
         priority
       />
-      <div className="flex items-center gap-1.5 min-w-0">
-        <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white sm:text-base md:text-lg whitespace-nowrap">
-          ADC Exam Prep
-        </span>
-        <span className="hidden md:inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 text-[11px] font-medium uppercase tracking-wider text-slate-600 dark:bg-slate-800 dark:text-slate-300">
-          Demo
-        </span>
-      </div>
+      <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white sm:text-base md:text-lg whitespace-nowrap">
+        ADC Exam Prep
+      </span>
     </div>
   );
 }

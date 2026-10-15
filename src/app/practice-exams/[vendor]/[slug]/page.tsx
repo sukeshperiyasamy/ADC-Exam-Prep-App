@@ -132,7 +132,7 @@ export default async function ExamDetailPage({ params, searchParams }: { params:
     sku: exam.code,
     category: 'Dental mock test',
     url: productUrl,
-    brand: { '@type': 'Brand', name: 'ADC Exam Prep Demo' }
+    brand: { '@type': 'Brand', name: 'ADC Exam Prep' }
   };
   const offers = purchaseBundles.flatMap((bundle) => {
     const checkoutUrl = `${PUBLIC_SITE_URL}/checkout/bundle/${bundle.id}`;
