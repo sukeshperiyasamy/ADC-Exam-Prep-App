@@ -1,0 +1,175 @@
+{
+  "schemaVersion": 1,
+  "project": "ADC Exam Prep App",
+  "policy": {
+    "oneFeatureAtATime": true,
+    "requireVerification": true,
+    "requireProgressUpdate": true,
+    "requireExplicitApprovalForProductionChanges": true
+  },
+  "features": [
+    {
+      "id": "FEAT-001",
+      "title": "Indian Rupee (INR) Sole Currency Migration",
+      "description": "Migrate all public catalog prices, bundle checkout, invoices, and payment processing exclusively to Indian Rupees (INR, ₹), denominating the comprehensive exam bundle at ₹1,499 (149900 paise) while preserving historical currency records.",
+      "priority": "high",
+      "status": "done",
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Bundle price authoritative in database as 149900 paise (₹1,499)",
+        "Stripe checkout creates INR sessions exclusively",
+        "Legacy foreign currency orders and invoices remain intact",
+        "Format utilities format INR currency with symbol ₹ and standard Indian number grouping"
+      ],
+      "verificationCommands": [
+        "npx tsx scripts/test-inr-migration.ts",
+        "npm run typecheck"
+      ],
+      "filesExpected": [
+        "src/lib/utils.ts",
+        "src/app/api/stripe/create-order/route.ts",
+        "src/app/api/checkout/methods/route.ts",
+        "scripts/test-inr-migration.ts"
+      ],
+      "notes": "Completed and verified. 100% test pass on scripts/test-inr-migration.ts."
+    },
+    {
+      "id": "FEAT-002",
+      "title": "Mobile Header & Responsive Navigation Polish",
+      "description": "Streamline mobile navigation header (screens <= 767px) by hiding demo badge, preventing button wrapping, and ensuring touch-friendly layout for search, theme toggle, and auth actions.",
+      "priority": "medium",
+      "status": "done",
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Demo label hidden on mobile viewports",
+        "Essential brand and navigation actions remain accessible without overflow or horizontal scroll",
+        "Theme toggle and account menus remain responsive and aligned"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "filesExpected": [
+        "src/components/nav.tsx"
+      ],
+      "notes": "Verified across mobile and tablet viewports via browser subagent."
+    },
+    {
+      "id": "FEAT-003",
+      "title": "Custom Dental Molar & Clinical Checkmark Vector Brand Identity Suite",
+      "description": "Implement original custom vector logo combining a stylized molar silhouette with an integrated teal clinical checkmark, including light/dark theme variants, wordmark typography, and multi-resolution favicon suite.",
+      "priority": "high",
+      "status": "done",
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Scalable original vector logo in SVG with transparent background",
+        "Adaptive color styling (Deep Navy in light mode, Clean White in dark mode, Clinical Teal accent)",
+        "Multi-resolution favicon suite (16x16, 32x32, 48x48 ICO, SVG tab icon, 180x180 Apple Touch Icon, 192x192/512x512 PWA icons)",
+        "Zero distortion or clipping on mobile (< 420px collapses to 'ADC' mark)",
+        "Clean production build with App Router route icon recognition"
+      ],
+      "verificationCommands": [
+        "npx tsx scripts/generate-brand-assets.ts",
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "filesExpected": [
+        "src/components/brand-logo.tsx",
+        "src/components/nav.tsx",
+        "src/components/footer.tsx",
+        "src/app/layout.tsx",
+        "public/logo.svg",
+        "public/logo-dark.svg",
+        "public/icon.svg",
+        "public/favicon.ico",
+        "src/app/icon.svg",
+        "src/app/favicon.ico"
+      ],
+      "notes": "Completed, verified in browser light/dark modes, and deployed."
+    },
+    {
+      "id": "FEAT-004",
+      "title": "Clinical Scenario Question Pool & Domain Performance Breakdown",
+      "description": "Audit and verify clinical examination attempt flow, autosave state management, question flagging, and post-exam domain performance score calculation for ADC Part 1 candidates.",
+      "priority": "high",
+      "status": "ready",
+      "dependencies": [
+        "FEAT-001"
+      ],
+      "acceptanceCriteria": [
+        "Free 10-question teaser gating works seamlessly for guest and authenticated users",
+        "Full exam attempts require active Entitlement row in database",
+        "Autosave preserves candidate answer selections across question transitions",
+        "Results page displays domain-wise accuracy percentage and clinical explanations"
+      ],
+      "verificationCommands": [
+        "npx tsx scripts/test-exam-engine.ts",
+        "npm run typecheck"
+      ],
+      "filesExpected": [
+        "src/app/api/attempts/start/route.ts",
+        "src/app/api/attempts/autosave/route.ts",
+        "src/app/api/attempts/submit/route.ts",
+        "src/app/exam/[attemptId]/page.tsx",
+        "src/app/results/[attemptId]/page.tsx"
+      ],
+      "notes": "Ready for execution in future session. Existing exam engine passes core tests."
+    },
+    {
+      "id": "FEAT-005",
+      "title": "GST Invoice PDF Generation and Email Dispatch Resilience",
+      "description": "Enhance invoice rendering and purchase confirmation email pipeline to ensure background job isolation, PDF font reliability, and decoupled error handling so SMTP failures never roll back paid transactions.",
+      "priority": "medium",
+      "status": "ready",
+      "dependencies": [
+        "FEAT-001"
+      ],
+      "acceptanceCriteria": [
+        "PDF invoices render sequential numbering (INV-2026-xxxxx) with valid GST tax breakdown",
+        "Email delivery failures are caught gracefully and logged to EmailLog table",
+        "Order status remains PAID even if PDF rendering or SMTP transmission encounters a network timeout"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "filesExpected": [
+        "src/lib/fulfill.ts",
+        "src/lib/invoice/render-invoice-pdf.ts",
+        "src/lib/mail.ts"
+      ],
+      "notes": "Ready for verification and stress testing."
+    },
+    {
+      "id": "FEAT-006",
+      "title": "Cashfree Payment Gateway Integration",
+      "description": "Future-planned domestic Indian payment gateway integration using Cashfree hosted checkout, raw-body HMAC-SHA256 signature verification, idempotent webhook processing, and server-side payment reconciliation.",
+      "priority": "medium",
+      "status": "backlog",
+      "dependencies": [
+        "FEAT-001"
+      ],
+      "acceptanceCriteria": [
+        "Server-authoritative order creation at ₹1,499 (149900 paise)",
+        "HMAC-SHA256 signature verification with timestamp drift protection (< 300s)",
+        "Zero access granted on fake redirects or tampering attempts",
+        "Idempotent webhook deduplication via PaymentWebhookEvent table",
+        "Stripe and existing payment history remain 100% intact",
+        "Passes all 8 automated sandbox security test scenarios"
+      ],
+      "verificationCommands": [
+        "npx tsx scripts/test-cashfree-integration.ts",
+        "npm run typecheck",
+        "npm run build"
+      ],
+      "filesExpected": [
+        "prisma/schema.prisma",
+        "src/lib/payments/cashfree.ts",
+        "src/app/api/cashfree/create-order/route.ts",
+        "src/app/api/cashfree/webhook/route.ts",
+        "src/components/checkout/payment-methods.tsx"
+      ],
+      "notes": "FUTURE SPECIFICATION ONLY. Complete specification saved in docs/future-plans/CASHFREE_PAYMENT_GATEWAY_INTEGRATION.md. Must remain in backlog until explicit user authorization is provided."
+    }
+  ]
+}

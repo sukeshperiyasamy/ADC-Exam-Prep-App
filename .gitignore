@@ -9,7 +9,8 @@ node_modules
 env_*
 *.env
 # Skill-manager install artifacts
-.agents/
+.agents/*
+!.agents/skills/
 skills-lock.json
 .DS_Store
 dist
@@ -68,3 +69,4 @@ scripts/_*
 # Source material the project was derived from — not ours to republish.
 **/reference/
 .neon
+.worktrees/
