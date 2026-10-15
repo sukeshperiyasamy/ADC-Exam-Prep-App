@@ -170,6 +170,33 @@
         "src/components/checkout/payment-methods.tsx"
       ],
       "notes": "FUTURE SPECIFICATION ONLY. Complete specification saved in docs/future-plans/CASHFREE_PAYMENT_GATEWAY_INTEGRATION.md. Must remain in backlog until explicit user authorization is provided."
+    },
+    {
+      "id": "FEAT-007",
+      "title": "Practice Exams Catalog & Practice Hub Redesign",
+      "description": "Redesign /practice-exams catalog into a high-conversion, clinical practice hub with dual-card architecture (Free 10-Question Teaser vs Comprehensive Full Bundle), dynamic candidate entitlement badge, dental specialty filtering pills, and question bank discipline distribution.",
+      "priority": "high",
+      "status": "verified",
+      "dependencies": [
+        "FEAT-001"
+      ],
+      "acceptanceCriteria": [
+        "Eliminate empty catalog void with Dual-Card layout (Free Teaser vs Full ADC Bundle)",
+        "Replace generic IT filters with 7 verified clinical specialty pills showing real counts",
+        "Authoritative reuse of database entitlement and expiry check",
+        "Preserve guest teaser cookie handling and route redirection to exam engine",
+        "Zero unverified syllabus or blueprint weighting claims",
+        "Responsive across 1440x900 desktop and 390x844 mobile viewports"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "Native browser subagent desktop & mobile audits"
+      ],
+      "filesExpected": [
+        "src/app/practice-exams/page.tsx",
+        "src/app/practice-exams/filters.tsx"
+      ],
+      "notes": "Verified in browser at 1440x900 and 390x844 with screenshots and passing TypeScript typecheck."
     }
   ]
 }

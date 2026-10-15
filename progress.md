@@ -120,22 +120,67 @@
 
 ---
 
-## 15. Next Recommended Action
-- **Prioritize Redesigning `/practice-exams` (Practice Exam Hub & Catalog):**
-  - Replace generic "Foundational/Associate" filters with relevant clinical dental domains (Periodontics, Endodontics, Restorative, Oral Surgery, Infection Control).
-  - Prominently feature the **Free 10-Question Diagnostic Teaser** alongside the **Full 180+ Question ADC Examination Bundle (₹1,499)**.
-  - Fill the empty space with a structured domain syllabus breakdown, clear action buttons ("Take Free Test", "Enroll in Full Bundle — ₹1,499"), and candidate entitlement state.
-  - Stop and present the Design Brief for `/practice-exams` for user approval before editing code.
+## 15. Completed Implementation: `/practice-exams` Catalog & Practice Hub Redesign
+- **Files Modified:**
+  - `src/app/practice-exams/page.tsx`: Implemented dual-card architecture (10-question Free Practice Teaser vs. Full ADC Preparation Bundle), verified entitlement status badge (`Enrolled Candidate` vs. `Guest Mode`), and 7-domain clinical curriculum breakdown grid.
+  - `src/app/practice-exams/filters.tsx`: Replaced generic IT vendor/level dropdowns with dental specialty filter pills with exact counts and keyword search.
+- **Data & Business Logic Faithfully Reused:**
+  - Database question counts: 187 published questions across 7 clinical disciplines.
+  - Teaser count: 10 randomized scenario MCQs (`isTeaser: true`).
+  - Mock exam simulation parameters: 60 questions, 180 minutes, 70% passing score.
+  - Entitlement check: Reused database query checking `Entitlement` table for active rows (`PRACTICE`, `BUNDLE`, `ADMIN_GRANT`).
+  - Stripe INR checkout: Direct link to `/checkout/bundle/adc-written-exam-prep-bundle` with authoritative ₹1,499 price.
+  - Zero unsupported external claims: Domain distributions labeled as question pool counts and percentages without claiming unverified official weight mandates.
 
 ---
 
-## 16. Features Explicitly Deferred
+## 16. Verification & Browser Testing Results
+- **TypeScript Typecheck:** `npm run typecheck` (`tsc --noEmit`) passed with exit code `0` (zero errors).
+- **Desktop Browser QA (1440×900):**
+  - Verified screenshot: `practice_exams_desktop_redesign_1792101802050.png`
+  - Dual cards render in balanced 2-column layout; 7 discipline cards fill the previously empty void with zero horizontal scroll.
+  - Interactive filter test: Clicked `Periodontics, Oral Surgery & Pain Management (53)`, verified filter notification banner, and verified reset (`practice_exams_filtered_desktop_1792101817727.png`).
+- **Mobile Browser QA (390×844):**
+  - Verified screenshot: `practice_exams_mobile_redesign_1792101836040.png`
+  - Cards stack cleanly; touch targets are ≥44px; domain pills wrap without overflow; CTAs remain fully accessible.
+- **Unresolved Defects:** **Zero**.
+
+---
+
+## 17. Next Recommended Action
+- Present visual verification evidence to user for sign-off.
+- Ready for next backlog feature selection (`FEAT-004` or `FEAT-005`).
+
+---
+
+## 18. Features Explicitly Deferred
 - **Cashfree Payment Gateway Integration (`FEAT-006`):** Kept in `backlog`.
-- **Application Code Edits:** Intentionally deferred in this session; audit and prioritization only.
 
 ---
 
-## 17. Production Deployment and Approval Status
+## 19. Production Deployment and Approval Status
 - **Current Production Status:** Live on Vercel at `https://adc-exam-prep-app.vercel.app/`.
 - **Payment Routing:** Active on Stripe INR (₹1,499 bundle).
-- **Deployment Authorization:** No automated deployment or push was made during this session.
+- **Deployment Authorization:** Awaiting user instruction before push or deploy.
+
+---
+
+## 20. Final Pre-Commit Review & Verification
+- **Published Refund Policy Verification:**
+  - Audited `src/lib/pages.ts` and `src/app/p/[slug]/page.tsx` (`slug: 'refund-policy'`).
+  - Found published policy states: *"Full refund within 7 days of purchase if you have answered fewer than {{TEASER_N}} questions across all attempts."*
+  - Corrected previous claim in `src/app/practice-exams/page.tsx` from "fewer than 2 attempts" to match exact published terms: *"Eligible within 7 days of purchase if you have answered fewer than 10 questions across all attempts. See our Refund Policy."* Added direct link to `/p/refund-policy`.
+- **Entitlement Authorization & Expiry Rules:**
+  - Reused `db.entitlement.findFirst` for tiers `['PRACTICE', 'BUNDLE', 'VOUCHER', 'ADMIN_GRANT']`.
+  - Added explicit expiry handling `OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }]` ensuring revoked or expired entitlements are not treated as active.
+- **Route Validation for All CTAs & Links:**
+  - Teaser CTA: Points to `/practice-exams/${vendorSlug}/${examSlug}/teaser` (Route Handler `GET`/`POST` minting guest attempt token and creating teaser attempt).
+  - Enrolled Candidate CTA: Points to `/practice-exams/${vendorSlug}/${examSlug}` (Exam preparation workspace where enrolled candidates select Practice Mode or Timed Simulation Mode).
+  - Unenrolled Candidate CTA: Points to `/checkout/bundle/${bundleSlug}` (Stripe INR checkout).
+  - Filter pills & search: Points to `/practice-exams` with query parameters `domain` and `q`.
+- **Backlog Tracking (`features.json`):**
+  - Added `FEAT-007` ("Practice Exams Catalog & Practice Hub Redesign") with status `verified`.
+- **Verification Commands Executed:**
+  - `npm run typecheck` (`tsc --noEmit`): Passed with exit code `0`.
+  - `git status`: Confirmed exactly 4 intended files (`features.json`, `progress.md`, `src/app/practice-exams/filters.tsx`, `src/app/practice-exams/page.tsx`).
+

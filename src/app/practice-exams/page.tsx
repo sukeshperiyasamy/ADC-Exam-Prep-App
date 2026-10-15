@@ -1,206 +1,410 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
+import { auth } from '@/lib/auth';
 import { formatPrice } from '@/lib/utils';
-import { practiceExamCount, practiceExamLabel, practiceQuestionTotal } from '@/lib/bundle-contents';
+import { getTeaserSize } from '@/lib/settings';
 import { CatalogFilters } from './filters';
-import { bundleSearchAliases, catalogSearchSuggestions, matchesCatalogSearch } from '@/lib/catalog-search';
+import {
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  Stethoscope,
+  ShieldCheck,
+  BookOpen,
+  HelpCircle,
+  Layers,
+  Unlock,
+  Check,
+  Play,
+  RotateCcw
+} from 'lucide-react';
 
-const PAGE_SIZE = 9;
-
-export default async function CatalogPage({ searchParams }: { searchParams: Promise<{ q?: string; level?: string; vendor?: string; page?: string }> }) {
+export default async function CatalogPage({
+  searchParams
+}: {
+  searchParams: Promise<{ q?: string; domain?: string }>
+}) {
   const sp = await searchParams;
   const q = (sp.q || '').trim();
-  const where = {
-    published: true,
-    deletedAt: null,
-    // Hide exams that don't have any published questions yet — they're
-    // catalog placeholders waiting on content. Admins still see them
-    // in /admin-dashboard (which doesn't apply this filter).
-    questions: { some: { status: 'PUBLISHED' as const } },
-    ...(sp.vendor ? { vendor: { slug: sp.vendor } } : {}),
-    ...(sp.level ? { level: sp.level } : {}),
-    ...(q ? { OR: [
-      { title: { contains: q, mode: 'insensitive' as const } },
-      { code: { contains: q, mode: 'insensitive' as const } }
-    ] } : {})
-  };
-  // Bundle-only catalog (per project policy): individual exam cards are
-  // hidden — customers only purchase bundles. The `where` filter is still
-  // used by the bundle query indirectly when we filter by vendor/level.
-  void where;
+  const selectedDomain = (sp.domain || '').trim();
 
-  const allBundlesRaw = await db.bundle.findMany({
-    where: { published: true },
-    include: { items: { include: { exam: { include: { vendor: true } } } } },
-    orderBy: { createdAt: 'desc' }
-  });
-  // Filter bundles in memory for vendor/level (they're derived from item[0]).
-  const allBundles = allBundlesRaw.filter(b => {
-    const first = b.items[0]?.exam;
-    if (sp.vendor && first?.vendor.slug !== sp.vendor) return false;
-    if (sp.level && first?.level !== sp.level) return false;
-    if (q && !matchesCatalogSearch(q, [
-      b.title,
-      b.description,
-      ...bundleSearchAliases(b.slug),
-      ...b.items.flatMap((item) => [
-        item.exam.vendor.name,
-        item.exam.vendor.slug,
-        item.exam.code,
-        item.exam.title,
-        item.exam.level,
-        item.exam.description
-      ])
-    ])) return false;
-    return true;
-  });
-  const suggestions = q && allBundles.length === 0
-    ? catalogSearchSuggestions(q, allBundlesRaw.flatMap((bundle) => [
-        bundle.title,
-        ...bundleSearchAliases(bundle.slug),
-        ...bundle.items.flatMap((item) => [item.exam.vendor.name, item.exam.code, item.exam.title])
-      ]))
-    : [];
+  const [session, teaserLimit, bundleRaw, domainCountsRaw, totalPublishedQuestions] = await Promise.all([
+    auth(),
+    getTeaserSize(),
+    db.bundle.findFirst({
+      where: { published: true },
+      include: {
+        items: {
+          orderBy: { position: 'asc' },
+          include: {
+            exam: {
+              include: {
+                vendor: true
+              }
+            }
+          }
+        }
+      }
+    }),
+    db.question.groupBy({
+      by: ['domain'],
+      where: { status: 'PUBLISHED' },
+      _count: true
+    }),
+    db.question.count({
+      where: { status: 'PUBLISHED' }
+    })
+  ]);
 
-  // Bundle-only catalog: no standalone exam cards.
-  type Card = { kind: 'bundle'; data: (typeof allBundles)[number] };
-  const allCards: Card[] = allBundles.map(b => ({ kind: 'bundle' as const, data: b }));
-  const totalCount = allCards.length;
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  const requestedPage = Number(sp.page) || 1;
-  const page = Math.min(Math.max(1, requestedPage), totalPages);
-  const pageCards = allCards.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const vendors = await db.vendor.findMany({ orderBy: { name: 'asc' } });
-  const levels = ['Foundational', 'Associate', 'Professional', 'Specialty'];
+  const primaryItem = bundleRaw?.items[0];
+  const primaryExam = primaryItem?.exam;
+  const userId = (session?.user as any)?.id as string | undefined;
+
+  // Re-use standard database entitlement verification with expiry handling
+  const entitled = Boolean(
+    userId &&
+    primaryExam &&
+    (await db.entitlement.findFirst({
+      where: {
+        userId,
+        examId: primaryExam.id,
+        tier: { in: ['PRACTICE', 'BUNDLE', 'VOUCHER', 'ADMIN_GRANT'] },
+        OR: [
+          { expiresAt: null },
+          { expiresAt: { gt: new Date() } }
+        ]
+      }
+    }))
+  );
+
+  const domainStats = domainCountsRaw
+    .map(d => ({
+      domain: d.domain,
+      count: d._count
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const vendorSlug = primaryExam?.vendor.slug || 'adc';
+  const examSlug = primaryExam?.slug || 'adc-written-examination-part-1';
+  const bundleSlug = bundleRaw?.slug || 'adc-written-exam-prep-bundle';
+  const bundlePriceFormatted = bundleRaw?.price ? formatPrice(bundleRaw.price) : '₹1,499';
+  const examDuration = primaryExam?.durationMinutes || 180;
+  const examQuestions = primaryExam?.questionCount || 60;
+  const passingScore = primaryExam?.passingScore || 70;
+
+  // Filter count if filter is active
+  const filteredQuestionCount = (q || selectedDomain)
+    ? await db.question.count({
+        where: {
+          status: 'PUBLISHED',
+          ...(selectedDomain ? { domain: selectedDomain } : {}),
+          ...(q
+            ? {
+                OR: [
+                  { stem: { contains: q, mode: 'insensitive' } },
+                  { domain: { contains: q, mode: 'insensitive' } },
+                  { explanation: { contains: q, mode: 'insensitive' } }
+                ]
+              }
+            : {})
+        }
+      })
+    : totalPublishedQuestions;
 
   return (
-    <div className="container-app py-10">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold tracking-tight">Practice exams</h1>
-        <p className="mt-1 text-slate-600">Choose a dental mock test and build confidence with focused clinical practice.</p>
-      </div>
+    <div className="container-app py-8 md:py-12">
+      {/* 01 · CLINICAL HEADER */}
+      <div className="mb-8">
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-900 dark:border-teal-800 dark:bg-teal-950/50 dark:text-teal-200">
+          <Stethoscope className="h-3.5 w-3.5 text-teal-700 dark:text-teal-400" />
+          <span>Independent ADC Part 1 Preparation Workspace</span>
+        </div>
 
-      <CatalogFilters
-        q={q}
-        vendor={sp.vendor || ''}
-        level={sp.level || ''}
-        vendors={vendors.map(v => ({ id: v.id, slug: v.slug, name: v.name }))}
-        levels={levels}
-      />
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <h1 className="text-2xl font-extrabold tracking-tight text-slate-950 sm:text-3xl md:text-4xl dark:text-white">
+              ADC Practice Exams & Clinical Scenarios
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-300">
+              Prepare for the Australian Dental Council Part 1 Written Examination with {totalPublishedQuestions} authentic
+              scenario-based multiple-choice questions, timed mock exams, and in-depth rationales.
+            </p>
+          </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {pageCards.map(card => {
-          const b = card.data;
-          const firstItem = b.items[0]?.exam;
-          // PRACTICE items only — the VOUCHER item points back at the same -p1
-          // exam, so counting raw items double-counts it. See bundle-contents.ts.
-          const totalQuestions = practiceQuestionTotal(b.items);
-          const examCount = practiceExamCount(b.items);
-          return (
-            <Link key={`b-${b.id}`} href={firstItem ? `/practice-exams/${firstItem.vendor.slug}/${b.slug}` : `/bundles/${b.slug}`} className="card-hover p-5">
-              <div className="mb-2 flex flex-wrap items-center gap-2 text-xs">
-                {firstItem && <span className="badge"><HighlightedText text={firstItem.vendor.name} query={q} /></span>}
-                {firstItem && <span className="badge"><HighlightedText text={firstItem.code} query={q} /></span>}
-                {firstItem && <span className="badge">{firstItem.level}</span>}
+          {/* Candidate Entitlement Status Badge */}
+          <div className="self-start md:self-auto">
+            {entitled ? (
+              <div className="inline-flex items-center gap-2 rounded-lg border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-900 dark:border-teal-700 dark:bg-teal-950/60 dark:text-teal-200">
+                <span className="h-2 w-2 rounded-full bg-teal-600 animate-pulse" />
+                <span className="font-semibold">Enrolled Candidate</span>
+                <span className="text-teal-700 dark:text-teal-400">• Full Access Active</span>
               </div>
-              <h3 className="font-semibold"><HighlightedText text={b.title} query={q} /></h3>
-              {bundleSearchAliases(b.slug).filter(alias => matchesCatalogSearch(q, [alias])).map(alias => (
-                q && <p key={alias} className="mt-1 text-xs font-medium text-blue-700 dark:text-blue-300">Matched course code: <mark className="rounded bg-yellow-200 px-1 text-slate-950">{alias}</mark></p>
-              ))}
-              <p className="mt-1 line-clamp-2 text-sm text-slate-600 dark:text-slate-300">{b.description}</p>
-              <div className="mt-4 flex items-center justify-between text-sm">
-                <span className="text-slate-500 dark:text-slate-400">{totalQuestions} questions · {practiceExamLabel(examCount)}</span>
-                <span className="font-semibold text-blue-700 dark:text-blue-300">{b.price === 0 ? 'Free' : `from ${formatPrice(b.price)}`}</span>
+            ) : userId ? (
+              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                <span className="h-2 w-2 rounded-full bg-slate-400" />
+                <span>Signed In</span>
+                <span className="text-slate-500">• Free Sample Mode</span>
               </div>
-            </Link>
-          );
-        })}
-        {totalCount === 0 && (
-          <div className="md:col-span-2 lg:col-span-3 rounded-lg border border-slate-200 p-5 text-sm dark:border-slate-800">
-            <p className="font-medium">No practice-exam bundles found.</p>
-            <p className="mt-1 text-slate-500 dark:text-slate-400">Try a mock-test title or topic. New dental practice content will appear here when it has been reviewed.</p>
-            {suggestions.length > 0 && (
-              <p className="mt-3">Did you mean?{' '}{suggestions.map((suggestion, index) => (
-                <span key={suggestion}>{index > 0 && ', '}<Link className="text-blue-700 hover:underline dark:text-blue-300" href={`/practice-exams?q=${encodeURIComponent(suggestion)}`}>{suggestion}</Link></span>
-              ))}</p>
+            ) : (
+              <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                <span className="h-2 w-2 rounded-full bg-slate-400" />
+                <span>Guest Mode</span>
+                <span className="text-slate-500">• Free Sample Available</span>
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
 
-      {totalPages > 1 && (
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          totalCount={totalCount}
-          searchParams={{ q, vendor: sp.vendor, level: sp.level }}
-        />
+      {/* 02 · CLINICAL TOPIC SEARCH & DOMAIN PILLS */}
+      <CatalogFilters
+        q={q}
+        selectedDomain={selectedDomain}
+        domains={domainStats}
+        totalQuestions={totalPublishedQuestions}
+      />
+
+      {/* Active Filter Notification Banner */}
+      {(q || selectedDomain) && (
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-teal-100 bg-teal-50/70 px-4 py-2.5 text-xs text-teal-900 dark:border-teal-900 dark:bg-teal-950/30 dark:text-teal-200">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">Filter active:</span>
+            {selectedDomain && <span className="rounded bg-teal-200/60 px-2 py-0.5 font-medium dark:bg-teal-800/60">{selectedDomain}</span>}
+            {q && <span>Matching &ldquo;{q}&rdquo;</span>}
+            <span>— {filteredQuestionCount} questions found in bank</span>
+          </div>
+          <Link href="/practice-exams" className="font-semibold underline hover:text-teal-700 dark:hover:text-teal-300">
+            Reset to all questions
+          </Link>
+        </div>
       )}
-    </div>
-  );
-}
 
-function HighlightedText({ text, query }: { text: string; query: string }) {
-  const trimmed = query.trim();
-  if (!trimmed) return text;
-  const index = text.toLocaleLowerCase().indexOf(trimmed.toLocaleLowerCase());
-  if (index < 0) return text;
-  return <>{text.slice(0, index)}<mark className="rounded bg-yellow-200 px-0.5 text-slate-950">{text.slice(index, index + trimmed.length)}</mark>{text.slice(index + trimmed.length)}</>;
-}
+      {/* 03 · DUAL CARD ARCHITECTURE: FREE TEASER vs FULL BUNDLE */}
+      <div className="mb-14 grid gap-6 lg:grid-cols-2">
+        {/* CARD A: FREE PRACTICE TEASER */}
+        <div className="relative flex flex-col justify-between rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm transition hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700">
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+                <Sparkles className="h-3 w-3 text-amber-500" />
+                <span>Free Sample • Instant Access</span>
+              </span>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                {teaserLimit} Questions
+              </span>
+            </div>
 
-function Pagination({ page, totalPages, totalCount, searchParams }: {
-  page: number;
-  totalPages: number;
-  totalCount: number;
-  searchParams: { q?: string; vendor?: string; level?: string };
-}) {
-  const hrefFor = (p: number) => {
-    const params = new URLSearchParams();
-    if (searchParams.q) params.set('q', searchParams.q);
-    if (searchParams.vendor) params.set('vendor', searchParams.vendor);
-    if (searchParams.level) params.set('level', searchParams.level);
-    if (p > 1) params.set('page', String(p));
-    const qs = params.toString();
-    return qs ? `/practice-exams?${qs}` : '/practice-exams';
-  };
+            <h2 className="text-xl font-bold tracking-tight text-slate-950 dark:text-white">
+              Diagnostic Practice Teaser
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Sample {teaserLimit} randomized scenario-based clinical questions with instant answer feedback and detailed rationales. Experience the computer-based exam interface without payment.
+            </p>
 
-  // Build a compact page list with ellipses around the current page
-  const pages: (number | 'gap')[] = [];
-  for (let p = 1; p <= totalPages; p++) {
-    if (p === 1 || p === totalPages || (p >= page - 1 && p <= page + 1)) {
-      pages.push(p);
-    } else if (pages[pages.length - 1] !== 'gap') {
-      pages.push('gap');
-    }
-  }
+            <ul className="mt-5 space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
+              <li className="flex items-start gap-2.5">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>{teaserLimit} authentic clinical scenario MCQs</strong> sampled from the pool</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>Untimed practice mode:</strong> view explanations immediately after each answer</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span>In-depth rationales citing Australian Therapeutic Guidelines standards</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span>Zero payment or credit card required — starts instantly</span>
+              </li>
+            </ul>
+          </div>
 
-  const start = (page - 1) * PAGE_SIZE + 1;
-  const end = Math.min(totalCount, page * PAGE_SIZE);
+          <div className="mt-8 border-t border-slate-100 pt-5 dark:border-slate-800">
+            <Link
+              href={`/practice-exams/${vendorSlug}/${examSlug}/teaser`}
+              className="btn-outline flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-800"
+            >
+              <span>Start Free Practice Test ({teaserLimit} Qs)</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
 
-  return (
-    <nav className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-between" aria-label="Pagination">
-      <p className="text-sm text-slate-500 dark:text-slate-400">
-        Showing {start}–{end} of {totalCount} exam{totalCount === 1 ? '' : 's'}
-      </p>
-      <div className="flex items-center gap-1">
-        {page > 1 ? (
-          <Link href={hrefFor(page - 1)} className="rounded-md border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Previous</Link>
-        ) : (
-          <span className="rounded-md border border-slate-200 px-3 py-1.5 text-sm text-slate-400 dark:border-slate-800 dark:text-slate-600">Previous</span>
-        )}
-        {pages.map((p, i) =>
-          p === 'gap'
-            ? <span key={`gap-${i}`} className="px-2 text-slate-400">…</span>
-            : p === page
-              ? <span key={p} aria-current="page" className="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white">{p}</span>
-              : <Link key={p} href={hrefFor(p)} className="rounded-md border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">{p}</Link>
-        )}
-        {page < totalPages ? (
-          <Link href={hrefFor(page + 1)} className="rounded-md border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800">Next</Link>
-        ) : (
-          <span className="rounded-md border border-slate-200 px-3 py-1.5 text-sm text-slate-400 dark:border-slate-800 dark:text-slate-600">Next</span>
-        )}
+        {/* CARD B: COMPREHENSIVE ADC EXAMINATION BUNDLE */}
+        <div className="relative flex flex-col justify-between rounded-2xl border-2 border-teal-600 bg-white p-6 shadow-md dark:border-teal-500 dark:bg-slate-900">
+          {/* Popular Tag */}
+          <div className="absolute -top-3 right-6 rounded-full bg-teal-700 px-3 py-0.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm dark:bg-teal-600">
+            {entitled ? 'Your Access' : 'Complete Preparation'}
+          </div>
+
+          <div>
+            <div className="mb-3 flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 dark:bg-teal-950/60 dark:text-teal-200">
+                <BookOpen className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+                <span>Full Examination Access</span>
+              </span>
+              <div className="text-right">
+                {entitled ? (
+                  <span className="text-sm font-bold text-teal-700 dark:text-teal-400">Purchased & Active</span>
+                ) : (
+                  <div>
+                    <span className="text-xl font-extrabold text-slate-950 dark:text-white">{bundlePriceFormatted}</span>
+                    <span className="block text-[11px] text-slate-500">one-time fee</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <h2 className="text-xl font-bold tracking-tight text-slate-950 dark:text-white">
+              ADC Written Examination Comprehensive Prep Bundle
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+              Unrestricted access to the entire {totalPublishedQuestions}-question clinical pool, full {examQuestions}-question timed exam simulations ({examDuration} minutes, {passingScore}% pass standard), and domain analytics.
+            </p>
+
+            <ul className="mt-5 space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>All {totalPublishedQuestions} clinical scenario questions</strong> across 7 disciplines</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>Timed Mock Exam Mode:</strong> {examQuestions} questions in {examDuration} minutes with live timer and flagging</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>Practice Mode:</strong> untimed review with instant option-by-option rationale</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>Domain Performance Analytics:</strong> diagnostic breakdown on candidate dashboard</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <span><strong>7-day refund policy:</strong> eligible within 7 days if fewer than 10 questions answered (<Link href="/p/refund-policy" className="underline hover:text-teal-700 dark:hover:text-teal-300">details</Link>)</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="mt-8 border-t border-slate-100 pt-5 dark:border-slate-800">
+            {entitled ? (
+              <Link
+                href={`/practice-exams/${vendorSlug}/${examSlug}`}
+                className="btn-primary-grad flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-md"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                <span>Launch Mock Exam ({examQuestions} Questions)</span>
+              </Link>
+            ) : (
+              <Link
+                href={`/checkout/bundle/${bundleSlug}`}
+                className="btn-primary-grad flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-md"
+              >
+                <span>Enroll in Complete Bundle — {bundlePriceFormatted}</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
+        </div>
       </div>
-    </nav>
+
+      {/* 04 · QUESTION BANK DISTRIBUTION BY CLINICAL DISCIPLINE */}
+      <div className="rounded-2xl border border-slate-200/90 bg-slate-50/50 p-6 sm:p-8 dark:border-slate-800 dark:bg-slate-900/40">
+        <div className="mb-6 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+          <div>
+            <h3 className="text-lg font-bold tracking-tight text-slate-950 dark:text-white">
+              Question Bank Distribution by Clinical Discipline
+            </h3>
+            <p className="mt-1 text-xs text-slate-600 sm:text-sm dark:text-slate-400">
+              Verified clinical scenario counts across {domainStats.length} disciplines in the active {totalPublishedQuestions}-question pool.
+            </p>
+          </div>
+          <span className="self-start text-xs font-semibold text-slate-500 sm:self-auto dark:text-slate-400">
+            {totalPublishedQuestions} Total Scenarios
+          </span>
+        </div>
+
+        <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          {domainStats.map((d) => {
+            const percentage = ((d.count / totalPublishedQuestions) * 100).toFixed(1);
+            const isSelected = selectedDomain === d.domain;
+            return (
+              <Link
+                key={d.domain}
+                href={isSelected ? '/practice-exams' : `/practice-exams?domain=${encodeURIComponent(d.domain)}`}
+                className={`flex flex-col justify-between rounded-xl border p-4 transition ${
+                  isSelected
+                    ? 'border-teal-600 bg-teal-50/80 shadow-sm dark:border-teal-500 dark:bg-teal-950/40'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-teal-800 dark:text-teal-300">
+                      {d.count} Questions
+                    </span>
+                    <span className="font-mono text-xs font-semibold text-slate-400 dark:text-slate-500">
+                      {percentage}%
+                    </span>
+                  </div>
+                  <h4 className="mt-2 text-sm font-semibold leading-snug text-slate-900 dark:text-slate-100">
+                    {d.domain}
+                  </h4>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                  <span>{isSelected ? 'Selected' : 'Filter by specialty'}</span>
+                  <ArrowRight className="h-3 w-3" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 05 · TRUST & TRANSPARENCY BAR */}
+      <div className="mt-12 grid gap-6 border-t border-slate-200 pt-8 sm:grid-cols-3 dark:border-slate-800">
+        <div className="flex items-start gap-3">
+          <ShieldCheck className="h-5 w-5 shrink-0 text-teal-600 dark:text-teal-400" />
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+              Authentic Scenario Format
+            </h4>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+              Multi-step patient cases and clinical cluster questions mirroring the ADC examination style.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-3">
+          <Clock className="h-5 w-5 shrink-0 text-teal-600 dark:text-teal-400" />
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+              Timed & Untimed Modes
+            </h4>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+              Practise at your own pace with instant rationales or simulate 3-hour exam conditions.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-start gap-3">
+          <RotateCcw className="h-5 w-5 shrink-0 text-teal-600 dark:text-teal-400" />
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+              7-Day Refund Policy
+            </h4>
+            <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+              Eligible within 7 days of purchase if you have answered fewer than 10 questions across all attempts. See our{' '}
+              <Link href="/p/refund-policy" className="underline hover:text-teal-700 dark:hover:text-teal-300">
+                Refund Policy
+              </Link>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
