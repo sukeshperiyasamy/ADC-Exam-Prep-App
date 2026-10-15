@@ -497,7 +497,7 @@ export default function HomePage() {
               Get Full Access — ₹1,499
             </Link>
             <Link
-              href="/practice-exams/australian-dental-council/adc-written-examination-part-1"
+              href="/practice-exams/adc/adc-written-examination-part-1"
               className="btn-outline py-3.5 text-center text-sm font-semibold"
             >
               View Exam Details

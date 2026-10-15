@@ -176,7 +176,7 @@
       "title": "Practice Exams Catalog & Practice Hub Redesign",
       "description": "Redesign /practice-exams catalog into a high-conversion, clinical practice hub with dual-card architecture (Free 10-Question Teaser vs Comprehensive Full Bundle), dynamic candidate entitlement badge, dental specialty filtering pills, and question bank discipline distribution.",
       "priority": "high",
-      "status": "verified",
+      "status": "done",
       "dependencies": [
         "FEAT-001"
       ],
@@ -197,6 +197,33 @@
         "src/app/practice-exams/filters.tsx"
       ],
       "notes": "Verified in browser at 1440x900 and 390x844 with screenshots and passing TypeScript typecheck."
+    },
+    {
+      "id": "FEAT-008",
+      "title": "Broken Homepage Link and Canonical Terms Route Resolution",
+      "description": "Fix broken vendor slug link on homepage pointing to Australian Dental Council exam details and canonicalize terms route resolution across footer, default pages, and static generation.",
+      "priority": "high",
+      "status": "done",
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Homepage link to exam details uses authoritative vendor slug adc",
+        "Footer terms link points directly to canonical /p/terms without redirect",
+        "DEFAULT_PAGES uses slug terms matching next.config.mjs canonical redirect target",
+        "loadPage handles backward-compatible fallback for terms-of-service",
+        "npm run check:links passes 100% of discovered internal URLs with zero 404s",
+        "npm run typecheck passes with zero errors"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "npm run check:links"
+      ],
+      "filesExpected": [
+        "src/app/page.tsx",
+        "src/components/footer.tsx",
+        "src/lib/pages.ts",
+        "src/app/p/[slug]/page.tsx"
+      ],
+      "notes": "Verified with npm run check:links passing all 56 crawled URLs with 0 errors, and npm run typecheck passing."
     }
   ]
 }

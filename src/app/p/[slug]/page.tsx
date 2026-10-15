@@ -27,7 +27,7 @@ async function loadPage(slug: string) {
   if (row && row.published) {
     return { title: row.title, excerpt: row.excerpt, bodyHtml: row.bodyHtml };
   }
-  const def = DEFAULT_PAGES.find((p) => p.slug === slug);
+  const def = DEFAULT_PAGES.find((p) => p.slug === slug || (slug === 'terms-of-service' && p.slug === 'terms'));
   if (def) {
     return { title: def.title, excerpt: def.excerpt, bodyHtml: def.bodyHtml };
   }

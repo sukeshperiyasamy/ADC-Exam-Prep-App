@@ -58,7 +58,7 @@ export const DEFAULT_PAGES: PageDefault[] = [
     ].join('')
   },
   {
-    slug: 'terms-of-service',
+    slug: 'terms',
     title: 'Terms of Service',
     excerpt: 'Terms governing use of our service.',
     showInFooter: true,

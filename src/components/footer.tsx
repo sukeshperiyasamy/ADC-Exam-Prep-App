@@ -174,7 +174,7 @@ export async function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/p/terms-of-service" className={linkClass}>
+                <Link href="/p/terms" className={linkClass}>
                   Terms of Service
                 </Link>
               </li>

@@ -184,3 +184,23 @@
   - `npm run typecheck` (`tsc --noEmit`): Passed with exit code `0`.
   - `git status`: Confirmed exactly 4 intended files (`features.json`, `progress.md`, `src/app/practice-exams/filters.tsx`, `src/app/practice-exams/page.tsx`).
 
+---
+
+## 21. Broken Homepage Link & Canonical Route Resolution (FEAT-008)
+- **Feature ID:** `FEAT-008`
+- **Status:** `done`
+- **Files Modified:**
+  - `src/app/page.tsx`: Fixed exam details CTA href to use canonical vendor slug `/practice-exams/adc/adc-written-examination-part-1`.
+  - `src/components/footer.tsx`: Updated Terms of Service link directly to `/p/terms` without requiring redirect.
+  - `src/lib/pages.ts`: Aligned `DEFAULT_PAGES` slug from `'terms-of-service'` to `'terms'`, matching canonical `next.config.mjs` destination.
+  - `src/app/p/[slug]/page.tsx`: Added fallback support in `loadPage` for both `'terms'` and `'terms-of-service'`.
+  - `features.json`: Tracked FEAT-008 as `done`.
+- **Verification Commands Executed:**
+  - `npm run typecheck`: Passed with exit code `0`.
+  - Direct route validation:
+    - `GET /practice-exams/adc/adc-written-examination-part-1`: 200 OK
+    - `GET /p/terms`: 200 OK
+    - `GET /p/terms-of-service`: 308 Permanent Redirect to `/p/terms`
+  - `npm run check:links`: 56/56 local URLs crawled with 0 failures. Exit code `0`.
+
+
