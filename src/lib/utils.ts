@@ -4,18 +4,26 @@ import type { Tier } from '@prisma/client';
 
 export function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
-export function formatPrice(cents: number, currency = 'SGD') {
+export function formatPrice(cents: number, currency = 'INR') {
   if (cents === 0) return 'Free';
-  if (currency.toUpperCase() === 'SGD') {
+  const cur = currency.toUpperCase();
+  if (cur === 'INR') {
+    const formatted = new Intl.NumberFormat('en-IN', {
+      maximumFractionDigits: cents % 100 === 0 ? 0 : 2,
+      minimumFractionDigits: cents % 100 === 0 ? 0 : 2
+    }).format(cents / 100);
+    return `₹${formatted}`;
+  }
+  if (cur === 'SGD') {
     const amount = new Intl.NumberFormat('en-SG', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(cents / 100);
     return `SGD $${amount}`;
   }
-  return new Intl.NumberFormat('en-SG', {
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency,
+    currency: cur,
     currencyDisplay: 'symbol'
   }).format(cents / 100);
 }

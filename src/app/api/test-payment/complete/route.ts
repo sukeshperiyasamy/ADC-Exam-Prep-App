@@ -48,9 +48,11 @@ export async function POST(req: Request) {
       bundleId: body.bundleId,
       tier: tier as Tier,
       amount,
-      currency: 'SGD',
+      currency: 'INR',
       status: 'PENDING',
-      paypalOrderId: testId
+      provider: 'TEST',
+      paypalOrderId: testId,
+      providerOrderId: testId
     }
   });
 

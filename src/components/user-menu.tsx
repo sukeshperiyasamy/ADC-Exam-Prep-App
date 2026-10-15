@@ -49,10 +49,14 @@ export function UserMenu() {
 
   if (!session?.user) {
     return (
-      <>
-        <Link href="/login" className="btn-ghost">Sign in</Link>
-        <Link href="/signup" className="btn-primary-grad">Get started</Link>
-      </>
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+        <Link href="/login" className="btn-ghost text-xs sm:text-sm px-2.5 py-1.5 sm:px-3">
+          Sign in
+        </Link>
+        <Link href="/signup" className="btn-primary-grad hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5">
+          Get started
+        </Link>
+      </div>
     );
   }
 
@@ -67,10 +71,10 @@ export function UserMenu() {
   const image = user.image as string | undefined;
 
   return (
-    <div className="flex items-center gap-2">
-      {/* View As — admin only, top-bar pill */}
+    <div className="flex items-center gap-1.5 sm:gap-2">
+      {/* View As — admin only, top-bar pill (hidden on small mobile to prevent header overflow) */}
       {isAdmin && (
-        <div className="relative" ref={viewRef}>
+        <div className="relative hidden sm:block" ref={viewRef}>
           <button
             onClick={() => setViewOpen((o) => !o)}
             className="flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
@@ -113,7 +117,7 @@ export function UserMenu() {
       <div className="relative" ref={ref}>
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-2 rounded-full border border-slate-200 py-1 pl-3 pr-1 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
+          className="flex items-center gap-1.5 sm:gap-2 rounded-full border border-slate-200 py-1 pl-2.5 sm:pl-3 pr-1 text-sm hover:bg-slate-50 dark:border-slate-700 dark:hover:bg-slate-800"
         >
           <span className="hidden max-w-[180px] truncate font-medium text-slate-700 dark:text-slate-200 sm:inline">
             {displayName}
@@ -142,6 +146,37 @@ export function UserMenu() {
                 {user.role || 'USER'}
               </div>
             </div>
+
+            {/* Mobile View Switcher for Admins */}
+            {isAdmin && (
+              <div className="border-b border-slate-100 py-2 px-2 dark:border-slate-800 sm:hidden">
+                <div className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1.5">
+                  View Mode
+                </div>
+                <div className="grid grid-cols-2 gap-1">
+                  <button
+                    onClick={() => setView('admin')}
+                    className={`rounded px-2 py-1 text-xs font-medium text-center ${
+                      viewAs === 'admin'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
+                    }`}
+                  >
+                    Admin
+                  </button>
+                  <button
+                    onClick={() => setView('user')}
+                    className={`rounded px-2 py-1 text-xs font-medium text-center ${
+                      viewAs === 'user'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300'
+                    }`}
+                  >
+                    User
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="py-1">
               <Link

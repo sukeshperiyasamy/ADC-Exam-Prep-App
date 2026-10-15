@@ -36,7 +36,7 @@ export async function POST(req: Request) {
       userId,
       bundleId,
       amount: 0,
-      currency: 'SGD',
+      currency: 'INR',
       status: 'PENDING',
       paypalOrderId: syntheticPaypalId
     }

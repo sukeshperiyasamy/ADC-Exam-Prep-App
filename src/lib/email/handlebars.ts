@@ -9,8 +9,15 @@ function register() {
   Handlebars.registerHelper('money', (cents: unknown, currency: unknown) => {
     const n = typeof cents === 'number' ? cents : Number(cents);
     if (!isFinite(n)) return '';
-    const cur = typeof currency === 'string' && currency ? currency : 'USD';
-    if (cur.toUpperCase() === 'SGD') {
+    const cur = typeof currency === 'string' && currency ? currency.toUpperCase() : 'INR';
+    if (cur === 'INR') {
+      const formatted = new Intl.NumberFormat('en-IN', {
+        maximumFractionDigits: n % 100 === 0 ? 0 : 2,
+        minimumFractionDigits: n % 100 === 0 ? 0 : 2
+      }).format(n / 100);
+      return `₹${formatted}`;
+    }
+    if (cur === 'SGD') {
       const amount = new Intl.NumberFormat('en-SG', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2

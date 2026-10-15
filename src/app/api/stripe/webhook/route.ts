@@ -57,6 +57,20 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'unknown-order' }, { status: 404 });
       }
 
+      // Enforce strict currency validation: must match order currency (INR)
+      const sessionCurrency = (session.currency || '').toUpperCase();
+      const orderCurrency = (order.currency || 'INR').toUpperCase();
+      if (sessionCurrency !== orderCurrency) {
+        await markWebhookFailed(log.id, `Currency mismatch: received ${sessionCurrency}, expected ${orderCurrency}`);
+        return NextResponse.json({ error: 'invalid-currency', message: `Currency ${sessionCurrency} does not match expected ${orderCurrency}` }, { status: 400 });
+      }
+
+      // Enforce strict amount validation: paid amount must match order.amount
+      if (session.amount_total != null && session.amount_total !== order.amount) {
+        await markWebhookFailed(log.id, `Amount mismatch: received ${session.amount_total}, expected ${order.amount}`);
+        return NextResponse.json({ error: 'invalid-amount', message: `Amount ${session.amount_total} does not match expected ${order.amount}` }, { status: 400 });
+      }
+
       // Check payment status
       if (session.payment_status === 'paid') {
         await fulfillOrder(order.id, session as any, session.payment_intent as string);

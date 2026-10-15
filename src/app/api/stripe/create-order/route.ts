@@ -38,7 +38,7 @@ export async function POST(req: Request) {
   }
 
   let amount: number;
-  const currency = 'SGD';
+  const currency = 'INR';
   let orderTier: 'PRACTICE' | 'VOUCHER' | null = null;
   let vendorIdForCoupon: string | null = null;
 
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
     line_items: [
       {
         price_data: {
-          currency,
+          currency: 'inr',
           product_data: { name: purpose },
           unit_amount: amount,
         },

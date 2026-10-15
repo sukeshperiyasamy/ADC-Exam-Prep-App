@@ -69,7 +69,7 @@ export async function issueInvoiceForOrder(orderId: string, dbc?: DbClient) {
   // SGD-equivalent (for reporting in mixed-currency stores)
   let fxRateBpsToSgd: number | null = null;
   let totalSgd: number | null = null;
-  const currency = order.currency || 'SGD';
+  const currency = order.currency || 'INR';
   if (currency.toUpperCase() === 'SGD') {
     fxRateBpsToSgd = 10000; // 1.0000
     totalSgd = total;

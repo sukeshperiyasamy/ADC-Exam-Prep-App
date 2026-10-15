@@ -2,6 +2,8 @@ import { db } from '@/lib/db';
 import { refundCapture as paypalRefundCapture } from '@/lib/paypal';
 import { refundPayment as hitpayRefundPayment } from '@/lib/payments/hitpay';
 import { issueCreditNoteForInvoice } from '@/lib/invoice/issue';
+import { getSetting } from '@/lib/settings';
+import Stripe from 'stripe';
 import type { PaymentProvider } from '@prisma/client';
 
 export type RefundInput = {
@@ -214,6 +216,21 @@ async function callProviderRefund(
       const result = await hitpayRefundPayment(input.providerOrderId, input.amountCents);
       const status = result.status === 'succeeded' || result.status === 'completed' ? 'SUCCEEDED' : 'PENDING';
       return { providerRefundId: result.id, status };
+    }
+    case 'STRIPE': {
+      if (!input.captureId && !input.providerOrderId) {
+        throw new Error('Order has no Stripe payment intent to refund.');
+      }
+      const secretKey = await getSetting('STRIPE_SECRET_KEY');
+      if (!secretKey) throw new Error('STRIPE_SECRET_KEY not configured');
+      const stripe = new Stripe(secretKey, { apiVersion: '2025-02-24.acacia' as any });
+      const refund = await stripe.refunds.create({
+        payment_intent: input.captureId || undefined,
+        amount: input.amountCents,
+        reason: input.reason as any
+      });
+      const status = refund.status === 'succeeded' ? 'SUCCEEDED' : refund.status === 'pending' ? 'PENDING' : 'FAILED';
+      return { providerRefundId: refund.id, status };
     }
     case 'PAYNOW':
     case 'TEST': {

@@ -30,7 +30,7 @@ export function BundleCheckoutClient({
   const router = useRouter();
   const [err, setErr] = useState('');
   const [addressId, setAddressId] = useState<string | null>(null);
-  const [method, setMethod] = useState<MethodId>('PAYPAL');
+  const [method, setMethod] = useState<MethodId>('STRIPE');
   const [busy, setBusy] = useState<MethodId | null>(null);
   const [promo, setPromo] = useState<PromoApplied | null>(null);
   const [paynowSession, setPaynowSession] = useState<{ orderId: string; qrDataUrl: string; reference: string; amount: number; currency: string } | null>(null);
@@ -97,7 +97,7 @@ export function BundleCheckoutClient({
           <PromoCodeInput bundleId={bundleId} tier={tier} onApply={setPromo} onClear={() => setPromo(null)} />
         </div>
         <div className="mt-4 flex items-baseline justify-between border-t border-slate-200 pt-4 dark:border-slate-700">
-          <span className="text-sm font-semibold">Total (SGD)</span>
+          <span className="text-sm font-semibold">Total (INR)</span>
           <span className="text-3xl font-bold text-blue-700 dark:text-blue-300">{formatPrice(total)}</span>
         </div>
       </div>
@@ -126,7 +126,7 @@ export function BundleCheckoutClient({
         <div className={addressId ? '' : 'pointer-events-none opacity-50'}>
           {selectedMethod === 'PAYPAL' && data && (
             paypalReady ? (
-              <PayPalScriptProvider options={{ clientId: data.paypalClientId!, currency: 'SGD', intent: 'capture' }}>
+              <PayPalScriptProvider options={{ clientId: data.paypalClientId!, currency: 'INR', intent: 'capture' }}>
                 <PayPalButtons
                   style={{ layout: 'vertical', shape: 'rect' }}
                   disabled={!addressId}

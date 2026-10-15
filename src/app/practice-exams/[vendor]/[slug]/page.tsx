@@ -140,7 +140,7 @@ export default async function ExamDetailPage({ params, searchParams }: { params:
       '@type': 'Offer',
       name: 'Practice Exam',
       url: `${checkoutUrl}?tier=PRACTICE`,
-      priceCurrency: 'SGD',
+      priceCurrency: 'INR',
       price: (bundle.price / 100).toFixed(2),
       availability: 'https://schema.org/InStock'
     }];

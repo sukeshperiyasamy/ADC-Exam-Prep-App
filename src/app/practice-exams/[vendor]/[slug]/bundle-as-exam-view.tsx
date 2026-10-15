@@ -69,7 +69,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
       '@type': 'Offer',
       name: option.label,
       url: `${PUBLIC_SITE_URL}/checkout/bundle/${bundle.id}?tier=${option.tier}`,
-      priceCurrency: 'SGD',
+      priceCurrency: 'INR',
       price: (option.price / 100).toFixed(2),
       availability: 'https://schema.org/InStock'
     }))

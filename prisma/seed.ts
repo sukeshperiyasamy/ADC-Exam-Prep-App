@@ -97,14 +97,14 @@ async function main() {
     update: {
       title: 'ADC Written Examination Comprehensive Prep Bundle',
       description: 'Full access to 180+ authentic Australian Dental Council clinical cluster questions, scenario breakdowns, and timed mock exam simulations.',
-      price: 4900,
+      price: 149900,
       published: true
     },
     create: {
       slug: 'adc-written-exam-prep-bundle',
       title: 'ADC Written Examination Comprehensive Prep Bundle',
       description: 'Full access to 180+ authentic Australian Dental Council clinical cluster questions, scenario breakdowns, and timed mock exam simulations.',
-      price: 4900,
+      price: 149900,
       published: true
     }
   });

@@ -351,8 +351,8 @@ export async function sendPurchaseEmail(
       tierLabel,
       voucherCode,
       voucherPending: !!voucherPending,
-      paymentMethod: extras?.paymentMethod ?? 'PayPal',
-      order: extras?.order ?? { id: '', amount: 0, currency: 'SGD' },
+      paymentMethod: extras?.paymentMethod ?? 'Card',
+      order: extras?.order ?? { id: '', amount: 0, currency: 'INR' },
       user: extras?.user ?? { name: '', email: to },
       invoiceNumber: invoice?.invoiceNumber ?? null
     },

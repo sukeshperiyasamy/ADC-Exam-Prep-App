@@ -518,8 +518,8 @@ model Order {
   refundAmount      Int?
   refundReason      String?
   refundRef         String?
-  amount          Int         // cents
-  currency        String      @default("USD")
+  amount          Int         // cents / paise
+  currency        String      @default("INR")
   status          OrderStatus @default(PENDING)
   createdAt       DateTime    @default(now())
   capturedAt      DateTime?
