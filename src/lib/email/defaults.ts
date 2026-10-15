@@ -18,9 +18,9 @@ const layoutClose = `  <hr style="margin:28px 0;border:none;border-top:1px solid
 const wrap = (inner: string) => `${layoutOpen}\n${inner}\n${layoutClose}`;
 
 const sampleBrand = {
-  name: 'Tertiary Exams',
+  name: 'ADC Exam Prep',
   logoUrl: '',
-  primaryColor: '#2563eb',
+  primaryColor: '#0f766e',
   supportEmail: 'support@example.com'
 };
 

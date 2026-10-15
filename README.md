@@ -263,4 +263,4 @@ The current ADC identity is a temporary, neutral demo brand. Replace it with cus
 
 ## License
 
-© Tertiary Infotech Academy Pte. Ltd. All rights reserved.
+© [Your Organization / Company Name]. All rights reserved.

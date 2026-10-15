@@ -188,13 +188,13 @@ export type CompanyInfo = {
 };
 
 export const COMPANY_DEFAULTS: CompanyInfo = {
-  name: 'Tertiary Infotech Academy Pte Ltd',
-  shortName: 'Tertiary Infotech Academy',
-  uen: '201200696W',
-  address: '12 Woodland Square #07-85/86/87 Woods Square Tower 1, Singapore 737715',
-  email: 'sales@tertiarycourses.com.sg',
-  tel: '+65 6100 0613',
-  website: 'https://www.tertiarycourses.com.sg/'
+  name: process.env.COMPANY_NAME || 'ADC Exam Preparation Institute',
+  shortName: process.env.COMPANY_SHORT_NAME || 'ADC Exam Prep',
+  uen: process.env.COMPANY_UEN || 'REG-2026-ADC01',
+  address: process.env.COMPANY_ADDRESS || '123 Healthcare Practice Way, Suite 400, Sydney, NSW 2000',
+  email: process.env.COMPANY_EMAIL || 'support@adcexamprep.com',
+  tel: process.env.COMPANY_TEL || '+61 2 9000 0000',
+  website: process.env.COMPANY_WEBSITE || 'https://adcexamprep.com'
 };
 
 export async function getCompanyInfo(): Promise<CompanyInfo> {

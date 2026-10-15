@@ -22,7 +22,7 @@ export function ShareExam({
     () => ''
   );
   const url = `${origin}/practice-exams/${vendorSlug}/${examSlug}`;
-  const text = `Practicing ${title} on Tertiary Exams — original questions, free teaser available.`;
+  const text = `Practicing ${title} on ADC Exam Prep — comprehensive mock tests & practice questions.`;
   return (
     <div className="mt-6 card p-5">
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold">

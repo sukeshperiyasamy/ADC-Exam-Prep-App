@@ -20,7 +20,7 @@ export async function LandingTestimonials() {
           </div>
           <h2 className="mt-4 text-3xl font-bold tracking-tight md:text-4xl">What learners say</h2>
           <p className="mt-3 text-slate-600 dark:text-slate-300">
-            Experiences shared by learners using Tertiary Exams.
+            Experiences shared by candidates preparing for the ADC examination.
           </p>
           <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Certification outcomes mentioned in reviews are self-reported.

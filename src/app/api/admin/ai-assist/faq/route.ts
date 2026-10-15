@@ -23,10 +23,9 @@ const Body = z.discriminatedUnion('mode', [
   })
 ]);
 
-const GENERATE_SYSTEM = `You write FAQ entries for an exam-prep SaaS called Tertiary Exams.
-Tertiary Exams sells original practice questions for IT certifications (AWS, Microsoft, Cisco,
-CompTIA, Google Cloud, etc.), free teasers per exam, Practice Mode + timed Exam Mode,
-and discounted real-exam vouchers.
+const GENERATE_SYSTEM = `You write FAQ entries for an exam-prep platform called ADC Exam Prep.
+ADC Exam Prep provides original clinical practice questions and mock exams for the Australian Dental Council (ADC)
+examination, free teasers per mock test, Practice Mode + timed Exam Mode, and in-depth rationales.
 
 Output ONLY a JSON array of objects: [{ "question": "...", "answer": "..." }, ...].
 - Each question is a customer-facing question (≤120 chars).

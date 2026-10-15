@@ -11,7 +11,7 @@ import { verifyOtp } from './otp';
 import { authConfig } from './auth.config';
 import { getAllSettings } from './settings';
 
-export const SUPER_ADMIN_EMAIL = 'angch@tertiaryinfotech.com';
+export const SUPER_ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'admin@adcexamprep.com').toLowerCase().trim();
 export function isSuperAdmin(email?: string | null): boolean {
   return !!email && email.toLowerCase().trim() === SUPER_ADMIN_EMAIL;
 }
@@ -105,8 +105,17 @@ const providers: NextAuthConfig['providers'] = [
       if (!email || !code) return null;
       const ok = await verifyOtp(email, code, 'LOGIN');
       if (!ok) return null;
-      const user = await db.user.findUnique({ where: { email } });
-      if (!user) return null;
+      let user = await db.user.findUnique({ where: { email } });
+      if (!user) {
+        user = await db.user.create({
+          data: {
+            email,
+            role: 'USER',
+            active: true,
+            emailVerified: new Date()
+          }
+        });
+      }
       if (!user.active) return null;
       if (!user.emailVerified) await db.user.update({ where: { id: user.id }, data: { emailVerified: new Date() } });
       return { id: user.id, email: user.email, name: user.name ?? undefined, role: user.role } as any;

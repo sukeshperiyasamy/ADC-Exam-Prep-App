@@ -6,10 +6,18 @@ import { rateLimit } from './ratelimit';
 export type OtpPurpose = 'LOGIN' | 'REGISTER' | 'RESET' | 'TEASER_GATE';
 
 export async function issueOtp(email: string, purpose: OtpPurpose, ip: string) {
-  // 5/hour/IP, 3/hour/email
-  const ipRl = rateLimit(`otp:ip:${ip}`, 5, 60 * 60_000);
+  const isDevOrDemo =
+    process.env.NODE_ENV !== 'production' ||
+    process.env.NEXT_PUBLIC_TEST_PAYMENTS === 'true' ||
+    (process.env.SMTP_HOST || '').includes('localhost');
+
+  const ipLimit = isDevOrDemo ? 100 : 5;
+  const emailLimit = isDevOrDemo ? 50 : 3;
+
+  // 5/hour/IP, 3/hour/email (relaxed in dev/demo)
+  const ipRl = rateLimit(`otp:ip:${ip}`, ipLimit, 60 * 60_000);
   if (!ipRl.ok) return { ok: false as const, error: 'Too many requests, try later' };
-  const emailRl = rateLimit(`otp:email:${email}`, 3, 60 * 60_000);
+  const emailRl = rateLimit(`otp:email:${email}`, emailLimit, 60 * 60_000);
   if (!emailRl.ok) return { ok: false as const, error: 'Too many codes sent to this email' };
 
   // Invalidate any prior unconsumed codes for this email+purpose so only
@@ -29,13 +37,21 @@ export async function issueOtp(email: string, purpose: OtpPurpose, ip: string) {
       expiresAt: new Date(Date.now() + 10 * 60_000)
     }
   });
+
   try {
     await sendOTPEmail(email, code, purpose);
-  } catch {
+  } catch (err: any) {
+    console.warn(`[OTP] Email delivery failed (${err?.message || err}).`);
+    console.log(`\n======================================================\n[DEV/DEMO OTP CODE]\nRecipient: ${email}\nPurpose: ${purpose}\nCode: ${code}\n======================================================\n`);
+
+    if (isDevOrDemo) {
+      return { ok: true as const, devCode: code };
+    }
+
     await db.otpCode.update({ where: { id: otp.id }, data: { consumed: true } });
     return { ok: false as const, error: 'Could not send the email code. Please try again later.', deliveryFailed: true as const };
   }
-  return { ok: true as const };
+  return { ok: true as const, devCode: isDevOrDemo ? code : undefined };
 }
 
 export async function verifyOtp(email: string, code: string, purpose: OtpPurpose) {

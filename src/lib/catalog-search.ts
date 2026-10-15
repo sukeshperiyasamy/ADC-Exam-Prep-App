@@ -3,7 +3,7 @@ function normalized(value: string): string {
 }
 
 const BUNDLE_SEARCH_ALIASES: Record<string, string[]> = {
-  // Verified Tertiary Courses course codes. These are course identifiers rather
+  // Catalog course code search aliases. These are internal course identifiers rather
   // than certification exam codes, so they do not live on Exam records.
   'aws-aif-c01': ['TGS-2024049338'],
   'aws-clf-c02': ['TGS-2023039183'],

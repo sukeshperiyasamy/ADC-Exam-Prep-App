@@ -67,3 +67,4 @@ scripts/_*
 
 # Source material the project was derived from — not ours to republish.
 **/reference/
+.neon

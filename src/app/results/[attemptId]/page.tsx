@@ -5,7 +5,9 @@ import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { isAnswerCorrect, scoreAttempt, type Responses } from '@/lib/attempts';
 import { ExplanationView } from '@/components/explanation-view';
+import { QuestionStemView } from '@/components/question-stem-view';
 import { ShareScore } from '@/components/share-score';
+
 import { ReviewFormModal } from '@/components/review-form-modal';
 import { ResultsSignupPrompt } from '@/components/results-signup-prompt';
 import { canUserReview } from '@/lib/reviews';
@@ -132,8 +134,9 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
                 <span className="badge">{q.domain}</span>
                 <span className={`badge ${correct ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'}`}>{correct ? 'Correct' : 'Incorrect'}</span>
               </div>
-              <p className="font-medium">{q.stem}</p>
+              <QuestionStemView stem={q.stem} className="my-2" />
               {q.type === 'ORDERING' ? (
+
                 // Every option id appears in `correct` for ORDERING, so the
                 // set-based renderer below would paint them all green. What
                 // matters here is POSITION: show the sequence the taker

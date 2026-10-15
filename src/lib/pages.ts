@@ -16,29 +16,26 @@ const HEADING = (s: string) => `<h2 style="margin:24px 0 8px;font-size:1.25rem;f
 export const DEFAULT_PAGES: PageDefault[] = [
   {
     slug: 'about-us',
-    title: 'About Tertiary Exams',
-    excerpt: 'Practice smarter for your next certification — our mission, how we work, and who is behind Tertiary Exams.',
+    title: 'About ADC Exam Prep',
+    excerpt: 'Prepare with confidence for your Australian Dental Council examination — our mission, how we work, and exam preparation resources.',
     showInFooter: true,
     footerGroup: 'legal',
     position: 5,
     bodyHtml: [
-      PARA('<strong>Practice smarter for your next certification.</strong>'),
-      PARA('Tertiary Exams exists to help working professionals pass their next IT certification with confidence — without resorting to brain dumps, leaked questions, or shortcuts that fall apart on test day. We believe the right way to prepare is to practice on questions that <em>look like</em> the real exam in shape, difficulty, and topic mix, while teaching you something every time you click an answer.'),
+      PARA('<strong>Prepare with confidence for the ADC Examination.</strong>'),
+      PARA('ADC Exam Prep exists to help dental professionals pass the Australian Dental Council examination with confidence. We believe the right way to prepare is with high-yield clinical scenarios and questions that mirror the real exam in format, difficulty, and domain distribution, while reinforcing core clinical principles with comprehensive explanations.'),
       HEADING('Our mission'),
-      PARA('Make high-quality certification practice accessible, affordable, and honest. Every question on Tertiary Exams is an original, blueprint-aligned practice item written by domain experts and paired with a clear explanation and a citation so you learn the <em>why</em>, not just the answer.'),
-      PARA('We will never publish dumps of real exam questions. Instead, we publish the next best thing: original questions that mirror the official blueprint, weighted by domain, so a high score on Tertiary Exams is a meaningful signal that you are ready.'),
-      HEADING('What we do'),
-      PARA('We build full-length practice exams for the certifications our learners care about most — AWS, Microsoft Azure, Google Cloud, CompTIA, Cisco, PMI, ISC2, GitHub, Anthropic, IASSC, AXELOS, Oracle, Tableau, and more. Each certification ships as a <strong>bundle</strong>: multiple full-length practice exams grouped together so you get genuine retest variety, not the same 60 questions in a different order.'),
-      PARA('Bundles can be purchased on their own, or with an optional discounted real-exam voucher — so one purchase covers your full prep journey from first attempt to test day.'),
-      HEADING('How we are different'),
-      PARA('<strong>Original content, not dumps.</strong> Every question is written by a subject-matter expert, reviewed before release, and mapped to a specific domain in the published vendor blueprint.'),
-      PARA('<strong>Explanations and citations.</strong> Every answer has a written explanation and a reference link to authoritative documentation, so a wrong answer becomes a learning moment instead of a guess.'),
-      PARA('<strong>Practice mode and Exam mode.</strong> Practice mode reveals correctness immediately so you build intuition. Exam mode is a timed simulation that matches real-test duration and gives you a per-domain breakdown when you submit — so you know exactly where to focus next.'),
-      PARA('<strong>Try before you buy.</strong> Every exam ships with a free teaser. No credit card required.'),
+      PARA('Make high-quality dental examination preparation accessible, rigorous, and reliable. Every practice question is crafted around ADC blueprint domains and paired with clear clinical explanations and references so you understand the underlying rationale.'),
+      HEADING('What we provide'),
+      PARA('We provide full-length simulated mock exams and topical practice tests covering all key areas evaluated in the ADC Part 1 Written Examination, including Restorative Dentistry, Periodontics, Endodontics, Oral Surgery, Orthodontics, Pediatric Dentistry, and Infection Control.'),
+      HEADING('Key features'),
+      PARA('<strong>Blueprint-aligned clinical MCQs.</strong> Questions designed to evaluate diagnosis, treatment planning, and clinical decision making.'),
+      PARA('<strong>Detailed rationales.</strong> In-depth explanations clarifying correct and incorrect options for every question.'),
+      PARA('<strong>Simulated Exam & Practice Modes.</strong> Timed simulations replicate official exam conditions, while practice mode provides immediate feedback for effective revision.'),
       HEADING('Who we are'),
-      PARA('Tertiary Exams is the certification-practice arm of <strong>Tertiary Infotech Academy Pte Ltd</strong>, a Singapore-registered training provider (UEN 201200696W). Our parent company has trained thousands of working professionals across Southeast Asia in classroom and online courses on cloud, data, AI, cybersecurity, and project management. Tertiary Exams brings that same rigour to self-paced exam preparation.'),
+      PARA('[Organization Overview: Add your company, institution, or initiative background here. Example: ADC Exam Prep is an independent dental education and exam preparation platform dedicated to assisting international dental practitioners.]'),
       HEADING('Get in touch'),
-      PARA('Email: <a href="mailto:sales@tertiarycourses.com.sg" style="color:#2563eb;text-decoration:underline">sales@tertiarycourses.com.sg</a><br>Tel: +65 6100 0613<br>Address: 12 Woodland Square #07-85/86/87 Woods Square Tower 1, Singapore 737715')
+      PARA('Email: <a href="mailto:[support@yourdomain.com]" style="color:#0f766e;text-decoration:underline">[support@yourdomain.com]</a><br>Tel: [Contact Phone Number, e.g. +1 234 567 8900]<br>Address: [Physical Business Address / Location, City, Country]')
     ].join('')
   },
   {
@@ -88,17 +85,17 @@ export const DEFAULT_PAGES: PageDefault[] = [
     footerGroup: 'company',
     position: 25,
     bodyHtml: [
-      PARA('Our support team helps with practice-exam access, billing, voucher delivery, refunds, and question-content concerns.'),
+      PARA('Our support team helps with practice-exam access, billing, account access, and question-content inquiries.'),
       HEADING('Contact support'),
-      PARA('Email <a href="mailto:sales@tertiarycourses.com.sg" style="color:#2563eb;text-decoration:underline">sales@tertiarycourses.com.sg</a>. We typically reply within one business day.'),
+      PARA('Email <a href="mailto:[support@yourdomain.com]" style="color:#0f766e;text-decoration:underline">[support@yourdomain.com]</a>. We typically reply within one business day.'),
       HEADING('Include these details'),
-      PARA('Please include your account email, order number (if applicable), exam code, and a short description of the issue. Do not email passwords, payment-card details, or voucher codes.'),
-      HEADING('Voucher delivery'),
-      PARA('Practice access unlocks immediately after payment. Official exam voucher codes are normally delivered by email within 3-5 business days.'),
+      PARA('Please include your account email, order number (if applicable), exam code, and a short description of the issue. Do not email passwords or payment-card details.'),
+      HEADING('Access delivery'),
+      PARA('Practice test access unlocks immediately in your account dashboard after enrollment or purchase.'),
       HEADING('Refunds'),
-      PARA('See our <a href="/p/refund-policy" style="color:#2563eb;text-decoration:underline">Refund Policy</a> for eligibility and processing times. The voucher portion becomes non-refundable once its code has been issued.'),
-      HEADING('Company'),
-      PARA('Tertiary Infotech Academy Pte Ltd<br>12 Woodland Square #07-85/86/87 Woods Square Tower 1, Singapore 737715<br>Tel: +65 6100 0613')
+      PARA('See our <a href="/p/refund-policy" style="color:#0f766e;text-decoration:underline">Refund Policy</a> for eligibility and processing times.'),
+      HEADING('Company / Organization Details'),
+      PARA('[Legal Business / Institution Name]<br>[Business Address, City, Postal Code, Country]<br>Tel: [Contact Phone Number, e.g. +1 234 567 8900]')
     ].join('')
   },
   {
@@ -109,13 +106,13 @@ export const DEFAULT_PAGES: PageDefault[] = [
     footerGroup: 'legal',
     position: 20,
     bodyHtml: [
-      PARA('We collect only the information needed to deliver our service: your email, name, billing address, and exam progress.'),
+      PARA('We collect only the information needed to deliver our service: your email, name, and exam progress.'),
       HEADING('What we collect'),
-      PARA('Account: email, name, optional password.<br>Purchases: billing address, order history, payment provider transaction id (we never store full card numbers).<br>Usage: which questions you answered and how you scored.'),
+      PARA('Account: email, name, optional password.<br>Purchases: billing details, order history, payment provider transaction id (we never store card numbers).<br>Usage: questions answered, mock test scores, and performance analytics.'),
       HEADING('What we don\'t do'),
-      PARA('We do not sell your data. We do not run third-party advertising trackers on your account pages.'),
+      PARA('We do not sell your personal data. We do not run third-party advertising trackers on your account pages.'),
       HEADING('Your rights'),
-      PARA('You may request deletion of your account and associated data at any time by emailing <a href="mailto:sales@tertiarycourses.com.sg" style="color:#2563eb;text-decoration:underline">sales@tertiarycourses.com.sg</a>.')
+      PARA('You may request deletion of your account and associated data at any time by emailing <a href="mailto:[support@yourdomain.com]" style="color:#0f766e;text-decoration:underline">[support@yourdomain.com]</a>.')
     ].join('')
   },
   {
@@ -126,13 +123,11 @@ export const DEFAULT_PAGES: PageDefault[] = [
     footerGroup: 'legal',
     position: 30,
     bodyHtml: [
-      PARA('We want you to be confident in your purchase.'),
-      HEADING('Practice exams'),
-      PARA('Full refund within 7 days of purchase if you have answered fewer than {{TEASER_N}} questions across all attempts. Email <a href="mailto:sales@tertiarycourses.com.sg" style="color:#2563eb;text-decoration:underline">sales@tertiarycourses.com.sg</a> with your order id.'),
-      HEADING('Voucher bundles'),
-      PARA('Once a voucher code has been issued and delivered to you, the voucher portion is non-refundable (we have already paid the certification vendor). The practice-exam portion remains refundable under the 7-day / {{TEASER_N}}-question rule.'),
+      PARA('We want you to be confident in your preparation materials.'),
+      HEADING('Practice exams & mock tests'),
+      PARA('Full refund within 7 days of purchase if you have answered fewer than {{TEASER_N}} questions across all attempts. Email <a href="mailto:[support@yourdomain.com]" style="color:#0f766e;text-decoration:underline">[support@yourdomain.com]</a> with your order details.'),
       HEADING('How to request'),
-      PARA('Reply to your order confirmation email or contact <a href="mailto:sales@tertiarycourses.com.sg" style="color:#2563eb;text-decoration:underline">sales@tertiarycourses.com.sg</a> directly. Approved refunds are returned to the original payment method within 5-10 business days.')
+      PARA('Reply to your order confirmation email or contact <a href="mailto:[support@yourdomain.com]" style="color:#0f766e;text-decoration:underline">[support@yourdomain.com]</a> directly. Approved refunds are returned to the original payment method within 5-10 business days.')
     ].join('')
   }
 ];

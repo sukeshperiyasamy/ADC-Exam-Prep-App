@@ -19,6 +19,7 @@ function LoginInner() {
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [otpSent, setOtpSent] = useState(false);
+  const [devNotice, setDevNotice] = useState<string | null>(null);
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -32,10 +33,19 @@ function LoginInner() {
   }
 
   async function sendOtp() {
-    setBusy(true); setErr('');
-    const r = await fetch('/api/otp/request', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, purpose: 'LOGIN' }) });
+    setBusy(true); setErr(''); setDevNotice(null);
+    const r = await fetch('/api/otp/request', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, purpose: 'LOGIN' })
+    });
     setBusy(false);
-    if (!r.ok) { setErr((await r.json()).error || 'Could not send code'); return; }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { setErr(data.error || 'Could not send code'); return; }
+    if (data.devCode) {
+      setCode(data.devCode);
+      setDevNotice(data.devCode);
+    }
     setOtpSent(true);
   }
 
@@ -82,6 +92,11 @@ function LoginInner() {
             ) : (
               <>
                 <div><label className="label">Code</label><input className="input tracking-[0.4em] text-center" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} /></div>
+                {devNotice && (
+                  <div className="rounded-lg border border-blue-200 bg-blue-50/80 p-2.5 text-xs text-blue-800 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300">
+                    <span className="font-semibold">Local/Demo Mode:</span> Code <b>{devNotice}</b> generated and auto-filled.
+                  </div>
+                )}
                 <button className="btn-primary w-full" disabled={busy}>{busy ? 'Verifying…' : 'Sign in'}</button>
               </>
             )}
@@ -93,8 +108,8 @@ function LoginInner() {
       </div>
 
       <div className="card p-8">
-        <h1 className="text-2xl font-bold tracking-tight">New to Tertiary Exams?</h1>
-        <p className="mt-1 text-sm text-slate-600">Create a free account to save progress, retake teasers unlimited times, and unlock paid practice exams.</p>
+        <h1 className="text-2xl font-bold tracking-tight">New to ADC Exam Prep?</h1>
+        <p className="mt-1 text-sm text-slate-600">Create a free account to save your progress, take practice questions, and review your dental domain breakdown.</p>
         <ul className="mt-4 space-y-2 text-sm text-slate-700">
           <li>✓ Free practice teaser on every exam</li>
           <li>✓ Mark for review and revisit any time</li>

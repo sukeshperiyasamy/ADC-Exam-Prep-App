@@ -108,7 +108,7 @@ export const EMAIL_SMTP_FIELDS: FieldDef[] = [
 ];
 
 export const EMAIL_COMMON_FIELDS: FieldDef[] = [
-  { key: 'EMAIL_FROM', label: 'From address', placeholder: 'Tertiary Exams <noreply@example.com>', fullWidth: true }
+  { key: 'EMAIL_FROM', label: 'From address', placeholder: '[e.g. ADC Exam Prep <noreply@yourdomain.com>]', fullWidth: true }
 ];
 
 // Social Login providers — toggled per provider on the dedicated
@@ -145,13 +145,13 @@ export const GROUPS: SettingsGroup[] = [
     description: 'Legal entity details used on invoices, vouchers, and emails.',
     compact: true,
     fields: [
-      { key: 'COMPANY_NAME', label: 'Company Name', placeholder: 'Tertiary Infotech Academy Pte Ltd' },
-      { key: 'COMPANY_SHORT_NAME', label: 'Company Short Name', placeholder: 'Tertiary Infotech Academy' },
-      { key: 'COMPANY_UEN', label: 'UEN', placeholder: '201200696W' },
-      { key: 'COMPANY_WEBSITE', label: 'Company Website', placeholder: 'https://...' },
-      { key: 'COMPANY_EMAIL', label: 'Company Email', placeholder: 'enquiry@tertiaryinfotech.com' },
-      { key: 'COMPANY_TEL', label: 'Company Tel', placeholder: '61000613' },
-      { key: 'COMPANY_ADDRESS', label: 'Company Address', placeholder: '12 Woodland Square …', fullWidth: true }
+      { key: 'COMPANY_NAME', label: 'Company Name', placeholder: '[e.g. Acme Dental Academy / Your Organization Name]' },
+      { key: 'COMPANY_SHORT_NAME', label: 'Company Short Name', placeholder: '[e.g. Acme Dental / Brand Name]' },
+      { key: 'COMPANY_UEN', label: 'UEN / Business Reg No.', placeholder: '[e.g. Business Registration or Tax Number]' },
+      { key: 'COMPANY_WEBSITE', label: 'Company Website', placeholder: '[e.g. https://www.yourdomain.com]' },
+      { key: 'COMPANY_EMAIL', label: 'Company Email', placeholder: '[e.g. info@yourdomain.com]' },
+      { key: 'COMPANY_TEL', label: 'Company Tel', placeholder: '[e.g. +1 234 567 8900]' },
+      { key: 'COMPANY_ADDRESS', label: 'Company Address', placeholder: '[e.g. 123 Healthcare Ave, Suite 400, Sydney, NSW 2000]', fullWidth: true }
     ]
   },
   {
@@ -160,9 +160,9 @@ export const GROUPS: SettingsGroup[] = [
     description: 'Logo, colour and support email shown in the email templates and customer touchpoints.',
     compact: true,
     fields: [
-      { key: 'BRAND_NAME', label: 'Brand name (emails)', placeholder: 'Tertiary Exams' },
+      { key: 'BRAND_NAME', label: 'Brand name (emails)', placeholder: '[e.g. ADC Exam Prep]' },
       { key: 'BRAND_LOGO_URL', label: 'Brand logo URL' },
-      { key: 'BRAND_PRIMARY_COLOR', label: 'Brand primary color', placeholder: '#2563eb' },
+      { key: 'BRAND_PRIMARY_COLOR', label: 'Brand primary color', placeholder: '#0f766e' },
       { key: 'BRAND_SUPPORT_EMAIL', label: 'Brand support email' }
     ]
   },
@@ -172,9 +172,9 @@ export const GROUPS: SettingsGroup[] = [
     description: 'Public homepage meta tags. Used by Google + social previews. Use the AI Assist button on individual exam pages for per-exam SEO.',
     compact: true,
     fields: [
-      { key: 'SITE_HOME_TITLE', label: 'Home title (50–70 chars)', placeholder: 'Tertiary Exams — Practice Smarter for Your Next Certification' },
-      { key: 'SITE_HOME_DESCRIPTION', label: 'Home description (120–180 chars)', placeholder: 'Original practice questions for AWS, Microsoft, Cisco…', fullWidth: true },
-      { key: 'SITE_HOME_KEYWORDS', label: 'Home keywords (comma-separated)', placeholder: 'AWS practice exam, Microsoft AZ-900 practice, Cisco CCNA quiz' }
+      { key: 'SITE_HOME_TITLE', label: 'Home title (50–70 chars)', placeholder: '[e.g. ADC Exam Prep — Australian Dental Council Exam Preparation Platform]' },
+      { key: 'SITE_HOME_DESCRIPTION', label: 'Home description (120–180 chars)', placeholder: '[e.g. Prepare for the Australian Dental Council Part 1 Written Exam with original clinical MCQs and simulated tests.]', fullWidth: true },
+      { key: 'SITE_HOME_KEYWORDS', label: 'Home keywords (comma-separated)', placeholder: '[e.g. ADC exam prep, Australian dental council questions, dental mock exam, dental MCQs]' }
     ]
   },
   {

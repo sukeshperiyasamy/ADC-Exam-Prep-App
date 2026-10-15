@@ -5,8 +5,6 @@ import { MapPin, Mail, Phone } from 'lucide-react';
 import { getCompanyInfo } from '@/lib/settings';
 import { getFooterPages } from '@/lib/pages';
 
-const WHATSAPP_URL = 'https://wa.me/6588666375';
-const WHATSAPP_LABEL = '+65 8866 6375';
 
 function displayPhone(value: string): string {
   const compact = value.replace(/\s+/g, '');
@@ -50,14 +48,6 @@ function FooterHeading({ children, className = '' }: { children: ReactNode; clas
   );
 }
 
-/** WhatsApp glyph, inline so we don't depend on a brand-icon pack. */
-function WhatsAppIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 32 32" className={className} fill="currentColor" aria-hidden="true">
-      <path d="M16.01 3.2c-7.06 0-12.8 5.74-12.8 12.8 0 2.26.6 4.46 1.73 6.4L3.2 28.8l6.56-1.72a12.74 12.74 0 0 0 6.25 1.6h.01c7.06 0 12.8-5.74 12.8-12.8 0-3.42-1.33-6.64-3.75-9.06A12.7 12.7 0 0 0 16.01 3.2Zm0 23.04h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-4.02 1.05 1.07-3.92-.25-.4a10.6 10.6 0 0 1-1.63-5.66c0-5.86 4.78-10.62 10.64-10.62 2.84 0 5.5 1.11 7.51 3.12a10.55 10.55 0 0 1 3.11 7.51c0 5.86-4.77 10.63-10.63 10.63Zm5.83-7.96c-.32-.16-1.89-.93-2.18-1.04-.29-.11-.5-.16-.71.16-.21.32-.82 1.04-1 1.25-.18.21-.37.24-.69.08-.32-.16-1.35-.5-2.57-1.59-.95-.85-1.59-1.9-1.78-2.22-.18-.32-.02-.49.14-.65.14-.14.32-.37.48-.56.16-.18.21-.32.32-.53.11-.21.05-.4-.03-.56-.08-.16-.71-1.72-.97-2.35-.26-.62-.52-.54-.71-.55l-.6-.01c-.21 0-.55.08-.84.4-.29.32-1.1 1.08-1.1 2.64 0 1.56 1.13 3.06 1.29 3.27.16.21 2.23 3.41 5.4 4.78.75.32 1.34.52 1.8.66.76.24 1.44.21 1.98.13.6-.09 1.89-.77 2.16-1.52.27-.74.27-1.38.19-1.51-.08-.13-.29-.21-.61-.37Z" />
-    </svg>
-  );
-}
 
 /** One contact row: leading icon + optional link. External links open in a new tab. */
 function Contact({
@@ -160,9 +150,6 @@ export async function Footer() {
                 {displayPhone(company.tel)}
               </Contact>
             )}
-            <Contact icon={WhatsAppIcon} href={WHATSAPP_URL}>
-              {WHATSAPP_LABEL}
-            </Contact>
           </ul>
         </div>
 
@@ -180,15 +167,8 @@ export async function Footer() {
 }
 
 /**
- * Single-line copyright shown on every page (frontend + backend). The full
- * multi-column <Footer> above is gated to the public surface via <FooterGate>.
+ * Single-line copyright bar removed per request.
  */
 export async function PersistentCopyright() {
-  const company = await safeCompany();
-  return (
-    <div className="border-t border-slate-200 bg-slate-50 py-2 text-center text-[11px] text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-      © {new Date().getFullYear()} {company.name}. All rights reserved.{' '}
-      <span>Independent demo platform</span>
-    </div>
-  );
+  return null;
 }

@@ -6,5 +6,5 @@ export function serializeJsonLd(value: unknown): string {
 export const PUBLIC_SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ||
   process.env.APP_URL ||
-  'https://exams.tertiaryinfotech.com'
+  'http://localhost:3040'
 ).replace(/\/$/, '');

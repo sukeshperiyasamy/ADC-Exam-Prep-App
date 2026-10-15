@@ -25,8 +25,8 @@ export function ShareScore({
   );
   const url = `${origin}/results/${attemptId}/share`;
   const text = passed
-    ? `I just scored ${score}% on ${examTitle} on Tertiary Exams!`
-    : `I'm preparing for ${examTitle} on Tertiary Exams — scored ${score}% so far.`;
+    ? `I just scored ${score}% on ${examTitle} on ADC Exam Prep!`
+    : `I'm preparing for ${examTitle} on ADC Exam Prep — scored ${score}% so far.`;
 
   return (
     <div className="mt-6 card p-5">

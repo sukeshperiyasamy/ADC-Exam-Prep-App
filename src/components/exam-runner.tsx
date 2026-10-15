@@ -7,7 +7,9 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, Check, CheckCircle2, ChevronLeft, ChevronRight, Clock, Flag, Loader2, X } from 'lucide-react';
 import { ExplanationView } from '@/components/explanation-view';
+import { QuestionStemView } from '@/components/question-stem-view';
 import { shuffleSeeded } from '@/lib/shuffle';
+
 
 export type RunnerQuestion = {
   id: string;
@@ -400,8 +402,9 @@ export function ExamRunner(props: ExamRunnerProps) {
               {TYPE_HINT[q.type]}
             </span>
           </div>
-          <p className="whitespace-pre-wrap text-base font-medium leading-relaxed">{q.stem}</p>
+          <QuestionStemView stem={q.stem} />
           {q.type === 'ORDERING' ? (
+
             <div className="mt-5 space-y-2">
               {displayOptions.map((o, oi) => {
                 // After submission the correct position is known, so mark each

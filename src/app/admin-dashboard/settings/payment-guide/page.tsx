@@ -68,7 +68,7 @@ export default async function PaymentGuidePage() {
   const set = (k: SettingKey) => !!values[k];
 
   const h = await headers();
-  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'exams.tertiaryinfotech.com';
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? 'localhost:3040';
   const proto = h.get('x-forwarded-proto') ?? 'https';
   const appUrl = process.env.APP_URL || `${proto}://${host}`;
 

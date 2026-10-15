@@ -21,9 +21,9 @@ export async function getBrand(): Promise<Brand> {
     getCompanyInfo()
   ]);
   return {
-    name: name || company.shortName || 'Tertiary Exams',
+    name: name || company.shortName || 'ADC Exam Prep',
     logoUrl: logoUrl || '',
-    primaryColor: primaryColor || '#2563eb',
+    primaryColor: primaryColor || '#0f766e',
     supportEmail: supportEmail || company.email
   };
 }

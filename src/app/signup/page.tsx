@@ -12,14 +12,24 @@ export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
+  const [devNotice, setDevNotice] = useState<string | null>(null);
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 
   async function startSignup(e: React.FormEvent) {
-    e.preventDefault(); setBusy(true); setErr('');
-    const r = await fetch('/api/otp/request', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ email, purpose: 'REGISTER' }) });
+    e.preventDefault(); setBusy(true); setErr(''); setDevNotice(null);
+    const r = await fetch('/api/otp/request', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ email, purpose: 'REGISTER' })
+    });
     setBusy(false);
-    if (!r.ok) { setErr((await r.json()).error || 'Could not send code'); return; }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) { setErr(data.error || 'Could not send code'); return; }
+    if (data.devCode) {
+      setCode(data.devCode);
+      setDevNotice(data.devCode);
+    }
     setStep('otp');
   }
 
@@ -62,6 +72,11 @@ export default function SignupPage() {
           <form onSubmit={verify} className="mt-6 space-y-4">
             <p className="text-sm text-slate-600">We sent a 6-digit code to <b>{email}</b>.</p>
             <div><label className="label">Verification code</label><input className="input tracking-[0.4em] text-center" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} /></div>
+            {devNotice && (
+              <div className="rounded-lg border border-blue-200 bg-blue-50/80 p-2.5 text-xs text-blue-800 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300">
+                <span className="font-semibold">Local/Demo Mode:</span> Code <b>{devNotice}</b> generated and auto-filled.
+              </div>
+            )}
             {err && <p className="text-sm text-red-600">{err}</p>}
             <button className="btn-primary w-full" disabled={busy}>{busy ? 'Verifying…' : 'Create account'}</button>
           </form>
