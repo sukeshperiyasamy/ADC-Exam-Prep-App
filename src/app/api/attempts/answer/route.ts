@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
-import { isAnswerCorrect, type Responses } from '@/lib/attempts';
+import type { Responses } from '@/lib/attempts';
 
 const Body = z.object({
   attemptId: z.string(),
@@ -41,8 +41,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Question not in this attempt' }, { status: 400 });
   }
 
-  const correct = isAnswerCorrect(question, data.answer);
-
   const prev = (attempt.responses as Responses) || {};
   const next: Responses = {
     ...prev,
@@ -58,14 +56,6 @@ export async function POST(req: Request) {
     data: { responses: next as any, lastSavedAt: new Date() }
   });
 
-  if (attempt.mode === 'PRACTICE') {
-    return NextResponse.json({
-      saved: true,
-      isCorrect: correct,
-      correct: question.correct,
-      explanation: question.explanation,
-      references: question.references
-    });
-  }
+  // Answers are never revealed mid-test; the results page shows the review.
   return NextResponse.json({ saved: true });
 }

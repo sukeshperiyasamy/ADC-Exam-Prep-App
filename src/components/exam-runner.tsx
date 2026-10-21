@@ -181,7 +181,7 @@ export function ExamRunner(props: ExamRunnerProps) {
       // burst of MULTI clicks becomes one request). The 15s autosave and the
       // navigation flush remain as safety nets — real exam software never asks
       // the candidate to click "Save".
-      if (props.mode === 'EXAM') {
+      {
         if (examSaveTimer.current) clearTimeout(examSaveTimer.current);
         const qid = q.id;
         const flagged = prev[qid]?.flagged;
@@ -213,12 +213,9 @@ export function ExamRunner(props: ExamRunnerProps) {
     const next = q.type === 'MULTI'
       ? (cur.includes(optId) ? cur.filter(x => x !== optId) : [...cur, optId])
       : [optId];
+    // ADC-style: nothing is revealed while the test is in progress. Correct
+    // and incorrect answers, with explanations, appear on the results page.
     setAnswer(next);
-    // PRACTICE mode auto-reveals the answer for single-pick types as soon as
-    // the user clicks an option — no "Show answer" button needed.
-    if (props.mode === 'PRACTICE' && !NEEDS_CONFIRM(q.type)) {
-      revealAnswer(next);
-    }
   }
 
   const [revealErr, setRevealErr] = useState('');
@@ -452,7 +449,7 @@ export function ExamRunner(props: ExamRunnerProps) {
               })}
               {!a.answer.length && (
                 <p className="pt-1 text-xs text-slate-500">
-                  Use the arrows to arrange these into the correct sequence, then check your answer.
+                  Use the arrows to arrange these into the correct sequence.
                 </p>
               )}
             </div>
@@ -495,9 +492,6 @@ export function ExamRunner(props: ExamRunnerProps) {
           </div>
           )}
           {revealErr && <p className="mt-3 text-xs text-red-600">{revealErr}</p>}
-          {!a.submitted && props.mode === 'PRACTICE' && !NEEDS_CONFIRM(q.type) && !a.answer.length && (
-            <p className="mt-4 text-xs text-slate-500">Pick an option to reveal the answer.</p>
-          )}
           {a.submitted && a.explanation && (
             <div className={`mt-4 rounded-md border p-4 text-sm ${a.isCorrect ? 'border-green-200 bg-green-50/60 dark:border-green-900 dark:bg-green-950/20' : 'border-red-200 bg-red-50/60 dark:border-red-900 dark:bg-red-950/20'}`}>
               <div className={`mb-2 font-semibold ${a.isCorrect ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>{a.isCorrect ? '✓ Correct' : '✗ Incorrect'}</div>
@@ -538,19 +532,7 @@ export function ExamRunner(props: ExamRunnerProps) {
             ) : (
               <div />
             )}
-            {/* MULTI in PRACTICE: the right slot holds "Check answer" until the
-                user confirms their picks (one click ≠ done picking). Next is
-                hidden until then, so they can't skip past without checking —
-                and it's disabled until at least one option is selected. Once
-                checkAnswer() flips a.submitted, this falls through to Next. */}
-            {!a.submitted && props.mode === 'PRACTICE' && NEEDS_CONFIRM(q.type) ? (
-              <button
-                onClick={checkAnswer}
-                disabled={!a.answer.length}
-                title={!a.answer.length ? 'Select at least one option first' : ''}
-                className="btn-primary-grad disabled:cursor-not-allowed disabled:opacity-50"
-              >Check answer</button>
-            ) : (
+            {(
               /* Hide Next entirely on the last question — there's nothing
                  to navigate to. Submit button stays available in the header
                  bar for the explicit-finish action. (Per user feedback
@@ -571,7 +553,7 @@ export function ExamRunner(props: ExamRunnerProps) {
         <aside className="card h-fit p-4 lg:sticky lg:top-52">
           <div className="mb-3 flex flex-wrap gap-1 text-xs">
             {(['all', 'unanswered', 'incorrect', 'flagged'] as const)
-              .filter(f => f !== 'incorrect' || props.mode === 'PRACTICE')
+              .filter(f => f !== 'incorrect')
               .map(f => {
                 const count = f === 'all' ? props.questions.length
                   : f === 'unanswered' ? props.questions.length - answeredCount
@@ -610,12 +592,6 @@ export function ExamRunner(props: ExamRunnerProps) {
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded bg-blue-100 dark:bg-blue-950/50" /> Answered</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded bg-slate-100 dark:bg-slate-800" /> Not answered</div>
             <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-amber-400" /> Flagged for review</div>
-            {props.mode === 'PRACTICE' && (
-              <>
-                <div className="flex items-center gap-2"><span className="h-3 w-3 rounded bg-green-100 dark:bg-green-950/50" /> Correct</div>
-                <div className="flex items-center gap-2"><span className="h-3 w-3 rounded bg-red-100 dark:bg-red-950/50" /> Incorrect</div>
-              </>
-            )}
           </div>
         </aside>
       </div>

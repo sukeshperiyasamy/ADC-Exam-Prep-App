@@ -209,7 +209,7 @@ export default async function CatalogPage({
               </li>
               <li className="flex items-start gap-2.5">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
-                <span><strong>Untimed practice mode:</strong> view explanations immediately after each answer</span>
+                <span><strong>Untimed practice mode:</strong> answers and explanations are shown after you finish the test</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
