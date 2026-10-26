@@ -127,16 +127,16 @@ function ReviewRow({
           </div>
           {row.title && <div className="mt-1 font-semibold">{row.title}</div>}
           {row.body && <p className="mt-1 whitespace-pre-line text-sm text-slate-600 dark:text-slate-200">{row.body}</p>}
-          {row.adminNote && <p className="mt-1 text-xs italic text-rose-600">Mod note: {row.adminNote}</p>}
+          {row.adminNote && <p className="mt-1 text-xs italic text-red-600">Mod note: {row.adminNote}</p>}
         </div>
         <div className="flex shrink-0 flex-wrap items-center gap-1.5">
           {row.status !== 'APPROVED' && (
-            <button type="button" disabled={!!busy} onClick={() => run('approve', onApprove)} className="btn-sm bg-emerald-600 text-white hover:bg-emerald-700">
+            <button type="button" disabled={!!busy} onClick={() => run('approve', onApprove)} className="btn-sm bg-brand-700 text-white hover:bg-brand-800">
               {busy === 'approve' ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />} Approve
             </button>
           )}
           {row.status !== 'REJECTED' && (
-            <button type="button" disabled={!!busy} onClick={() => setShowReject((v) => !v)} className="btn-sm bg-rose-600 text-white hover:bg-rose-700">
+            <button type="button" disabled={!!busy} onClick={() => setShowReject((v) => !v)} className="btn-sm bg-red-600 text-white hover:bg-red-700">
               <X className="h-3 w-3" /> Reject
             </button>
           )}
@@ -145,16 +145,16 @@ function ReviewRow({
               Move to pending
             </button>
           )}
-          <button type="button" disabled={!!busy} onClick={() => run('promote', onPromote)} className="btn-sm bg-violet-600 text-white hover:bg-violet-700">
+          <button type="button" disabled={!!busy} onClick={() => run('promote', onPromote)} className="btn-sm bg-blue-600 text-white hover:bg-blue-700">
             <Sparkles className="h-3 w-3" /> Promote
           </button>
-          <button type="button" disabled={!!busy} onClick={() => run('delete', onDelete)} className="btn-sm text-rose-600 hover:bg-rose-50">
+          <button type="button" disabled={!!busy} onClick={() => run('delete', onDelete)} className="btn-sm text-red-600 hover:bg-red-50">
             <Trash2 className="h-3 w-3" />
           </button>
         </div>
       </div>
       {showReject && (
-        <div className="mt-2 rounded border border-rose-200 bg-rose-50 p-2 text-xs dark:border-rose-900 dark:bg-rose-950/30">
+        <div className="mt-2 rounded border border-red-200 bg-red-50 p-2 text-xs dark:border-red-900 dark:bg-red-950/30">
           <input
             value={note}
             onChange={(e) => setNote(e.target.value)}
@@ -163,7 +163,7 @@ function ReviewRow({
           />
           <div className="mt-1.5 flex justify-end gap-1.5">
             <button type="button" onClick={() => { setShowReject(false); setNote(''); }} className="btn-sm">Cancel</button>
-            <button type="button" onClick={() => run('reject', () => onReject(note))} className="btn-sm bg-rose-600 text-white hover:bg-rose-700">Confirm reject</button>
+            <button type="button" onClick={() => run('reject', () => onReject(note))} className="btn-sm bg-red-600 text-white hover:bg-red-700">Confirm reject</button>
           </div>
         </div>
       )}

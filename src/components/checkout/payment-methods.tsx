@@ -55,8 +55,8 @@ export function PaymentMethodsPicker({ methods, selected, onSelect }: Props) {
               onClick={() => onSelect(m.id)}
               className={`flex items-center gap-3 rounded-lg border p-3 text-left text-sm transition ${
                 isSel
-                  ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/30'
-                  : 'border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600'
+                  ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/40'
+                  : 'border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/50'
               }`}
             >
               <span

@@ -35,12 +35,12 @@ function VerifyOtpInner() {
 
   return (
     <div className="container-app max-w-md py-16">
-      <h1 className="text-2xl font-bold">Enter the code we sent</h1>
-      <p className="mt-1 text-sm text-slate-600">A 6-digit code was sent to <b>{email}</b>.</p>
+      <h1 className="text-2xl font-bold tracking-tight">Enter the code we sent</h1>
+      <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">A 6-digit code was sent to <b>{email}</b>.</p>
       <form onSubmit={submit} className="mt-6 space-y-4">
         <div><label className="label">Code</label><input className="input tracking-[0.4em] text-center" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} /></div>
         {err && <p className="text-sm text-red-600">{err}</p>}
-        <button className="btn-primary w-full" disabled={busy}>{busy ? 'Verifying…' : 'Verify'}</button>
+        <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Verifying…' : 'Verify'}</button>
       </form>
     </div>
   );

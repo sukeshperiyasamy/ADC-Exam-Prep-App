@@ -43,8 +43,8 @@ export default async function MyContentPage({
     <>
       {/* Welcome header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome, {userName}</h1>
-        <p className="mt-1 text-slate-600 dark:text-slate-400">Resume practice or start a timed exam.</p>
+        <h1 className="text-2xl font-bold tracking-tight">Welcome, {userName}</h1>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Resume practice or start a timed exam.</p>
       </div>
 
       {/* Stats row */}
@@ -85,7 +85,7 @@ function StatCard({
   const accents: Record<string, string> = {
     blue: 'bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400',
     purple: 'bg-purple-50 text-purple-600 dark:bg-purple-950/40 dark:text-purple-400',
-    emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400'
+    emerald: 'bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400'
   };
   return (
     <div className="card flex items-center gap-4 p-5">

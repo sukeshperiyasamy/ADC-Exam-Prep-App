@@ -300,7 +300,7 @@ export default async function EditExamPage({ params }: { params: Promise<{ id: s
           <Link href="/admin-dashboard/exams" className="text-xs text-slate-500 hover:underline">
             ← Back to exams
           </Link>
-          <h1 className="text-2xl font-bold">Edit Exam</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Edit Exam</h1>
           <div className="text-sm text-slate-500">{exam.vendor.name} · {exam.code}</div>
         </div>
         <div className="flex items-center gap-2">

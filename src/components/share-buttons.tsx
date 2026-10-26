@@ -15,7 +15,7 @@ export function ShareButtons({ url, text }: { url: string; text: string }) {
     } catch {}
   }
 
-  const btn = 'inline-flex h-8 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 text-[12px] font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800';
+  const btn = 'btn-sm-outline';
 
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -52,7 +52,7 @@ export function ShareButtons({ url, text }: { url: string; text: string }) {
         <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
       </a>
       <button type="button" onClick={copy} className={btn}>
-        {copied ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <LinkIcon className="h-3.5 w-3.5" />}
+        {copied ? <Check className="h-3.5 w-3.5 text-green-600 dark:text-green-400" /> : <LinkIcon className="h-3.5 w-3.5" />}
         {copied ? 'Copied' : 'Copy link'}
       </button>
     </div>

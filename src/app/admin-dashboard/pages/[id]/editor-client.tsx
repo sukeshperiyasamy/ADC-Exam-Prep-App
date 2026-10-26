@@ -118,7 +118,7 @@ export default function PageEditorClient({ id, initial }: Props) {
 
         <div className="flex items-center gap-3">
           <button type="button" onClick={save} disabled={busy} className="btn-primary">{busy ? 'Saving…' : id ? 'Save' : 'Create'}</button>
-          {id && <button type="button" onClick={del} className="text-sm text-rose-600 hover:underline">Delete</button>}
+          {id && <button type="button" onClick={del} className="text-sm text-red-600 hover:underline">Delete</button>}
           {msg && <span className="text-sm text-slate-500">{msg}</span>}
         </div>
       </div>

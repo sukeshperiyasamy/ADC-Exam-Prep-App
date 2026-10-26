@@ -63,7 +63,7 @@ export default async function AdminVendorsPage() {
   });
   return (
     <div>
-      <h1 className="text-2xl font-bold">Vendors</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Vendors</h1>
 
       <div className="card mt-4 overflow-x-auto">
         <table className="w-max min-w-full text-sm">

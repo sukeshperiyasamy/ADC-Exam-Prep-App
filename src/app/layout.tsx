@@ -137,8 +137,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col bg-white text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-        <Script id="theme-init" strategy="beforeInteractive">{themeInitScript}</Script>
+      <body className="min-h-screen flex flex-col text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+        {/* Raw inline script (not next/script): React 19 warns on hydration
+            when <Script> renders an inline child script, and beforeInteractive
+            adds no timing benefit over a first-child-of-body inline script,
+            which the browser still executes before any content paints. */}
+        <script
+          id="theme-init"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
         <script
           type="application/ld+json"
           // Site-wide Organization + WebSite structured data. Helps Google

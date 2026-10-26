@@ -87,7 +87,7 @@ export function SourceStreamPanel({
                     type="button"
                     onClick={() => approve(q.id)}
                     disabled={done || st === 'approving'}
-                    className="inline-flex h-7 items-center gap-1 rounded-md bg-emerald-600 px-2 text-[11px] font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                    className="inline-flex h-7 items-center gap-1 rounded-md bg-brand-700 px-2 text-[11px] font-medium text-white hover:bg-brand-800 disabled:opacity-50"
                   >
                     {st === 'approving' ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
                     {st === 'approved' ? 'Approved' : 'Approve'}

@@ -473,7 +473,7 @@ export default async function AdminExamsPage({
           title = `All ${e.publishedCount} questions published`;
           aria = 'All questions published';
         } else if (e.draftCount > 0) {
-          cls = 'bg-rose-500';
+          cls = 'bg-red-500';
           title = `${e.draftCount} draft, ${e.publishedCount} published`;
           aria = `${e.draftCount} draft questions remaining`;
         }
@@ -616,7 +616,7 @@ export default async function AdminExamsPage({
         title="View Exams"
         subtitle={`${totalCount} exam${totalCount === 1 ? '' : 's'}${totalPages > 1 ? ` · page ${page} of ${totalPages}` : ''}`}
         actions={
-          <Link href="/admin-dashboard/exams/new" className="btn-sm bg-blue-600 text-white hover:bg-blue-700">
+          <Link href="/admin-dashboard/exams/new" className="btn-sm bg-brand-700 text-white hover:bg-brand-800">
             + Create Exam
           </Link>
         }
@@ -631,7 +631,7 @@ export default async function AdminExamsPage({
             { key: 'active', label: 'Active', count: trkActive, href: chipHref('active', ''), on: view === 'active' && !qstatus, dot: 'bg-emerald-500' },
             { key: 'inactive', label: 'Inactive', count: trkInactive, href: chipHref('inactive', ''), on: view === 'inactive' && !qstatus, dot: 'bg-amber-500' },
             { key: 'archived', label: 'Archived', count: trkArchived, href: chipHref('archived', ''), on: view === 'archived' && !qstatus, dot: 'bg-slate-400' },
-            { key: 'drafts', label: 'Draft questions', count: trkDrafts, href: chipHref('all', 'drafts'), on: qstatus === 'drafts', dot: 'bg-rose-500' },
+            { key: 'drafts', label: 'Draft questions', count: trkDrafts, href: chipHref('all', 'drafts'), on: qstatus === 'drafts', dot: 'bg-red-500' },
             { key: 'empty', label: 'No questions', count: trkEmpty, href: chipHref('all', 'empty'), on: qstatus === 'empty', dot: 'bg-slate-300 dark:bg-slate-600' }
           ] as const
         ).map((c) => (
@@ -732,7 +732,7 @@ export default async function AdminExamsPage({
             type="submit"
             name="op"
             value="publish"
-            className="btn-sm bg-emerald-600 text-white hover:bg-emerald-700"
+            className="btn-sm bg-brand-700 text-white hover:bg-brand-800"
           >
             Activate
           </button>

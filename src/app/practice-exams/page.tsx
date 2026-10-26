@@ -116,8 +116,8 @@ export default async function CatalogPage({
     <div className="container-app py-8 md:py-12">
       {/* 01 · CLINICAL HEADER */}
       <div className="mb-8">
-        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-900 dark:border-teal-800 dark:bg-teal-950/50 dark:text-teal-200">
-          <Stethoscope className="h-3.5 w-3.5 text-teal-700 dark:text-teal-400" />
+        <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-900 dark:border-brand-800 dark:bg-brand-950/50 dark:text-brand-200">
+          <Stethoscope className="h-3.5 w-3.5 text-brand-700 dark:text-brand-400" />
           <span>Independent ADC Part 1 Preparation Workspace</span>
         </div>
 
@@ -135,10 +135,10 @@ export default async function CatalogPage({
           {/* Candidate Entitlement Status Badge */}
           <div className="self-start md:self-auto">
             {entitled ? (
-              <div className="inline-flex items-center gap-2 rounded-lg border border-teal-300 bg-teal-50 px-3 py-1.5 text-xs font-medium text-teal-900 dark:border-teal-700 dark:bg-teal-950/60 dark:text-teal-200">
-                <span className="h-2 w-2 rounded-full bg-teal-600 animate-pulse" />
+              <div className="inline-flex items-center gap-2 rounded-lg border border-brand-300 bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-900 dark:border-brand-700 dark:bg-brand-950/60 dark:text-brand-200">
+                <span className="h-2 w-2 rounded-full bg-brand-600 animate-pulse" />
                 <span className="font-semibold">Enrolled Candidate</span>
-                <span className="text-teal-700 dark:text-teal-400">• Full Access Active</span>
+                <span className="text-brand-700 dark:text-brand-400">• Full Access Active</span>
               </div>
             ) : userId ? (
               <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
@@ -167,14 +167,14 @@ export default async function CatalogPage({
 
       {/* Active Filter Notification Banner */}
       {(q || selectedDomain) && (
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-teal-100 bg-teal-50/70 px-4 py-2.5 text-xs text-teal-900 dark:border-teal-900 dark:bg-teal-950/30 dark:text-teal-200">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-brand-100 bg-brand-50/70 px-4 py-2.5 text-xs text-brand-900 dark:border-brand-900 dark:bg-brand-950/30 dark:text-brand-200">
           <div className="flex items-center gap-2">
             <span className="font-semibold">Filter active:</span>
-            {selectedDomain && <span className="rounded bg-teal-200/60 px-2 py-0.5 font-medium dark:bg-teal-800/60">{selectedDomain}</span>}
+            {selectedDomain && <span className="rounded bg-brand-200/60 px-2 py-0.5 font-medium dark:bg-brand-800/60">{selectedDomain}</span>}
             {q && <span>Matching &ldquo;{q}&rdquo;</span>}
             <span>— {filteredQuestionCount} questions found in bank</span>
           </div>
-          <Link href="/practice-exams" className="font-semibold underline hover:text-teal-700 dark:hover:text-teal-300">
+          <Link href="/practice-exams" className="font-semibold underline hover:text-brand-700 dark:hover:text-brand-300">
             Reset to all questions
           </Link>
         </div>
@@ -204,19 +204,19 @@ export default async function CatalogPage({
 
             <ul className="mt-5 space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
               <li className="flex items-start gap-2.5">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span><strong>{teaserLimit} authentic clinical scenario MCQs</strong> sampled from the pool</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span><strong>Untimed practice mode:</strong> answers and explanations are shown after you finish the test</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span>In-depth rationales citing Australian Therapeutic Guidelines standards</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span>Zero payment or credit card required — starts instantly</span>
               </li>
             </ul>
@@ -225,7 +225,7 @@ export default async function CatalogPage({
           <div className="mt-8 border-t border-slate-100 pt-5 dark:border-slate-800">
             <Link
               href={`/practice-exams/${vendorSlug}/${examSlug}/teaser`}
-              className="btn-outline flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-800"
+              className="btn-outline flex w-full items-center justify-center gap-2 py-3 text-sm font-semibold shadow-sm"
             >
               <span>Start Free Practice Test ({teaserLimit} Qs)</span>
               <ArrowRight className="h-4 w-4" />
@@ -234,21 +234,21 @@ export default async function CatalogPage({
         </div>
 
         {/* CARD B: COMPREHENSIVE ADC EXAMINATION BUNDLE */}
-        <div className="relative flex flex-col justify-between rounded-2xl border-2 border-teal-600 bg-white p-6 shadow-md dark:border-teal-500 dark:bg-slate-900">
+        <div className="relative flex flex-col justify-between rounded-2xl border-2 border-brand-600 bg-white p-6 shadow-md dark:border-brand-500 dark:bg-slate-900">
           {/* Popular Tag */}
-          <div className="absolute -top-3 right-6 rounded-full bg-teal-700 px-3 py-0.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm dark:bg-teal-600">
+          <div className="absolute -top-3 right-6 rounded-full bg-brand-700 px-3 py-0.5 text-xs font-semibold uppercase tracking-wider text-white shadow-sm dark:bg-brand-600">
             {entitled ? 'Your Access' : 'Complete Preparation'}
           </div>
 
           <div>
             <div className="mb-3 flex items-center justify-between">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-800 dark:bg-teal-950/60 dark:text-teal-200">
-                <BookOpen className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800 dark:bg-brand-950/60 dark:text-brand-200">
+                <BookOpen className="h-3 w-3 text-brand-600 dark:text-brand-400" />
                 <span>Full Examination Access</span>
               </span>
               <div className="text-right">
                 {entitled ? (
-                  <span className="text-sm font-bold text-teal-700 dark:text-teal-400">Purchased & Active</span>
+                  <span className="text-sm font-bold text-brand-700 dark:text-brand-400">Purchased & Active</span>
                 ) : (
                   <div>
                     <span className="text-xl font-extrabold text-slate-950 dark:text-white">{bundlePriceFormatted}</span>
@@ -267,24 +267,24 @@ export default async function CatalogPage({
 
             <ul className="mt-5 space-y-2.5 text-sm text-slate-700 dark:text-slate-300">
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span><strong>All {totalPublishedQuestions} clinical scenario questions</strong> across 7 disciplines</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span><strong>Timed Mock Exam Mode:</strong> {examQuestions} questions in {examDuration} minutes with live timer and flagging</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span><strong>Practice Mode:</strong> untimed review with instant option-by-option rationale</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
                 <span><strong>Domain Performance Analytics:</strong> diagnostic breakdown on candidate dashboard</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-teal-600 dark:text-teal-400" />
-                <span><strong>7-day refund policy:</strong> eligible within 7 days if fewer than 10 questions answered (<Link href="/p/refund-policy" className="underline hover:text-teal-700 dark:hover:text-teal-300">details</Link>)</span>
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-brand-600 dark:text-brand-400" />
+                <span><strong>7-day refund policy:</strong> eligible within 7 days if fewer than 10 questions answered (<Link href="/p/refund-policy" className="underline hover:text-brand-700 dark:hover:text-brand-300">details</Link>)</span>
               </li>
             </ul>
           </div>
@@ -293,7 +293,7 @@ export default async function CatalogPage({
             {entitled ? (
               <Link
                 href={`/practice-exams/${vendorSlug}/${examSlug}`}
-                className="btn-primary-grad flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-md"
+                className="btn-primary-grad flex w-full items-center justify-center gap-2 py-3 text-sm font-semibold shadow-md"
               >
                 <Play className="h-4 w-4 fill-current" />
                 <span>Launch Mock Exam ({examQuestions} Questions)</span>
@@ -301,7 +301,7 @@ export default async function CatalogPage({
             ) : (
               <Link
                 href={`/checkout/bundle/${bundleSlug}`}
-                className="btn-primary-grad flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold shadow-md"
+                className="btn-primary-grad flex w-full items-center justify-center gap-2 py-3 text-sm font-semibold shadow-md"
               >
                 <span>Enroll in Complete Bundle — {bundlePriceFormatted}</span>
                 <ArrowRight className="h-4 w-4" />
@@ -337,13 +337,13 @@ export default async function CatalogPage({
                 href={isSelected ? '/practice-exams' : `/practice-exams?domain=${encodeURIComponent(d.domain)}`}
                 className={`flex flex-col justify-between rounded-xl border p-4 transition ${
                   isSelected
-                    ? 'border-teal-600 bg-teal-50/80 shadow-sm dark:border-teal-500 dark:bg-teal-950/40'
+                    ? 'border-brand-600 bg-brand-50/80 shadow-sm dark:border-brand-500 dark:bg-brand-950/40'
                     : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-teal-800 dark:text-teal-300">
+                    <span className="text-xs font-bold text-brand-800 dark:text-brand-300">
                       {d.count} Questions
                     </span>
                     <span className="font-mono text-xs font-semibold text-slate-400 dark:text-slate-500">
@@ -367,7 +367,7 @@ export default async function CatalogPage({
       {/* 05 · TRUST & TRANSPARENCY BAR */}
       <div className="mt-12 grid gap-6 border-t border-slate-200 pt-8 sm:grid-cols-3 dark:border-slate-800">
         <div className="flex items-start gap-3">
-          <ShieldCheck className="h-5 w-5 shrink-0 text-teal-600 dark:text-teal-400" />
+          <ShieldCheck className="h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400" />
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               Authentic Scenario Format
@@ -379,7 +379,7 @@ export default async function CatalogPage({
         </div>
 
         <div className="flex items-start gap-3">
-          <Clock className="h-5 w-5 shrink-0 text-teal-600 dark:text-teal-400" />
+          <Clock className="h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400" />
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               Timed & Untimed Modes
@@ -391,14 +391,14 @@ export default async function CatalogPage({
         </div>
 
         <div className="flex items-start gap-3">
-          <RotateCcw className="h-5 w-5 shrink-0 text-teal-600 dark:text-teal-400" />
+          <RotateCcw className="h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400" />
           <div>
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
               7-Day Refund Policy
             </h4>
             <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
               Eligible within 7 days of purchase if you have answered fewer than 10 questions across all attempts. See our{' '}
-              <Link href="/p/refund-policy" className="underline hover:text-teal-700 dark:hover:text-teal-300">
+              <Link href="/p/refund-policy" className="underline hover:text-brand-700 dark:hover:text-brand-300">
                 Refund Policy
               </Link>.
             </p>

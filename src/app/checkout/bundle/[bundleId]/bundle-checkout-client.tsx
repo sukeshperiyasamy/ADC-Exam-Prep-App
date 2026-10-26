@@ -87,7 +87,7 @@ export function BundleCheckoutClient({
             <dd className="font-medium">{formatPrice(amount)}</dd>
           </div>
           {promo && (
-            <div className="flex justify-between text-emerald-700 dark:text-emerald-300">
+            <div className="flex justify-between text-green-700 dark:text-green-300">
               <dt>Promo «{promo.code}»</dt>
               <dd className="font-medium">−{formatPrice(promo.discountCents)}</dd>
             </div>
@@ -104,7 +104,7 @@ export function BundleCheckoutClient({
 
       <div className="card space-y-4 p-6">
         <div className="flex items-center gap-2 text-sm font-semibold">
-          <Lock className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+          <Lock className="h-4 w-4 text-green-600 dark:text-green-400" />
           Pay securely
         </div>
 
@@ -183,7 +183,7 @@ export function BundleCheckoutClient({
 
       <div className="rounded-lg bg-slate-50 p-4 dark:bg-slate-900">
         <div className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-green-600 dark:text-green-400" />
           <p>
             {TRUST_COPY[selectedMethod]}{' '}
             {hasVoucher

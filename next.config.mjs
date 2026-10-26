@@ -6,6 +6,8 @@ const handlebarsBrowserBuild = require.resolve('handlebars/dist/cjs/handlebars.j
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  // Booklet PDF conversion (admin-only, server-side) uses native/ESM-heavy packages.
+  serverExternalPackages: ['pdfjs-dist', '@napi-rs/canvas', 'sharp'],
   experimental: { serverActions: { bodySizeLimit: '2mb' } },
   webpack(config) {
     // The package's Node entry registers require.extensions for .hbs files,

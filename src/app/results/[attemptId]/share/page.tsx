@@ -45,7 +45,7 @@ export default async function ShareResultPage({ params }: { params: Promise<{ at
     <div className="container-app py-10">
       <div className="card p-8 text-center">
         <p className="text-sm text-slate-500">{attempt.exam.vendor.name} · {attempt.exam.code}</p>
-        <h1 className="mt-1 text-3xl font-bold">{attempt.exam.title}</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">{attempt.exam.title}</h1>
         <div className={`mt-6 inline-flex flex-col items-center rounded-full ${passed ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300' : 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'} px-8 py-6`}>
           <span className="text-5xl font-bold">{score}%</span>
           <span className="text-sm font-semibold uppercase tracking-wide">{passed ? 'Pass' : 'In progress'}</span>

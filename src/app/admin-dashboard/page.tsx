@@ -47,7 +47,7 @@ export default async function AdminOverview() {
                 <div className="truncate text-xs text-slate-500">{user.email}</div>
               </div>
               <div className="flex shrink-0 items-center gap-2 text-xs text-slate-500">
-                {!user.active && <span className="rounded bg-red-100 px-1.5 py-0.5 font-semibold text-red-800">Inactive</span>}
+                {!user.active && <span className="rounded bg-red-100 px-1.5 py-0.5 font-semibold text-red-800 dark:bg-red-900/40 dark:text-red-200">Inactive</span>}
                 <span>{user.createdAt.toLocaleDateString()}</span>
               </div>
             </li>

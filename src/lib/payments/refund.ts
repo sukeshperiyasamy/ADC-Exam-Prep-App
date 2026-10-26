@@ -5,6 +5,8 @@ import { issueCreditNoteForInvoice } from '@/lib/invoice/issue';
 import { getSetting } from '@/lib/settings';
 import Stripe from 'stripe';
 import type { PaymentProvider } from '@prisma/client';
+import { requireCashfreeConfig, createCashfreeRefund } from '@/lib/payments/cashfree';
+import { revokeOrderEntitlements, type RevokeResult } from '@/lib/payments/order-entitlements';
 
 export type RefundInput = {
   orderId: string;
@@ -45,8 +47,10 @@ export async function refundOrder(input: RefundInput): Promise<RefundOutcome> {
     return { ok: false, status: 'FAILED', message: 'Only PAID orders can be refunded.' };
   }
 
+  // PENDING refunds (e.g. Cashfree processing) reserve their amount so an
+  // admin can't over-refund while the first refund is still settling.
   const alreadyRefunded = order.refunds
-    .filter((r) => r.status === 'SUCCEEDED')
+    .filter((r) => r.status === 'SUCCEEDED' || r.status === 'PENDING')
     .reduce((sum, r) => sum + r.amount, 0);
   const remaining = order.amount - alreadyRefunded;
   if (amountCents > remaining) {
@@ -65,6 +69,7 @@ export async function refundOrder(input: RefundInput): Promise<RefundOutcome> {
     const result = await callProviderRefund(
       order.provider as PaymentProvider,
       {
+        orderId: order.id,
         captureId: order.paypalCaptureId || order.providerCaptureId || null,
         providerOrderId: order.providerOrderId || order.paypalOrderId || null,
         amountCents,
@@ -99,10 +104,10 @@ export async function refundOrder(input: RefundInput): Promise<RefundOutcome> {
     await db.adminLog.create({
       data: {
         adminId: byAdminId,
-        action: 'order.refund.failed',
+        action: providerStatus === 'PENDING' ? 'order.refund.pending' : 'order.refund.failed',
         targetType: 'Order',
         targetId: order.id,
-        metadata: { refundId: refund.id, amountCents, provider: order.provider, error: failureMessage ?? null }
+        metadata: { refundId: refund.id, providerRefundId, amountCents, provider: order.provider, error: failureMessage ?? null }
       }
     });
     return {
@@ -114,39 +119,80 @@ export async function refundOrder(input: RefundInput): Promise<RefundOutcome> {
     };
   }
 
-  // 3. Update Order aggregates
-  const cumulative = alreadyRefunded + amountCents;
-  const fully = cumulative >= order.amount;
-  await db.order.update({
-    where: { id: order.id },
-    data: {
-      refundAmount: cumulative,
-      refundReason: reason ?? order.refundReason,
-      refundRef: providerRefundId || manualRef || order.refundRef,
-      refundedAt: fully ? new Date() : order.refundedAt,
-      status: fully ? 'REFUNDED' : order.status
-    }
-  });
+  const fin = await finalizeSucceededRefund(refund.id);
+  return {
+    ok: true,
+    refundId: refund.id,
+    providerRefundId,
+    status: 'SUCCEEDED',
+    fullyRefunded: fin.fullyRefunded
+  };
+}
 
-  // 4. Mint credit-note Invoice linked to this refund
-  let creditNoteInvoiceId: string | undefined;
-  if (order.invoice) {
-    try {
-      const cn = await issueCreditNoteForInvoice(order.invoice.id, amountCents);
-      creditNoteInvoiceId = cn.id;
-      await db.refund.update({
-        where: { id: refund.id },
-        data: { creditNoteInvoiceId: cn.id }
+/**
+ * Apply a refund that is now SUCCEEDED: recompute the order's refunded total
+ * from all succeeded refunds, flip the order to REFUNDED on full refund and
+ * revoke the access it granted, mint the credit note, and audit it.
+ * Idempotent per refund (guarded by `creditNoteInvoiceId` / the conditional
+ * status update), so a webhook + reconciliation race can't double-apply.
+ * Used by refundOrder (synchronous success) and by Cashfree refund
+ * reconciliation (PENDING -> SUCCESS later).
+ */
+export async function finalizeSucceededRefund(refundId: string): Promise<{ fullyRefunded: boolean; revoke?: RevokeResult }> {
+  const refund = await db.refund.findUniqueOrThrow({ where: { id: refundId } });
+  if (refund.status !== 'SUCCEEDED') throw new Error('Refund is not SUCCEEDED');
+
+  const result = await db.$transaction(async (tx) => {
+    const order = await tx.order.findUniqueOrThrow({ where: { id: refund.orderId }, include: { refunds: true } });
+    const cumulative = order.refunds.filter((r) => r.status === 'SUCCEEDED').reduce((sum, r) => sum + r.amount, 0);
+    const fully = cumulative >= order.amount;
+    const becameRefunded = fully
+      ? (await tx.order.updateMany({ where: { id: order.id, status: 'PAID' }, data: { status: 'REFUNDED', refundedAt: new Date() } })).count === 1
+      : false;
+    await tx.order.update({
+      where: { id: order.id },
+      data: {
+        refundAmount: cumulative,
+        refundReason: refund.reason ?? order.refundReason,
+        refundRef: refund.providerRefundId || order.refundRef
+      }
+    });
+    let revoke: RevokeResult | undefined;
+    if (becameRefunded) {
+      revoke = await revokeOrderEntitlements(tx, order.id);
+      await tx.paymentStateChange.create({
+        data: {
+          orderId: order.id,
+          provider: order.provider,
+          fromStatus: 'PAID',
+          toStatus: 'REFUNDED',
+          source: 'refund',
+          actorId: refund.byAdminId,
+          detail: { refundId: refund.id, cumulative, revoke } as any
+        }
       });
+    }
+    return { order, cumulative, fully, revoke };
+  });
+  const { order, cumulative, fully, revoke } = result;
+
+  // Mint credit-note Invoice linked to this refund (once).
+  let creditNoteInvoiceId: string | undefined = refund.creditNoteInvoiceId ?? undefined;
+  const invoice = await db.invoice.findUnique({ where: { orderId: order.id } });
+  if (invoice && !creditNoteInvoiceId) {
+    try {
+      const cn = await issueCreditNoteForInvoice(invoice.id, refund.amount);
+      creditNoteInvoiceId = cn.id;
+      await db.refund.update({ where: { id: refund.id }, data: { creditNoteInvoiceId: cn.id } });
     } catch (err) {
       // The refund itself succeeded; missing credit note is recoverable but
       // we still surface it in the admin log so an admin can mint manually.
       await db.adminLog.create({
         data: {
-          adminId: byAdminId,
+          adminId: refund.byAdminId,
           action: 'invoice.credit-note.failed',
           targetType: 'Invoice',
-          targetId: order.invoice.id,
+          targetId: invoice.id,
           metadata: { error: String((err as Error)?.message ?? err), refundId: refund.id }
         }
       });
@@ -155,18 +201,19 @@ export async function refundOrder(input: RefundInput): Promise<RefundOutcome> {
 
   await db.adminLog.create({
     data: {
-      adminId: byAdminId,
+      adminId: refund.byAdminId,
       action: 'order.refund',
       targetType: 'Order',
       targetId: order.id,
       metadata: {
         refundId: refund.id,
-        providerRefundId,
-        amountCents,
+        providerRefundId: refund.providerRefundId,
+        amountCents: refund.amount,
         cumulativeRefunded: cumulative,
         fullyRefunded: fully,
-        reason: reason ?? null,
-        creditNoteInvoiceId: creditNoteInvoiceId ?? null
+        reason: refund.reason ?? null,
+        creditNoteInvoiceId: creditNoteInvoiceId ?? null,
+        accessRevoked: revoke ?? null
       }
     }
   });
@@ -175,26 +222,20 @@ export async function refundOrder(input: RefundInput): Promise<RefundOutcome> {
     const { notify } = await import('@/lib/admin-notifications');
     await notify({
       kind: 'order.refund',
-      title: `${fully ? 'Full' : 'Partial'} refund · ${(amountCents / 100).toFixed(2)} ${order.currency}`,
-      body: `Order ${order.number ?? order.id.slice(0, 8)} refunded${reason ? ` — ${reason}` : ''}`,
+      title: `${fully ? 'Full' : 'Partial'} refund · ${(refund.amount / 100).toFixed(2)} ${order.currency}`,
+      body: `Order ${order.number ?? order.id.slice(0, 8)} refunded${refund.reason ? ` — ${refund.reason}` : ''}${revoke?.keptVoucherIssued.length ? ' — voucher already issued, review access manually' : ''}`,
       link: `/admin-dashboard/orders/${order.id}`
     });
   } catch {
     /* never break refund flow */
   }
-
-  return {
-    ok: true,
-    refundId: refund.id,
-    providerRefundId,
-    status: 'SUCCEEDED',
-    fullyRefunded: fully
-  };
+  return { fullyRefunded: fully, revoke };
 }
 
 async function callProviderRefund(
   provider: PaymentProvider,
   input: {
+    orderId: string;
     captureId: string | null;
     providerOrderId: string | null;
     amountCents: number;
@@ -231,6 +272,16 @@ async function callProviderRefund(
       });
       const status = refund.status === 'succeeded' ? 'SUCCEEDED' : refund.status === 'pending' ? 'PENDING' : 'FAILED';
       return { providerRefundId: refund.id, status };
+    }
+    case 'CASHFREE': {
+      // Cashfree refunds are keyed by OUR order id (we use it as order_id) and
+      // a merchant refund_id (3-40 alphanumeric). Store the merchant refund_id
+      // so refund webhooks / reconciliation can find this row.
+      const c = await requireCashfreeConfig();
+      const refundId = `RF${input.orderId.replace(/[^A-Za-z0-9]/g, '')}${Date.now().toString(36)}`.slice(0, 40);
+      const r = await createCashfreeRefund(c, input.orderId, refundId, input.amountCents, input.reason);
+      const status = r.refund_status === 'SUCCESS' ? 'SUCCEEDED' : r.refund_status === 'CANCELLED' || r.refund_status === 'REJECTED' ? 'FAILED' : 'PENDING';
+      return { providerRefundId: r.refund_id || refundId, status };
     }
     case 'PAYNOW':
     case 'TEST': {

@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   BookOpen,
   ClipboardList,
+  Library,
   ShoppingBag,
   Receipt,
   UserCircle,
@@ -16,6 +17,7 @@ import {
 const ITEMS: { href: string; label: string; icon: any }[] = [
   { href: '/user-dashboard', label: 'Overview', icon: LayoutDashboard },
   { href: '/user-dashboard/exams', label: 'Exams', icon: BookOpen },
+  { href: '/user-dashboard/study', label: 'Study Booklets', icon: Library },
   { href: '/user-dashboard/attempts', label: 'Attempts', icon: ClipboardList },
   { href: '/user-dashboard/orders', label: 'Orders', icon: ShoppingBag },
   { href: '/user-dashboard/invoices', label: 'Invoices', icon: Receipt },
@@ -32,7 +34,8 @@ export function UserChrome({ children }: { children: React.ReactNode }) {
       const v = localStorage.getItem('userSidebarCollapsed');
       // Hydrate the persisted UI preference after the server render.
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCollapsed(v === '1');
+      // No saved preference + phone-width screen => start collapsed so content has room.
+      setCollapsed(v === null ? window.innerWidth < 768 : v === '1');
     } catch {}
     setMounted(true);
   }, []);
@@ -58,7 +61,7 @@ export function UserChrome({ children }: { children: React.ReactNode }) {
       >
         <div className="flex items-center justify-between px-3 py-3">
           {!collapsed && (
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               My Study Area
             </span>
           )}
@@ -91,7 +94,7 @@ export function UserChrome({ children }: { children: React.ReactNode }) {
           })}
         </nav>
       </aside>
-      <main className="min-w-0 flex-1 p-6 lg:p-8">{children}</main>
+      <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
     </div>
   );
 }

@@ -27,19 +27,19 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="container-app max-w-md py-16">
-      <h1 className="text-2xl font-bold">Reset password</h1>
+      <h1 className="text-2xl font-bold tracking-tight">Reset password</h1>
       {step === 'email' ? (
         <form onSubmit={send} className="mt-6 space-y-4">
           <div><label className="label">Email</label><input className="input" type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-          <button className="btn-primary w-full" disabled={busy}>{busy ? 'Sending…' : 'Send code'}</button>
+          <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Sending…' : 'Send code'}</button>
         </form>
       ) : (
         <form onSubmit={reset} className="mt-6 space-y-4">
-          <p className="text-sm text-slate-600">If <b>{email}</b> exists, a code was sent.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">If <b>{email}</b> exists, a code was sent.</p>
           <div><label className="label">Code</label><input className="input tracking-[0.4em] text-center" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} /></div>
           <div><label className="label">New password</label><input className="input" type="password" minLength={8} required value={newPassword} onChange={e => setNewPassword(e.target.value)} /></div>
           {err && <p className="text-sm text-red-600">{err}</p>}
-          <button className="btn-primary w-full" disabled={busy}>{busy ? 'Resetting…' : 'Reset password'}</button>
+          <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Resetting…' : 'Reset password'}</button>
         </form>
       )}
     </div>

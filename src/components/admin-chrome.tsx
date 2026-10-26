@@ -57,6 +57,7 @@ const SECTIONS: NavSection[] = [
       { href: '/admin-dashboard/exams', label: 'View Exams', icon: BookOpen, exact: true },
       { href: '/admin-dashboard/exams/new', label: 'Create Exam', icon: Sparkles },
       { href: '/admin-dashboard/bundles', label: 'View Bundled Exams', icon: FileText },
+      { href: '/admin-dashboard/booklets', label: 'Study Booklets', icon: BookOpen },
       { href: '/admin-dashboard/vendors', label: 'Vendors', icon: Building2 }
     ]
   },
@@ -138,7 +139,8 @@ const SECTIONS: NavSection[] = [
           { href: '/admin-dashboard/settings/payment-guide', label: 'Payment Setup Guide', icon: BookOpen },
           { href: '/admin-dashboard/settings/email', label: 'Email', icon: Mail },
           { href: '/admin-dashboard/settings/social-login', label: 'Social Login', icon: LogIn },
-          { href: '/admin-dashboard/settings/credentials', label: 'Credentials', icon: Key }
+          { href: '/admin-dashboard/settings/credentials', label: 'Credentials', icon: Key },
+          { href: '/admin-dashboard/settings/image-storage', label: 'Image Storage', icon: Palette }
         ]
       }
     ]
@@ -294,14 +296,14 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
                       <div
                         className={`group flex items-center gap-1 rounded-md text-[13px] transition ${
                           active
-                            ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
+                            ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/40 dark:text-brand-300'
                             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-slate-100'
                         }`}
                       >
                         {/* left-border accent for active */}
                         <span
                           aria-hidden
-                          className={`block h-6 w-0.5 rounded ${active ? 'bg-blue-600 dark:bg-blue-400' : 'bg-transparent'}`}
+                          className={`block h-6 w-0.5 rounded ${active ? 'bg-brand-600 dark:bg-brand-400' : 'bg-transparent'}`}
                         />
                         <Link
                           href={href}

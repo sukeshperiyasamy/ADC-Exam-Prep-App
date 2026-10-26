@@ -54,6 +54,14 @@ export const PAYMENT_SUBGROUPS: SettingsGroup[] = [
     ]
   },
   {
+    slug: 'cashfree',
+    title: 'Cashfree (INR — UPI, cards, netbanking)',
+    // App ID, secret key, environment (TEST/PROD) and API version are server
+    // environment variables only (CASHFREE_APP_ID, CASHFREE_SECRET_KEY,
+    // CASHFREE_ENV, CASHFREE_API_VERSION) so live mode can't be switched on here.
+    fields: [{ key: 'CASHFREE_ENABLED', label: 'Enabled (true/false) — credentials & TEST/PROD come from server env vars', placeholder: 'false' }]
+  },
+  {
     slug: 'paynow',
     title: 'PayNow',
     fields: [
@@ -196,6 +204,19 @@ export const GROUPS: SettingsGroup[] = [
     ]
   },
   {
+    slug: 'image-storage',
+    title: 'Image Storage (Cloudflare R2)',
+    description: 'S3-compatible bucket for uploaded images and booklet figures.',
+    fields: [
+      { key: 'R2_ACCOUNT_ID', label: 'Account ID' },
+      { key: 'R2_BUCKET', label: 'Bucket name' },
+      { key: 'R2_ACCESS_KEY_ID', label: 'Access key ID' },
+      { key: 'R2_SECRET_ACCESS_KEY', label: 'Secret access key', secret: true },
+      { key: 'R2_PUBLIC_URL', label: 'Public base URL', fullWidth: true },
+      { key: 'BOOKLET_FIGURE_STORAGE', label: 'Booklet figures: "local" (default, private server disk) or "r2" (use a PRIVATE bucket — figures are read with signed requests, never via the public URL)', placeholder: 'local', fullWidth: true }
+    ]
+  },
+  {
     slug: 'credentials',
     title: 'Credentials',
     description: 'Non-payment API keys and worker secrets. Payment provider credentials live under Payment Setting.',
@@ -203,6 +224,10 @@ export const GROUPS: SettingsGroup[] = [
       { key: 'ANTHROPIC_API_KEY', label: 'Claude (Anthropic) — API Key', secret: true },
       { key: 'FIRECRAWL_API_KEY', label: 'Firecrawl — API Key', secret: true },
       { key: 'TAVILY_API_KEY', label: 'Tavily — API Key', secret: true },
+      { key: 'GEMINI_API_KEY', label: 'Gemini (Google AI) — API Key', secret: true },
+      { key: 'GOOGLE_CLOUD_PROJECT', label: 'Vertex AI — Google Cloud project (alternative to API key)' },
+      { key: 'GOOGLE_CLOUD_LOCATION', label: 'Vertex AI — location', placeholder: 'global' },
+      { key: 'GEMINI_MODEL', label: 'Gemini model id (booklet conversion)' },
       { key: 'WORKER_SHARED_SECRET', label: 'Cron worker — shared secret', secret: true }
     ]
   }

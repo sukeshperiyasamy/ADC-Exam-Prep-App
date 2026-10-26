@@ -321,7 +321,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
         if (!isVoucherTier || !o.userId || !o.examId) return <span className="text-slate-400">—</span>;
         if (existing) {
           return (
-            <span className="rounded bg-violet-100 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-violet-800 dark:bg-violet-950/40 dark:text-violet-200">
+            <span className="rounded bg-blue-100 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-blue-800 dark:bg-blue-950/40 dark:text-blue-200">
               {existing}
             </span>
           );
@@ -333,7 +333,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
             <button
               type="submit"
               title="Generate and assign a voucher code"
-              className="inline-flex h-6 items-center gap-1 rounded bg-violet-600 px-2 text-[11px] font-medium text-white hover:bg-violet-700"
+              className="inline-flex h-6 items-center gap-1 rounded bg-blue-600 px-2 text-[11px] font-medium text-white hover:bg-blue-700"
             >
               <Ticket className="h-3 w-3" />
               Assign
@@ -367,11 +367,11 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                       type="text"
                       name="reference"
                       placeholder="Bank ref"
-                      className="h-7 w-24 rounded border border-slate-200 px-1 text-[11px] dark:border-slate-700 dark:bg-slate-900"
+                      className="h-7 w-24 rounded border border-slate-200 px-1 text-[11px] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
                     />
                     <button
                       type="submit"
-                      className="inline-flex h-7 items-center gap-1 rounded bg-emerald-600 px-2 text-[11px] font-medium text-white hover:bg-emerald-700"
+                      className="inline-flex h-7 items-center gap-1 rounded bg-brand-700 px-2 text-[11px] font-medium text-white hover:bg-brand-800"
                     >
                       <CheckCircle2 className="h-3 w-3" />
                       Paid

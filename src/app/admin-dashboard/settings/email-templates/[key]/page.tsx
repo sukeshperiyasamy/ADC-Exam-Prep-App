@@ -23,7 +23,7 @@ export default async function EditTemplatePage({ params }: { params: Promise<{ k
       <div className="mb-2 text-sm">
         <Link href="/admin-dashboard/settings/email-templates" className="text-slate-500 hover:underline">← All templates</Link>
       </div>
-      <h1 className="text-2xl font-bold">{k}</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">{k}</h1>
       <p className="mt-1 text-sm text-slate-500">{def.description}</p>
 
       <EditorClient

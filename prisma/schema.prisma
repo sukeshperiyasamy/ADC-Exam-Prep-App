@@ -58,6 +58,7 @@ enum PaymentProvider {
   HITPAY
   STRIPE
   TEST
+  CASHFREE
 }
 
 enum DeliveryStatus {
@@ -125,6 +126,8 @@ model User {
   reviews       Review[]
   examsCreated  Exam[]        @relation("ExamCreatedBy")
   bundlesCreated Bundle[]     @relation("BundleCreatedBy")
+  bookletProgress BookletProgress[]
+  bookletBookmarks BookletBookmark[]
 }
 
 // NextAuth/Prisma adapter table used by OAuth providers (Google, GitHub, …)
@@ -198,6 +201,7 @@ model Exam {
   voucherInventory VoucherInventory[]
   reviews         Review[]
   testimonials    Testimonial[]
+  booklet         Booklet?     @relation("BookletAccessExam")
   @@index([vendorId])
 }
 
@@ -256,11 +260,16 @@ model Question {
   version     Int       @default(1)
   sourceId    String?
   source      ExamSource? @relation(fields: [sourceId], references: [id], onDelete: SetNull)
+  // Booklet-generated MCQs only: owning chapter + source PDF pages.
+  bookletChapterId String?
+  bookletChapter   BookletChapter? @relation(fields: [bookletChapterId], references: [id], onDelete: SetNull)
+  sourcePages Int[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   @@index([examId, status])
   @@index([examId, isTeaser])
   @@index([sourceId])
+  @@index([bookletChapterId])
 }
 
 // Provenance for a batch of generated questions: which document or set of
@@ -518,6 +527,14 @@ model Order {
   refundAmount      Int?
   refundReason      String?
   refundRef         String?
+  // Gateway lifecycle detail (Cashfree): the provider-side order status
+  // (ACTIVE/PAID/EXPIRED/TERMINATED), the hosted-checkout session we can
+  // resume, when it expires, last server-side reconciliation and any dispute.
+  providerStatus    String?
+  providerSessionId String?
+  providerExpiresAt DateTime?
+  reconciledAt      DateTime?
+  disputeStatus     String?
   amount          Int         // cents / paise
   currency        String      @default("INR")
   status          OrderStatus @default(PENDING)
@@ -532,6 +549,7 @@ model Order {
   invoice         Invoice?
   refunds         Refund[]
   webhookEvents   PaymentWebhookEvent[]
+  stateChanges    PaymentStateChange[]
   @@unique([provider, providerOrderId])
   @@unique([provider, providerCaptureId])
   @@index([userId, status])
@@ -562,6 +580,23 @@ enum RefundStatus {
   PENDING
   SUCCEEDED
   FAILED
+}
+
+// Append-only audit trail of every payment state transition, whoever caused
+// it (webhook, reconciliation, browser return, admin). AdminLog requires an
+// admin actor, so system-driven changes are recorded here instead.
+model PaymentStateChange {
+  id         String          @id @default(cuid())
+  orderId    String
+  order      Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  provider   PaymentProvider
+  fromStatus String?
+  toStatus   String
+  source     String          // webhook | reconcile | return | poll | admin | refund | dispute
+  actorId    String?         // admin user id when an admin triggered it
+  detail     Json?
+  createdAt  DateTime        @default(now())
+  @@index([orderId, createdAt])
 }
 
 model PaymentWebhookEvent {
@@ -858,4 +893,166 @@ model Testimonial {
   updatedAt      DateTime @updatedAt
   deletedAt      DateTime?
   @@index([published, sortOrder])
+}
+
+// ---------------------------------------------------------------------------
+// Study booklets (AI-converted textbook chapters). Everything is DRAFT until a
+// licence is confirmed AND a clinical reviewer approves the chapter.
+// Students only ever see: booklet PUBLISHED + chapter publishedAt set + item
+// APPROVED. Paid access reuses Entitlement via `accessExamId` (an unpublished
+// Exam that is added to a Bundle so normal checkout grants it).
+// ---------------------------------------------------------------------------
+enum BookletStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ChapterProcessStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+enum ChapterReviewStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+}
+
+enum BookletItemKind {
+  SUMMARY
+  NOTE
+  KEY_CONCEPT
+  TABLE
+  FLOWCHART
+  FLASHCARD
+}
+
+enum BookletItemStatus {
+  DRAFT
+  APPROVED
+  REJECTED
+}
+
+model Booklet {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  publisher        String?
+  description      String        @default("")
+  status           BookletStatus @default(DRAFT)
+  totalPages       Int?
+  // Private server-side location of the source PDF. Never sent to clients.
+  sourcePath       String?
+  // Blockers for paid publication.
+  licenseConfirmed Boolean       @default(false)
+  licenseNote      String?
+  // Unpublished Exam that carries Entitlement + booklet MCQs/attempts.
+  accessExamId     String?       @unique
+  accessExam       Exam?         @relation("BookletAccessExam", fields: [accessExamId], references: [id], onDelete: SetNull)
+  createdById      String?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  chapters         BookletChapter[]
+}
+
+model BookletChapter {
+  id               String               @id @default(cuid())
+  bookletId        String
+  booklet          Booklet              @relation(fields: [bookletId], references: [id], onDelete: Cascade)
+  slug             String
+  title            String
+  position         Int                  @default(0)
+  pdfPageFrom      Int
+  pdfPageTo        Int
+  processStatus    ChapterProcessStatus @default(PENDING)
+  processStage     String?
+  processError     String?
+  processedAt      DateTime?
+  model            String?              // model id that produced the content
+  verification     Json?                // fact-check issues from the AI verifier
+  reviewStatus     ChapterReviewStatus  @default(DRAFT)
+  reviewerName     String?              // qualified clinical reviewer
+  reviewerNote     String?
+  reviewedAt       DateTime?
+  publishedAt      DateTime?
+  isFreePreview    Boolean              @default(false)
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  pages            BookletPage[]
+  figures          BookletFigure[]
+  items            BookletItem[]
+  questions        Question[]
+  progress         BookletProgress[]
+  bookmarks        BookletBookmark[]
+  @@unique([bookletId, slug])
+  @@index([bookletId, position])
+}
+
+// Transcription of one PDF page (source of truth for page references).
+model BookletPage {
+  id          String         @id @default(cuid())
+  chapterId   String
+  chapter     BookletChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  pdfPage     Int
+  printedPage String?
+  markdown    String
+  @@unique([chapterId, pdfPage])
+}
+
+model BookletFigure {
+  id         String         @id @default(cuid())
+  chapterId  String
+  chapter    BookletChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  pdfPage    Int
+  label      String
+  caption    String
+  // Storage key (R2 or local); served only through the access-checked proxy.
+  storageKey String
+  approved   Boolean        @default(false)
+  @@index([chapterId])
+}
+
+// Notes, key concepts, tables, flowcharts, flashcards, summary.
+// `data` shape depends on `kind` (see src/lib/booklet/schemas.ts).
+model BookletItem {
+  id        String            @id @default(cuid())
+  chapterId String
+  chapter   BookletChapter    @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  kind      BookletItemKind
+  position  Int               @default(0)
+  data      Json
+  pages     Int[]
+  status    BookletItemStatus @default(DRAFT)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  @@index([chapterId, kind, status])
+}
+
+model BookletProgress {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId     String
+  chapter       BookletChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  completedModes String[]
+  lastMode      String?
+  completedAt   DateTime?
+  updatedAt     DateTime       @updatedAt
+  @@unique([userId, chapterId])
+}
+
+model BookletBookmark {
+  id        String         @id @default(cuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   BookletChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  itemId    String         @default("")
+  label     String
+  pdfPage   Int?
+  createdAt DateTime       @default(now())
+  @@unique([userId, chapterId, itemId])
 }

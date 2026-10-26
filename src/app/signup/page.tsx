@@ -58,19 +58,19 @@ export default function SignupPage() {
     <div className="container-app grid gap-6 pb-12 pt-4 md:grid-cols-2 md:pb-20 md:pt-6">
       <div className="card p-8">
         <h1 className="text-2xl font-bold tracking-tight">Create your account</h1>
-        <p className="mt-1 text-sm text-slate-600">Free to start. No credit card required.</p>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Free to start. No credit card required.</p>
 
         {step === 'form' ? (
           <form onSubmit={startSignup} className="mt-6 space-y-4">
             <div><label className="label">Name</label><input className="input" value={name} onChange={e => setName(e.target.value)} /></div>
             <div><label className="label">Email</label><input className="input" type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
-            <div><label className="label">Password <span className="text-xs text-slate-500">(optional — you can sign in with email codes)</span></label><input className="input" type="password" minLength={8} value={password} onChange={e => setPassword(e.target.value)} /></div>
+            <div><label className="label">Password <span className="text-xs text-slate-500 dark:text-slate-400">(optional — you can sign in with email codes)</span></label><input className="input" type="password" minLength={8} value={password} onChange={e => setPassword(e.target.value)} /></div>
             {err && <p className="text-sm text-red-600">{err}</p>}
-            <button className="btn-primary w-full" disabled={busy}>{busy ? 'Sending code…' : 'Continue'}</button>
+            <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Sending code…' : 'Continue'}</button>
           </form>
         ) : (
           <form onSubmit={verify} className="mt-6 space-y-4">
-            <p className="text-sm text-slate-600">We sent a 6-digit code to <b>{email}</b>.</p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">We sent a 6-digit code to <b>{email}</b>.</p>
             <div><label className="label">Verification code</label><input className="input tracking-[0.4em] text-center" maxLength={6} required value={code} onChange={e => setCode(e.target.value.replace(/\D/g, ''))} /></div>
             {devNotice && (
               <div className="rounded-lg border border-blue-200 bg-blue-50/80 p-2.5 text-xs text-blue-800 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-300">
@@ -78,7 +78,7 @@ export default function SignupPage() {
               </div>
             )}
             {err && <p className="text-sm text-red-600">{err}</p>}
-            <button className="btn-primary w-full" disabled={busy}>{busy ? 'Verifying…' : 'Create account'}</button>
+            <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Verifying…' : 'Create account'}</button>
           </form>
         )}
 
@@ -87,7 +87,7 @@ export default function SignupPage() {
 
       <div className="card p-8">
         <h2 className="text-xl font-semibold">Already have an account?</h2>
-        <p className="mt-1 text-sm text-slate-600">Sign in with email and password, or with a one-time email code.</p>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Sign in with email and password, or with a one-time email code.</p>
         <Link href="/login" className="btn-outline mt-4 inline-flex w-full">Sign in →</Link>
       </div>
     </div>

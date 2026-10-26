@@ -195,12 +195,126 @@
   - `src/lib/pages.ts`: Aligned `DEFAULT_PAGES` slug from `'terms-of-service'` to `'terms'`, matching canonical `next.config.mjs` destination.
   - `src/app/p/[slug]/page.tsx`: Added fallback support in `loadPage` for both `'terms'` and `'terms-of-service'`.
   - `features.json`: Tracked FEAT-008 as `done`.
-- **Verification Commands Executed:**
-  - `npm run typecheck`: Passed with exit code `0`.
-  - Direct route validation:
-    - `GET /practice-exams/adc/adc-written-examination-part-1`: 200 OK
-    - `GET /p/terms`: 200 OK
-    - `GET /p/terms-of-service`: 308 Permanent Redirect to `/p/terms`
-  - `npm run check:links`: 56/56 local URLs crawled with 0 failures. Exit code `0`.
+---
 
+## 22. Link Fixes Secured on Main & Exam Engine Hardening Preparation (FEAT-004)
+- **Phase 1 Verification:**
+  - Reviewed commit `ebcd83c` diff across `src/app/page.tsx`, `src/components/footer.tsx`, `src/lib/pages.ts`, and `src/app/p/[slug]/page.tsx`.
+  - Confirmed strictly minimal fixes: 1-line ADC vendor slug correction, 1-line direct `/p/terms` link in footer, 1-line canonical slug alignment in `DEFAULT_PAGES`, and 1-line backward-compatible alias fallback in `loadPage`.
+  - Ran `npm run typecheck` (`tsc --noEmit`): Passed with exit code `0`.
+  - Ran `npm run check:links` (`node scripts/check-local-links.mjs`): 56/56 crawled URLs passed with exit code `0`.
+  - Push status: Clean working tree, commit `ebcd83c` pushed to `origin/main`.
+- **Phase 2 Code Audit:**
+  - Inspected `src/lib/attempts.ts`, `src/app/api/attempts/submit/route.ts`, and `scripts/test-exam-engine.ts`.
+  - Identified edge-case vulnerabilities:
+    - Empty or invalid `correct` key in DB questions allows unanswered (`[]`) questions to evaluate as correct due to `[].length === [].length && [].every(...)`.
+    - Missing questions in DB reduces denominator `total` from `attempt.questionIds.length` to `questions.length`.
+    - Passing boundary calculation at 70% vs rounding rules (`Math.round((correctCount / total) * 100)`).
+  - Drafted test-first plan for pure in-memory unit tests in `scripts/test-exam-scoring-unit.ts`.
+  - Status of `FEAT-004` transitioned to `in_progress` in `features.json`.
+
+---
+
+## 23. Exam Engine Hardening Implementation & Test-First Execution (FEAT-004)
+- **Unit Test Suite Implemented (`scripts/test-exam-scoring-unit.ts`):**
+  - Group 1: Question Types (`SINGLE`, `MULTI`, `ORDERING`, `TRUE_FALSE`) — 10 tests.
+  - Group 2: Unanswered Answers & Malformed Keys — 4 tests.
+  - Group 3: Score Boundaries & Rounding (0%, 50%, 69%, 70%, 100%, rounding cases 2/3, 5/7, 4/7, and empty question set) — 7 tests.
+  - Group 4: Per-Domain Breakdown Integrity — 1 test.
+  - Group 5: Denominator Integrity & Expected Question Count Validation — 3 tests.
+- **Defects Captured & Hardened:**
+  - `isAnswerCorrect` hardened in `src/lib/attempts.ts`:
+    - Guards against non-array candidate answers (`!Array.isArray(answer)`).
+    - Prohibits scoring on empty, null, undefined, or non-array `correct` answer keys (`!Array.isArray(q.correct) || q.correct.length === 0`).
+    - Guarantees set equality without duplicates on `MULTI` questions (`a.size === correct.length`).
+  - `validateAttemptQuestions` implemented in `src/lib/attempts.ts`:
+    - Validates that every ID in `attempt.questionIds` is present in retrieved database questions.
+  - Submission gating in `src/app/api/attempts/submit/route.ts`:
+    - Rejects submission with HTTP 422 if database question retrieval is incomplete, preventing score calculation on corrupted or partial attempts and preserving the attempt record.
+- **Verification Commands Executed:**
+  - `npm run test:scoring`: 25/25 unit tests passed with exit code `0`.
+  - `npm run typecheck`: Passed with exit code `0`.
+
+---
+
+## 24. Study booklets (AI textbook feature)
+- Added Booklet/Chapter/Page/Figure/Item/Progress/Bookmark models (migration `20261021000000_add_study_booklets`), admin import/convert/review/publish UI, student library + six study modes, booklet MCQ practice + timed mock (reuses Attempt/runner/scoring), private figure proxy, entitlement gating via a hidden access Exam.
+- Tests: 25 unit + 27 integration (local PG, mocked Gemini) + 17 HTTP e2e (local dev server) + 25 existing scoring; `npm run typecheck` and `npm run build` pass.
+- Real data: eTG "Local anaesthetics in dentistry" (PDF 58-65) converted into a LOCAL DB as DRAFT (47 items, 10 MCQs, 1 figure, 1 fact-check finding). Not published; licence unconfirmed.
+- Incident: first `prisma migrate deploy` hit the Neon `production` DB (directUrl not overridden) and applied the additive booklet migration there. No data changed.
+
+---
+
+## 25. App-Wide UI Consistency & Design-Token Normalization (FEAT-009)
+- **Feature ID:** `FEAT-009` — status `done`.
+- **Audit method:** 4 parallel Explore code audits (public+auth, user dashboard, exam/results/checkout, admin dashboard) + live browser baseline (desktop 1440×900 screenshots of `/`, homepage footer, `/practice-exams`) before edits.
+- **Design system formalized:** brand teal = brand/CTA color, blue = interactive selection/info accent, green = success, red = error, amber = pending/warning. Marketing/checkout/begin CTAs → `btn-primary-grad`; in-app form/utility primaries → `btn-primary`; secondary → `btn-outline` / new `.btn-sm-outline` (h-8, pairs with `.input-sm`).
+
+### Token fixes (tailwind.config.ts)
+- Completed the brand teal scale: added `200: '#99f6e4'`, `400: '#2dd4bf'`, `950: '#042f2e'`. Pre-existing `dark:bg-brand-950` usages (homepage hero badge etc.) were silently not compiling before this.
+
+### Global (globals.css)
+- Added app-wide `:focus-visible` ring (brand-600/400 + offset) — the app previously had zero keyboard focus styling outside `.input`. Form `.input` keeps its softer focus ring via layer cascade.
+- Added `.btn-sm-outline` utility; raised `.btn-secondary` dark-mode background contrast (brand-900/60).
+- Removed dead `bg-white` on `<body>` (layout.tsx) so the intended `#f7fbfb` tinted base background renders; dark mode unaffected.
+
+### Incidents during this session
+- First version of the `:focus-visible` rule referenced `dark:ring-brand-400/60` but `brand-400` did not exist in the palette → Turbopack marked globals.css unparsable and the dev server 500'd on every page. Root-caused via dev-server log (`The 'dark:ring-brand-400/60' class does not exist`), fixed by completing the brand palette. Server verified healthy (all routes 200) after the fix.
+
+### Files modified (37 source files)
+- Tokens/layout/chrome: `tailwind.config.ts`, `src/app/globals.css`, `src/app/layout.tsx`, `footer.tsx`.
+- Public: `src/app/page.tsx` (emerald→green, teal accents), `practice-exams/page.tsx` + `filters.tsx` (all teal-*→brand-*, removed rounded-xl CTA shape overrides), `practice-exams/[vendor]/[slug]/page.tsx` + `bundle-as-exam-view.tsx` (muted copy dark variants, blue icons→brand).
+- Auth: `login` (dark variants, tab bar dark mode, second h1→h2, submit→btn-primary-grad), `signup`, `forgot-password`, `set-password`, `verify-otp` (dark variants + tracking-tight h1s + grad submits).
+- Exam/results: `exam-runner.tsx` (selected option dark border/ring, Saved indicator green, review modal overlay /60), `results/[attemptId]/page.tsx` + share page (tracking-tight, dark text, badge tones aligned to runner), `review-form-modal.tsx` (card panel, slate-950/60 overlay, icon-btn close, outline cancel, .input textarea), `share-score.tsx`, `share-buttons.tsx` (→btn-sm-outline), `explanation-view.tsx` (emerald/rose→green/red).
+- Checkout: `payment-methods.tsx`, `billing-address-card.tsx` (.input fields, outline cancel, ring-1 selected, green DEFAULT badge), `promo-code.tsx` (btn-sm-outline, green applied chip), `paynow-modal.tsx` (card panel, formatPrice()), `checkout/page.tsx` + `bundle-checkout-client.tsx` + `success/page.tsx` (emerald→green), `processing/page.tsx` (aligned to success/failed status-page layout: card + icon circle + 3xl heading).
+- User dashboard: `attempts`, `orders`, `invoices`, `vouchers` (dark-safe badges/empty states/subtitles, `.badge` shapes, `btn-sm-outline` PDF button), `page.tsx` (h1 2xl, green stat accent), `exams`, `settings`, `user-chrome.tsx`, `my-exams-list.tsx` (Open CTAs → btn-primary-grad), `study/page.tsx` + `[booklet]/page.tsx` + `[chapter]/page.tsx` (tracking-tight h1s, blue link tokens unified to 600/400, unlock banner unified, membership pill → badge-brand, p-8 empty states), `booklet/client.tsx` (ModeCompleteButton → grad, dark hovers), `booklet/toc.tsx` (.card dedupe, h-2 progress bars, green badge tones, removed bespoke blue focus ring), `booklet/admin-client.tsx` (dark variants on all badges/AI-issue cards, .input file input, muted text).
+- Admin: `admin-chrome.tsx` (sidebar active blue→brand), `filter-bar.tsx` (Apply blue→brand — propagates to every filtered page), 18 admin pages/clients (blue-600 & emerald-600 solids → brand-700/800, rose→red, violet→blue, `text-2xl font-bold` h1s → PageHeader scale `text-xl font-semibold tracking-tight`, missing dark variants on badges/muted text/links, vouchers grad row-actions → btn-primary, section-form.tsx settings input → `.input`).
+- Lint blocker fixed (pre-existing, in uncommitted booklet work): `figure-storage.ts` `useR2()` → `shouldUseR2()` (rules-of-hooks false positive).
+
+### Verification commands executed
+- `npm run typecheck`: PASS (0 errors).
+- `npm run lint`: 0 errors, 21 pre-existing warnings (react-hooks/set-state-in-effect etc.).
+- Route smoke tests (`curl` against `npm run dev -- -p 3040`): `/`, `/practice-exams`, `/login`, `/signup`, `/forgot-password`, `/verify-otp`, `/vendors`, `/p/terms`, `/p/refund-policy`, `/bundles/adc-written-exam-prep-bundle`, `/checkout/processing` all 200; `/user-dashboard`, `/admin-dashboard` 307 (auth redirect, expected).
+- Compiled dev CSS inspected: no `unparsable` markers; `brand-950`, `focus-visible`, `btn-sm-outline` utilities present.
+
+### Known deferred items
+- Hand-rolled admin tables (questions, pages, vendors, booklets, api-tokens, reports/revenue, admins) not migrated to shared `DataTable` — functional refactor, left for a dedicated session.
+- Post-fix screenshot re-verification pending: the ZCode browser bridge (DeferredToolCall) broke mid-session with a harness-side validation error and could not be used for the final visual pass. Baseline screenshots were captured pre-fix; changes are class-level normalizations verified via typecheck/lint/CSS/route checks. Recommend a quick light+dark visual pass at 1440×900 and 390×844 next session.
+- WhatsApp/social-login brand hexes intentionally kept (third-party brand colors).
+- Exam runner: header "Submit exam" stays `btn-primary-grad` vs footer "Next" `btn-primary` — deliberate high-stakes emphasis.
+
+### Follow-up fix (2026-10-27): React 19 hydration warning on theme-init script
+- **Symptom:** console error on client render — "Encountered a script tag while rendering React component… never executed when rendering on the client", pointing at `<Script id="theme-init" strategy="beforeInteractive">` in `src/app/layout.tsx`.
+- **Cause:** `next/script` renders an inline child script during client hydration; React 19 refuses to execute script tags rendered by client components (browser-consistent, since the server already ran it from SSR HTML).
+- **Fix:** replaced the `next/script` component with a raw inline `<script dangerouslySetInnerHTML>` as the first child of `<body>` — the same warning-free pattern the JSON-LD script below it already used. Execution timing is unchanged (inline body scripts run synchronously before any content paints, so the no-flash theme behavior is preserved). The Plausible `next/script` usage (external `src`, `afterInteractive`) is correct and untouched.
+- **Verified:** `npm run typecheck` passes; `/` and `/practice-exams` serve 200 with `<script id="theme-init">` present in the SSR HTML; zero `beforeInteractive` remnants.
+
+---
+
+## 26. Booklet Access-Policy Change: License Flag Decoupled from Student Visibility
+- **Directive:** paid eligible users must reach booklets designated for them without an additional licensing-confirmation gate on visibility; licensing stays a publication safeguard.
+- **Audit result — every gate found (`src/lib/booklet/`):**
+  - Student-visibility gates that checked `licenseConfirmed` (3, all removed): `access.ts isChapterLive` (line 12), `queries.ts loadLibrary` where-clause (line 61), `queries.ts loadBookletForStudent` early-return (line 97).
+  - Publication safeguards KEPT (mandatory): `chapterPublishBlockers` requires licence confirmation + named clinical reviewer + no DRAFT items + no unresolved high-severity issues; `admin-actions.updateBooklet` requires a licence note to confirm, refuses unnoted confirmations, and reverts booklet status to DRAFT when licensing is revoked; chapter publish/booklet publish gates unchanged.
+  - Gates that were never license-related and are unchanged: publication status (`PUBLISHED` + chapter `publishedAt`), clinical review (`reviewStatus APPROVED`, APPROVED items only, approved figures only, PUBLISHED MCQs only), auth (`login-required`), entitlement tiers PRACTICE/BUNDLE/VOUCHER/ADMIN_GRANT with active `expiresAt` (incl. ADC-PART1 code + published-bundle siblings), free-preview (`isFreePreview`, signed-in), admin bypass. All student APIs (attempts, figures proxy, page inspector, progress, bookmarks) route through `decideAccess`/`resolveViewer` — no API bypasses the policy.
+- **eTG booklet `tg-oral-dental` (read-only inspection via `scripts/inspect-etg-readonly.ts`, local DB):** status DRAFT, `licenseConfirmed: false` (note: "we are serving for limited people" — not valid licensing evidence), all **42 chapters** `reviewStatus: DRAFT` with no named reviewer and `publishedAt: null`, **1924/1924 items DRAFT**, 420 MCQ rows, 111 figures, 357 page records. Unavailable to students for reasons entirely independent of the visibility gate: DRAFT booklet + unreviewed/unpublished chapters. Removing the visibility gate does NOT change its availability. Its status/flags/chapters/content were NOT modified.
+- **Test updates:** `scripts/test-booklet-unit.ts` now asserts the new policy (unlicensed-but-published chapters visible; entitled student passes with flag off; unreviewed chapter still not live); `scripts/test-booklet-integration.ts` adds "licence flag alone does not gate student visibility of a published booklet" (direct-DB PUBLISHED+flag-off state → entitled access ok; DRAFT+flag-on still hidden) and renames the draft-booklet test; `scripts/test-booklet-http.ts` adds the same policy check over HTTP with restore-in-finally.
+- **Pre-existing test bug fixed:** the free-preview library badge mixed static JSX text with expressions, so React SSR emitted `Free Preview · <!-- -->1<!-- --> Chapter Free` and the HTTP regex could never match. Badge now renders a single template-literal text node (`src/app/user-dashboard/study/page.tsx`).
+- **Test-environment note:** the HTTP suite's 503 no-credentials check fails if Vertex AI env vars (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_APPLICATION_CREDENTIALS`, `GEMINI_API_KEY`) are set — they are now set in `.env` from the booklet pilot. The suite was run with those vars emptied at the shell level (NOT by editing `.env`), matching the suite's documented no-Gemini contract. No real Gemini/Vertex call was made (verified: conversion failed fast at text extraction on the synthetic PDF).
+- **Verification:** `npm run test:booklet` 27/27 ✓ · `npx tsx scripts/test-booklet-integration.ts` 37/37 ✓ (throwaway `booklet_test` DB) · HTTP e2e 21/21 ✓ (dev server 3041 on throwaway DB) · `npm run typecheck` clean. Dev DB (`adc_local`) untouched except read-only SELECTs; production/Neon never connected to.
+
+---
+
+## 27. Booklet Access Approval & Complete UI Polish (FEAT-010)
+- **Phase 1/2 (paid access re-verified in current code):** the only `licenseConfirmed` references left in `src/lib/booklet/` are the type field and `chapterPublishBlockers` (publication safeguard). Student visibility, library listing, chapter reader, and every student API route (attempts/figures/page-inspector/progress/bookmarks) resolve through the shared `decideAccess`/`resolveViewer`/`hasBookletEntitlement` helpers — entitlement tiers PRACTICE/BUNDLE/VOUCHER/ADMIN_GRANT (incl. ADC-PART1 + published-bundle siblings) with active `expiresAt`. No further gate removal was needed; no gate was weakened this session.
+- **Phase 3 (eTG `tg-oral-dental`, read-only re-inspection):** STILL status `DRAFT`, `licenseConfirmed: false` (note "we are serving for limited people" — not valid licensing evidence), all **42 chapters** `reviewStatus: DRAFT` with no named reviewer and `publishedAt: null`, 1,924/1,924 items DRAFT. Per the directive, the publication/clinical-review safeguards were NOT bypassed: the booklet was not published, no chapter was bulk-approved, no licensing flag was changed, and no licensing evidence was invented. **Remaining blocker for paid visibility: the publication workflow (booklet DRAFT + unreviewed/unpublished chapters + unconfirmed licensing).** The redesigned UI will surface the booklet automatically for paid users once it is published through the existing workflow.
+- **Phase 4 (UI redesign, design-system reuse only):**
+  - `src/components/booklet/library-browser.tsx` (NEW, client): compact search, access-filter pills with counts (All/Full Access/Free preview/Purchase required), redesigned booklet cards (title, status badge preserving exact test strings `Full Access` / `Free Preview · N Chapter(s) Free`, publisher·edition line, 2-line description, progress bar only when progress exists, contextual CTA: Start reading / Continue learning / Review chapters, chapter count). Empty/no-match states.
+  - `src/app/user-dashboard/study/page.tsx` (rewrite): title + tightened description, enrolled pill, single compact unlock banner (non-entitled only, heading preserved for tests), data shaping (edition extraction, access state, CTA) into serializable cards.
+  - `src/components/booklet/toc.tsx` (rewrite): polished collapsible sections (brand index chip, chapter/PDF-range/completed meta, mini progress), chapter rows with current-chapter highlight + "Current" badge, completed/locked/free-preview states, in-chapter progress bar only when started; explicit note that section groupings are reconstructed, not the publisher's original TOC; NEW `ChapterRail` compact sidebar for the reader.
+  - `src/app/user-dashboard/study/[booklet]/page.tsx` (rewrite): breadcrumb back-link, header with publisher + real completion count, description column, admin-preview notice, two-card row (mock test + access summary with per-count unlock CTA), polished TOC.
+  - `src/app/user-dashboard/study/[booklet]/[chapter]/page.tsx` (rewrite): full breadcrumbs (Study Library › booklet › chapter), sticky study-mode pill bar under the site header, `max-w-3xl` reading column, brand-accented concept chips, XL two-column layout with sticky `ChapterRail`, previous/next chapter navigation across chapters the viewer can open, polished locked state (keeps asserted "Unlock this booklet"), icon empty state, bookmarks aside preserved.
+- **Clinical content untouched:** no source text, doses, warnings, page mappings, or figures were modified — styling and layout only.
+- **Tests:** `scripts/test-booklet-integration.ts` adds "hierarchy groups cover every chapter exactly once (no duplicates or omissions)" (5-chapter booklet → flat hierarchy = 5 unique); `scripts/inspect-toc-readonly.ts` (NEW, read-only) verified the real eTG booklet: **42 chapters → 9 groups → 42 flattened, 42 unique ids, zero unmatched**.
+- **Verification:** `npm run typecheck` clean ✓ · `npm run test:booklet` 27/27 ✓ · integration **38/38** ✓ · HTTP e2e **21/21** ✓ (throwaway DB + dev server 3041, Gemini vars emptied at shell) · `npm run lint` 0 errors (24 pre-existing warnings) · **`npm run build` succeeded** (all study routes compiled dynamic). Database: only read-only SELECTs on the local dev DB; no migrations, no production contact, no payment/pricing changes, no licensing/publication flag changes.
 

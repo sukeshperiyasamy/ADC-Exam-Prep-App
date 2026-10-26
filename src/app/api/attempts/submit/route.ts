@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
-import { scoreAttempt, type Responses } from '@/lib/attempts';
+import { scoreAttempt, validateAttemptQuestions, type Responses } from '@/lib/attempts';
 
 const Body = z.object({ attemptId: z.string() });
 
@@ -26,6 +26,19 @@ export async function POST(req: Request) {
     where: { id: { in: attempt.questionIds } },
     select: { id: true, type: true, correct: true, domain: true }
   });
+
+  const validation = validateAttemptQuestions(attempt.questionIds, questions);
+  if (!validation.valid) {
+    console.error(`[Attempt Submit] Incomplete questions for attempt ${attemptId}: missing ${validation.missingIds.join(', ')}`);
+    return NextResponse.json(
+      {
+        error: 'Incomplete question set retrieved for attempt',
+        missingQuestionIds: validation.missingIds
+      },
+      { status: 422 }
+    );
+  }
+
   const responses = (attempt.responses as Responses) || {};
   const { score } = scoreAttempt(questions, responses);
   const passed = score >= attempt.exam.passingScore;

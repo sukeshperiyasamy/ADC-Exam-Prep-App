@@ -21,7 +21,7 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
 
   const attempt = await db.attempt.findUnique({
     where: { id: attemptId },
-    include: { exam: { include: { vendor: true } } }
+    include: { exam: { include: { vendor: true, booklet: { select: { slug: true } } } } }
   });
   if (!attempt) notFound();
   if (attempt.userId) {
@@ -54,15 +54,15 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
     <div className="container-app py-10">
       <div className="card p-8 text-center">
         <p className="text-sm text-slate-500">{attempt.exam.vendor.name} · {attempt.exam.code}</p>
-        <h1 className="mt-1 text-3xl font-bold">{attempt.exam.title}</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight">{attempt.exam.title}</h1>
         <div className={`mt-6 inline-flex flex-col items-center rounded-full ${passed ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300' : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-300'} px-8 py-6`}>
           <span className="text-5xl font-bold">{score}%</span>
           <span className="text-sm font-semibold uppercase tracking-wide">{passed ? 'Pass' : 'Did not pass'}</span>
         </div>
-        <p className="mt-4 text-slate-600">{correctCount} correct out of {total} · pass mark {attempt.exam.passingScore}%</p>
+        <p className="mt-4 text-slate-600 dark:text-slate-200">{correctCount} correct out of {total} · pass mark {attempt.exam.passingScore}%</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link href="/user-dashboard" className="btn-outline">My Content</Link>
-          <Link href={`/practice-exams/${attempt.exam.vendor.slug}/${attempt.exam.slug}`} className="btn-primary-grad">Back to exam</Link>
+          <Link href={attempt.exam.booklet ? `/user-dashboard/study/${attempt.exam.booklet.slug}` : `/practice-exams/${attempt.exam.vendor.slug}/${attempt.exam.slug}`} className="btn-primary-grad">{attempt.exam.booklet ? 'Back to booklet' : 'Back to exam'}</Link>
           {canReview && (
             <ReviewFormModal
               examId={attempt.examId}
@@ -132,7 +132,7 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
               <div className="mb-2 flex items-center gap-2 text-xs">
                 <span className="badge">Q{i + 1}</span>
                 <span className="badge">{q.domain}</span>
-                <span className={`badge ${correct ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200'}`}>{correct ? 'Correct' : 'Incorrect'}</span>
+                <span className={`badge ${correct ? 'bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300' : 'bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-300'}`}>{correct ? 'Correct' : 'Incorrect'}</span>
               </div>
               <QuestionStemView stem={q.stem} className="my-2" />
               {q.type === 'ORDERING' ? (
@@ -150,7 +150,7 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
                         const o = byId.get(id);
                         const right = correctIds[oi] === id;
                         return (
-                          <li key={`${oi}-${id}`} className={`rounded px-3 py-1 ${right ? 'bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-200' : 'bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-200'}`}>
+                          <li key={`${oi}-${id}`} className={`rounded px-3 py-1 ${right ? 'bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300' : 'bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-300'}`}>
                             <span className="font-semibold">{oi + 1}.</span> {o?.text ?? <em>no answer</em>}
                             {!right && (
                               <span className="ml-2 text-xs opacity-80">
@@ -172,7 +172,7 @@ export default async function ResultsPage({ params }: { params: Promise<{ attemp
                   const sel = ans.includes(o.id);
                   const isC = correctIds.includes(o.id);
                   return (
-                    <li key={`${oi}-${o.id}`} className={`rounded px-3 py-1 ${isC ? 'bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-200' : sel ? 'bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-200' : 'text-slate-700 dark:text-slate-300'}`}>
+                    <li key={`${oi}-${o.id}`} className={`rounded px-3 py-1 ${isC ? 'bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300' : sel ? 'bg-red-50 text-red-800 dark:bg-red-950/40 dark:text-red-300' : 'text-slate-700 dark:text-slate-300'}`}>
                       {sel ? '● ' : '○ '}{o.text}{isC ? ' ✓' : ''}
                     </li>
                   );

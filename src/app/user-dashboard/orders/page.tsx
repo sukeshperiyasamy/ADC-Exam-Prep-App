@@ -25,8 +25,8 @@ export default async function MyOrdersPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Orders & billing</h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <h1 className="text-2xl font-bold tracking-tight">Orders & billing</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Your purchase history. PDFs for voucher orders are available below.
       </p>
 
@@ -59,12 +59,12 @@ export default async function MyOrdersPage() {
                 <span
                   className={`badge ${
                     o.status === 'PAID'
-                      ? 'bg-emerald-100 text-emerald-800'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300'
                       : o.status === 'FAILED'
-                      ? 'bg-red-100 text-red-800'
+                      ? 'bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-300'
                       : o.status === 'REFUNDED'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-slate-100 text-slate-700'
+                      ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300'
+                      : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
                   }`}
                 >
                   {o.status}
@@ -74,7 +74,7 @@ export default async function MyOrdersPage() {
           );
         })}
         {orders.length === 0 && (
-          <p className="p-6 text-center text-sm text-slate-500">
+          <p className="p-8 text-center text-sm text-slate-500 dark:text-slate-400">
             No orders yet.{' '}
             <Link href="/practice-exams" className="text-blue-600 hover:underline dark:text-blue-400">
               Browse exams →

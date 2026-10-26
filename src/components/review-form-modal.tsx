@@ -60,14 +60,14 @@ export function ReviewFormModal({
         {trigger ?? <span className="btn-outline">Write a review</span>}
       </button>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4" onClick={() => !busy && setOpen(false)}>
-          <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-xl dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" onClick={() => !busy && setOpen(false)}>
+          <div className="card w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
             <div className="mb-3 flex items-start justify-between">
               <div>
                 <h2 className="font-semibold">Review {examTitle}</h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400">Reviews are moderated before they appear publicly.</p>
               </div>
-              <button type="button" onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-700"><X className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setOpen(false)} className="icon-btn"><X className="h-4 w-4" /></button>
             </div>
 
             {existing?.status === 'PENDING' && (
@@ -111,15 +111,15 @@ export function ReviewFormModal({
               onChange={(e) => setBody(e.target.value)}
               rows={4}
               maxLength={2000}
-              className="mt-1 w-full rounded-md border border-slate-200 bg-white p-2 text-sm dark:border-slate-700 dark:bg-slate-950"
+              className="input mt-1"
               placeholder="What did you like or wish was different?"
             />
 
-            {err && <p className="mt-2 text-xs text-rose-600">{err}</p>}
-            {ok && <p className="mt-2 text-xs text-emerald-600">Submitted — pending moderation.</p>}
+            {err && <p className="mt-2 text-xs text-red-600">{err}</p>}
+            {ok && <p className="mt-2 text-xs text-green-600">Submitted — pending moderation.</p>}
 
             <div className="mt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setOpen(false)} className="btn-ghost">Cancel</button>
+              <button type="button" onClick={() => setOpen(false)} className="btn-outline">Cancel</button>
               <button type="button" disabled={busy} onClick={submit} className="btn-primary inline-flex items-center gap-1.5">
                 {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
                 Submit review

@@ -86,7 +86,7 @@ export function MyExamsList({ items, cols = 2 }: { items: MyExamsListItem[]; col
                         </div>
                         <Link
                           href={`/practice-exams/${row.vendorSlug}/${row.examSlug}`}
-                          className="btn-secondary shrink-0 text-xs"
+                          className="btn-primary-grad shrink-0 text-xs"
                         >
                           Open
                         </Link>
@@ -106,11 +106,7 @@ export function MyExamsList({ items, cols = 2 }: { items: MyExamsListItem[]; col
             <div className="mb-2 flex flex-wrap items-center gap-1.5 text-xs">
               <span className="badge-brand">{e.vendorName}</span>
               <span className="badge">{e.examCode}</span>
-              <span
-                className={`badge ${
-                  'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'
-                }`}
-              >
+              <span className="badge bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
                 Practice access
               </span>
             </div>
@@ -121,7 +117,7 @@ export function MyExamsList({ items, cols = 2 }: { items: MyExamsListItem[]; col
             <div className="mt-auto pt-3">
               <Link
                 href={`/practice-exams/${e.vendorSlug}/${e.examSlug}`}
-                className="btn-secondary w-full text-sm"
+                className="btn-primary-grad w-full text-sm"
               >
                 Open exam
               </Link>

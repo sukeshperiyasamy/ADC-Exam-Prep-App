@@ -63,7 +63,7 @@ export default async function BundleCheckoutPage({
             <div className="mb-1 flex flex-wrap items-center gap-2 text-xs">
               {vendor && <span className="badge-brand">{vendor.name}</span>}
               {firstCode && <span className="badge">{firstCode}</span>}
-              <span className={`badge ${hasVoucher ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'}`}>
+              <span className={`badge ${hasVoucher ? 'bg-green-50 text-green-700 dark:bg-green-950/40 dark:text-green-300' : 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300'}`}>
                 {hasVoucher ? 'Exam Voucher tier' : 'Practice Exam tier'}
               </span>
             </div>
@@ -86,11 +86,11 @@ export default async function BundleCheckoutPage({
                 </li>
               ))}
               {hasVoucher && (
-                <li className="flex items-start gap-3 rounded-md bg-emerald-50 p-3 dark:bg-emerald-950/30">
-                  <Ticket className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                <li className="flex items-start gap-3 rounded-md bg-green-50 p-3 dark:bg-green-950/30">
+                  <Ticket className="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
                   <div className="flex-1">
-                    <div className="font-medium text-emerald-900 dark:text-emerald-100">Real {firstCode || 'exam'} voucher</div>
-                    <div className="text-xs text-emerald-800/80 dark:text-emerald-200/80">Delivered by email within 3–5 business days. Redeem with the official vendor for the real cert exam.</div>
+                    <div className="font-medium text-green-900 dark:text-green-100">Real {firstCode || 'exam'} voucher</div>
+                    <div className="text-xs text-green-800/80 dark:text-green-200/80">Delivered by email within 3–5 business days. Redeem with the official vendor for the real cert exam.</div>
                   </div>
                 </li>
               )}
@@ -101,7 +101,7 @@ export default async function BundleCheckoutPage({
                 {totalQuestions} questions across {displayedPractice.length} practice exam{displayedPractice.length === 1 ? '' : 's'}
               </div>
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
                 Lifetime access
               </div>
             </div>

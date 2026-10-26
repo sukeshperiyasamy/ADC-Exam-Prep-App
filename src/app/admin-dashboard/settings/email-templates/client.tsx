@@ -263,7 +263,7 @@ function ExpandedEditor({
           {saving ? 'Saving…' : 'Save'}
         </button>
         {row.customized && (
-          <button type="button" onClick={resetToDefault} className="text-sm text-rose-600 hover:underline">
+          <button type="button" onClick={resetToDefault} className="text-sm text-red-600 hover:underline">
             Reset to default
           </button>
         )}

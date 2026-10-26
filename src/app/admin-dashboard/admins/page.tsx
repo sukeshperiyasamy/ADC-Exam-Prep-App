@@ -47,7 +47,7 @@ export default async function AdminAdminsPage() {
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold">Admins</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Admins</h1>
         <div className="text-xs text-slate-500">
           {superAdmin
             ? `Signed in as super admin (${SUPER_ADMIN_EMAIL})`

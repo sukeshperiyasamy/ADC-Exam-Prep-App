@@ -112,7 +112,7 @@ export default function EditorClient({ templateKey, initial, defaults, sampleVar
               Refresh preview
             </button>
             {initial.customized && (
-              <button type="button" onClick={resetToDefault} className="text-sm text-rose-600 hover:underline">
+              <button type="button" onClick={resetToDefault} className="text-sm text-red-600 hover:underline">
                 Reset to default
               </button>
             )}
@@ -150,7 +150,7 @@ export default function EditorClient({ templateKey, initial, defaults, sampleVar
 
       <div className="card p-4">
         <h3 className="text-sm font-semibold">Preview</h3>
-        {previewError && <p className="mt-2 text-sm text-rose-600">{previewError}</p>}
+        {previewError && <p className="mt-2 text-sm text-red-600">{previewError}</p>}
         {preview && (
           <>
             <p className="mt-2 text-xs text-slate-500">Subject: <span className="text-slate-800 dark:text-slate-200">{preview.subject}</span></p>

@@ -26,7 +26,7 @@ export default async function AdminPagesPage() {
     <div>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Pages</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Pages</h1>
           <p className="mt-1 text-sm text-slate-500">
             Static content pages (Terms, Privacy, FAQ, etc.). Footer-visible pages appear in the site footer.
           </p>
@@ -61,7 +61,7 @@ export default async function AdminPagesPage() {
               <tr key={p.id}>
                 <td className="px-4 py-3 font-medium">{p.title}</td>
                 <td className="px-4 py-3 text-xs">
-                  <Link href={`/p/${p.slug}`} target="_blank" className="text-blue-600 hover:underline">/p/{p.slug}</Link>
+                  <Link href={`/p/${p.slug}`} target="_blank" className="text-blue-600 hover:underline dark:text-blue-400">/p/{p.slug}</Link>
                 </td>
                 <td className="px-4 py-3 text-xs">
                   {p.showInFooter ? (
@@ -79,7 +79,7 @@ export default async function AdminPagesPage() {
                 </td>
                 <td className="px-4 py-3 text-xs text-slate-500">{new Date(p.updatedAt).toLocaleString()}</td>
                 <td className="px-4 py-3 text-right">
-                  <Link href={`/admin-dashboard/pages/${p.id}`} className="text-sm text-blue-600 hover:underline">Edit →</Link>
+                  <Link href={`/admin-dashboard/pages/${p.id}`} className="text-sm text-blue-600 hover:underline dark:text-blue-400">Edit →</Link>
                 </td>
               </tr>
             ))}

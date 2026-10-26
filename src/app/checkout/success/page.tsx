@@ -38,7 +38,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
   return (
     <div className="container-app max-w-xl py-20">
       <div className="card p-10 text-center">
-        <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400">
+        <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600 dark:bg-green-950/40 dark:text-green-400">
           <Check className="h-8 w-8" />
         </div>
         <h1 className="text-3xl font-bold tracking-tight">Payment successful</h1>
@@ -96,7 +96,7 @@ export default async function SuccessPage({ searchParams }: { searchParams: Sear
           </div>
           {hasVoucher && (
             <div className="flex items-start gap-2">
-              <Ticket className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <Ticket className="mt-0.5 h-4 w-4 shrink-0 text-green-600 dark:text-green-400" />
               <span className="text-slate-700 dark:text-slate-300">
                 Your exam voucher code arrives by email within <b>3–5 business days</b>.
               </span>

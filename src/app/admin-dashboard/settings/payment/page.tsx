@@ -25,7 +25,7 @@ export default async function PaymentSettingPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Payment Setting</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Payment Setting</h1>
       <p className="mt-1 text-sm text-slate-500">
         Configure each payment provider, their credentials, and fulfillment timing for voucher delivery. Not sure where a
         value comes from? Follow the step-by-step{' '}

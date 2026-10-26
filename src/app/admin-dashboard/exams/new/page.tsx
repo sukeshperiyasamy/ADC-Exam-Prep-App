@@ -53,7 +53,7 @@ export default async function NewExamPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Create Exam</h1>
+        <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Create Exam</h1>
         <Link href="/admin-dashboard/exams" className="btn-ghost text-sm">← Back to list</Link>
       </div>
 

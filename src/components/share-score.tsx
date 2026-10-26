@@ -31,7 +31,7 @@ export function ShareScore({
   return (
     <div className="mt-6 card p-5">
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
-        <Share2 className="h-4 w-4 text-blue-600" />
+        <Share2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
         Share your result
       </div>
       <p className="mb-3 text-xs text-slate-500 dark:text-slate-300">

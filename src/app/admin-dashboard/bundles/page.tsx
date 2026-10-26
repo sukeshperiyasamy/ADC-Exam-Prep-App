@@ -391,7 +391,7 @@ export default async function AdminBundlesPage({ searchParams }: { searchParams:
         title="View Bundled Exams"
         subtitle={`${total} bundle${total === 1 ? '' : 's'}${pages > 1 ? ` · page ${page} of ${pages}` : ''}`}
         actions={
-          <Link href="/admin-dashboard/bundles/new" className="btn-sm bg-blue-600 text-white hover:bg-blue-700">
+          <Link href="/admin-dashboard/bundles/new" className="btn-sm bg-brand-700 text-white hover:bg-brand-800">
             + Create Bundle
           </Link>
         }
@@ -404,7 +404,7 @@ export default async function AdminBundlesPage({ searchParams }: { searchParams:
         {(
           [
             { key: 'active', label: 'Published', count: trkPublished, href: trkHref('active'), on: view === 'active', dot: 'bg-emerald-500' },
-            { key: 'inactive', label: 'Draft', count: trkDraft, href: trkHref('inactive'), on: view === 'inactive', dot: 'bg-rose-500' }
+            { key: 'inactive', label: 'Draft', count: trkDraft, href: trkHref('inactive'), on: view === 'inactive', dot: 'bg-red-500' }
           ] as const
         ).map((c) => (
           <Link
@@ -471,7 +471,7 @@ export default async function AdminBundlesPage({ searchParams }: { searchParams:
           type="submit"
           name="op"
           value="publish"
-          className="btn-sm bg-emerald-600 text-white hover:bg-emerald-700"
+          className="btn-sm bg-brand-700 text-white hover:bg-brand-800"
         >
           Publish
         </button>

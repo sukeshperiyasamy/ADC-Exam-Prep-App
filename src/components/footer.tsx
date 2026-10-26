@@ -67,7 +67,7 @@ function Contact({
           href={href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noopener noreferrer' : undefined}
-          className={`inline-flex items-start gap-2 rounded-sm underline decoration-slate-400/60 underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${linkClass}`}
+          className={`inline-flex items-start gap-2 rounded-sm underline decoration-slate-400/60 underline-offset-2 ${linkClass}`}
         >
           <Icon className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
           <span>{children}</span>

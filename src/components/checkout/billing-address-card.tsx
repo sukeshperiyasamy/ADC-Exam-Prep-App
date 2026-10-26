@@ -93,11 +93,11 @@ export function BillingAddressCard({ selectedId, onSelect }: Props) {
           <Field label="Country (ISO-2, e.g. SG)" value={form.country} onChange={(v) => setForm({ ...form, country: v })} required maxLength={2} />
           <Field label="Phone (optional)" value={form.phone ?? ''} onChange={(v) => setForm({ ...form, phone: v })} className="sm:col-span-2" />
         </div>
-        {err && <p className="mt-2 text-sm text-rose-600">{err}</p>}
+        {err && <p className="mt-2 text-sm text-red-600">{err}</p>}
         <div className="mt-3 flex gap-2">
           <button type="button" onClick={save} disabled={saving} className="btn-primary">{saving ? 'Saving…' : 'Save address'}</button>
           {addresses.length > 0 && (
-            <button type="button" onClick={() => { setEditing(false); setErr(''); }} className="rounded border border-slate-300 px-3 py-1.5 text-sm dark:border-slate-700">
+            <button type="button" onClick={() => { setEditing(false); setErr(''); }} className="btn-outline">
               Cancel
             </button>
           )}
@@ -113,7 +113,7 @@ export function BillingAddressCard({ selectedId, onSelect }: Props) {
         <button
           type="button"
           onClick={() => { setEditing(true); setForm(EMPTY); }}
-          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
+          className="inline-flex items-center gap-1 text-sm text-blue-600 hover:underline dark:text-blue-400"
         >
           <Plus className="h-3.5 w-3.5" /> Add new
         </button>
@@ -126,7 +126,7 @@ export function BillingAddressCard({ selectedId, onSelect }: Props) {
               <button
                 type="button"
                 onClick={() => onSelect(a.id)}
-                className={`flex w-full items-start gap-3 rounded-md border p-3 text-left text-sm ${selected ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30' : 'border-slate-200 hover:border-slate-300 dark:border-slate-700'}`}
+                className={`flex w-full items-start gap-3 rounded-md border p-3 text-left text-sm transition ${selected ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/40' : 'border-slate-200 hover:border-slate-300 dark:border-slate-700'}`}
               >
                 <div className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${selected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-300 dark:border-slate-600'}`}>
                   {selected && <Check className="h-3 w-3" />}
@@ -138,7 +138,7 @@ export function BillingAddressCard({ selectedId, onSelect }: Props) {
                     {a.phone ? ` · ${a.phone}` : ''}
                   </div>
                 </div>
-                {a.isDefault && <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">DEFAULT</span>}
+                {a.isDefault && <span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-800 dark:bg-green-950/50 dark:text-green-300">DEFAULT</span>}
               </button>
             </li>
           );
@@ -158,7 +158,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         maxLength={maxLength}
-        className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900"
+        className="input"
       />
     </label>
   );

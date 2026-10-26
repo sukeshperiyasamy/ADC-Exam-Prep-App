@@ -231,7 +231,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                       <span className="ml-2 text-slate-500">{e.exam.title}</span>
                       <span className="ml-2 text-[10px] text-slate-400">{e.tier}</span>
                       {e.voucher && (
-                        <span className="ml-2 rounded bg-violet-100 px-1.5 py-0.5 font-mono text-[10px] text-violet-800 dark:bg-violet-950/40 dark:text-violet-200">
+                        <span className="ml-2 rounded bg-blue-100 px-1.5 py-0.5 font-mono text-[10px] text-blue-800 dark:bg-blue-950/40 dark:text-blue-200">
                           {e.voucher}
                         </span>
                       )}
@@ -354,7 +354,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                     className={`absolute -left-1.5 mt-1 inline-block h-3 w-3 rounded-full ${
                       e.kind === 'refund' ? 'bg-amber-500' :
                       e.kind === 'admin' ? 'bg-blue-500' :
-                      e.kind === 'webhook' ? 'bg-violet-500' : 'bg-emerald-500'
+                      e.kind === 'webhook' ? 'bg-blue-500' : 'bg-emerald-500'
                     }`}
                   />
                   <div className="text-[12px] text-slate-700 dark:text-slate-200">{e.title}</div>

@@ -152,7 +152,7 @@ export default function HomePage() {
               {/* Interface Header Bar */}
               <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-4 py-3 dark:border-slate-800 dark:bg-slate-950/60 rounded-t-2xl">
                 <div className="flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                     ADC Part 1 Simulation
                   </span>
@@ -203,7 +203,7 @@ export default function HomePage() {
                     </span>
                     <div className="flex-1">
                       <span className="font-semibold">Reassurance, soft diet, and conservative stabilization splint evaluation</span>
-                      <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 dark:text-emerald-400">
+                      <span className="ml-2 inline-flex items-center gap-1 text-[10px] font-bold text-green-700 dark:text-green-400">
                         <Check className="h-3 w-3" /> Recommended
                       </span>
                     </div>
@@ -407,7 +407,7 @@ export default function HomePage() {
       {/* 04 · FEATURED PREPARATION BUNDLE & PRICING */}
       <section id="pricing" className="container-app py-16 md:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-800 dark:border-green-800 dark:bg-green-950/40 dark:text-green-300">
             <Lock className="h-3 w-3" /> Transparent INR Pricing · No Subscriptions
           </div>
           <h2 className="mt-3 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl dark:text-white">
@@ -507,13 +507,13 @@ export default function HomePage() {
           {/* Trust Guarantee Footnote */}
           <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
             <span className="inline-flex items-center gap-1.5">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" /> Secure INR Checkout via Stripe
+              <ShieldCheck className="h-4 w-4 text-green-600 dark:text-green-400" /> Secure INR Checkout via Stripe
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Check className="h-4 w-4 text-emerald-600" /> Cards, UPI & Netbanking
+              <Check className="h-4 w-4 text-green-600 dark:text-green-400" /> Cards, UPI & Netbanking
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Shield className="h-4 w-4 text-emerald-600" /> 7-Day Money-Back Guarantee
+              <Shield className="h-4 w-4 text-green-600 dark:text-green-400" /> 7-Day Money-Back Guarantee
             </span>
           </div>
         </div>

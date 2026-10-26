@@ -79,9 +79,9 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
     <div className="container-app py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(productJsonLd) }} />
       <div className="mb-2 text-sm">
-        <Link href="/practice-exams" className="text-blue-600 hover:underline">All exams</Link>
+        <Link href="/practice-exams" className="text-blue-600 hover:underline dark:text-blue-400">All exams</Link>
         <span className="text-slate-400"> / </span>
-        <Link href={`/practice-exams/${vendor.slug}`} className="text-blue-600 hover:underline">{vendor.name}</Link>
+        <Link href={`/practice-exams/${vendor.slug}`} className="text-blue-600 hover:underline dark:text-blue-400">{vendor.name}</Link>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -92,7 +92,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
             <span className="badge">{first.level}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight">{bundle.title}</h1>
-          <p className="mt-2 text-slate-600 dark:text-slate-100">{bundle.description}</p>
+          <p className="mt-2 text-slate-600 dark:text-slate-300">{bundle.description}</p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <Stat icon={BookOpen} label="Questions" value={`${first.questionCount}`} />
@@ -102,14 +102,14 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <div className="card p-5">
-              <BookOpenCheck className="h-6 w-6 text-blue-600" />
+              <BookOpenCheck className="h-6 w-6 text-brand-600 dark:text-brand-400" />
               <h3 className="mt-3 font-semibold">Practice mode</h3>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-100">See the correct answer and full explanation immediately after each question. Best for studying.</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">See the correct answer and full explanation immediately after each question. Best for studying.</p>
             </div>
             <div className="card p-5">
-              <Hourglass className="h-6 w-6 text-blue-600" />
+              <Hourglass className="h-6 w-6 text-brand-600 dark:text-brand-400" />
               <h3 className="mt-3 font-semibold">Exam mode</h3>
-              <p className="mt-1 text-sm text-slate-600 dark:text-slate-100">{first.durationMinutes}-minute timer, no answer reveal until you submit. Auto-saves and auto-submits — like the real exam.</p>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">{first.durationMinutes}-minute timer, no answer reveal until you submit. Auto-saves and auto-submits — like the real exam.</p>
             </div>
           </div>
 
@@ -119,7 +119,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
               <ul className="mt-3 space-y-2 text-sm">
                 {domains.map((d, i) => (
                   <li key={i} className="flex items-center justify-between">
-                    <span className="text-slate-700 dark:text-slate-100">{d.name}</span>
+                    <span className="text-slate-700 dark:text-slate-300">{d.name}</span>
                     <span className="text-slate-500 dark:text-slate-300">{d.weight}%</span>
                   </li>
                 ))}
@@ -129,7 +129,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
 
           <div className="mt-6 card p-6">
             <h2 className="font-semibold">What you get</h2>
-            <ul className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-100">
+            <ul className="mt-3 space-y-2 text-sm text-slate-700 dark:text-slate-300">
               {[
                 `Includes ${practice.length} full practice exam${practice.length === 1 ? '' : 's'} (${totalQuestions} unique questions${practice.length === 1 ? '' : ' across all sets'})`,
                 'Practice mode with immediate explanations',
@@ -138,7 +138,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
                 'Per-domain breakdown after each attempt',
                 'Original questions — never real exam dumps'
               ].map((f, i) => (
-                <li key={i} className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-blue-600" /> {f}</li>
+                <li key={i} className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-brand-600 dark:text-brand-400" /> {f}</li>
               ))}
             </ul>
           </div>
@@ -152,7 +152,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
                     <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
                       {i + 1}
                     </span>
-                    <span className="text-slate-700 dark:text-slate-100">Practice Exam {i + 1}</span>
+                    <span className="text-slate-700 dark:text-slate-300">Practice Exam {i + 1}</span>
                   </div>
                   <span className="text-slate-500 dark:text-slate-300">{item.exam.questionCount} questions · {item.exam.durationMinutes} min</span>
                 </li>
@@ -188,7 +188,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
             <button type="submit" className="w-full text-left">
               <span className="mb-1 block text-xs font-semibold uppercase text-blue-700 dark:text-blue-300">Free</span>
               <span className="block font-semibold">Try our free practice teaser</span>
-              <span className="mt-1 block text-sm text-slate-600 dark:text-slate-100">No credit card required.</span>
+              <span className="mt-1 block text-sm text-slate-600 dark:text-slate-300">No credit card required.</span>
               <span className="btn-outline mt-3 w-full">Start free practice exam</span>
             </button>
           </form>
@@ -209,7 +209,7 @@ export function BundleAsExamView({ bundle, userId }: { bundle: Bundle; userId?: 
 function Stat({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
     <div className="card flex items-center gap-3 p-4">
-      <Icon className="h-5 w-5 text-blue-600" />
+      <Icon className="h-5 w-5 text-brand-600 dark:text-brand-400" />
       <div>
         <div className="text-xs text-slate-500 dark:text-slate-300">{label}</div>
         <div className="font-semibold">{value}</div>

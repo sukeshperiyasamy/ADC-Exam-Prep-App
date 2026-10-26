@@ -96,13 +96,13 @@ export function CatalogFilters({
             onClick={() => handleDomainClick('')}
             className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
               !selectedDomain
-                ? 'bg-teal-700 text-white shadow-sm dark:bg-teal-600'
+                ? 'bg-brand-700 text-white shadow-sm dark:bg-brand-600'
                 : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
             }`}
           >
             <span>All Disciplines</span>
             <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-semibold ${
-              !selectedDomain ? 'bg-teal-800/80 text-teal-100' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+              !selectedDomain ? 'bg-brand-800/80 text-brand-100' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
             }`}>
               {totalQuestions}
             </span>
@@ -117,13 +117,13 @@ export function CatalogFilters({
                 onClick={() => handleDomainClick(d.domain)}
                 className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
                   isSelected
-                    ? 'bg-teal-700 text-white shadow-sm dark:bg-teal-600'
+                    ? 'bg-brand-700 text-white shadow-sm dark:bg-brand-600'
                     : 'border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800'
                 }`}
               >
                 <span>{d.domain}</span>
                 <span className={`rounded-full px-1.5 py-0.2 text-[10px] font-semibold ${
-                  isSelected ? 'bg-teal-800/80 text-teal-100' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
+                  isSelected ? 'bg-brand-800/80 text-brand-100' : 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
                 }`}>
                   {d.count}
                 </span>

@@ -322,7 +322,7 @@ export function ExamRunner(props: ExamRunnerProps) {
           <div className="flex items-center gap-2">
             <span className="hidden items-center gap-1 text-xs text-slate-400 sm:flex" aria-live="polite">
               {saveState === 'saving' && <><Loader2 className="h-3 w-3 animate-spin" /> Saving…</>}
-              {saveState === 'saved' && <><CheckCircle2 className="h-3 w-3 text-emerald-500" /> Saved</>}
+              {saveState === 'saved' && <><CheckCircle2 className="h-3 w-3 text-green-500" /> Saved</>}
             </span>
             {timed && (
               <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1 font-mono text-sm font-semibold tabular-nums ${timerTone}`}>
@@ -469,7 +469,7 @@ export function ExamRunner(props: ExamRunnerProps) {
                   className={`group flex w-full items-start gap-3 rounded-md border px-4 py-3 text-left text-sm transition ${
                     isAnswered && correct ? 'border-green-500 bg-green-50 dark:bg-green-950/40' :
                     wrong ? 'border-red-500 bg-red-50 dark:bg-red-950/40' :
-                    sel ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/40' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/50'
+                    sel ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:border-blue-400 dark:ring-blue-400 dark:bg-blue-950/40' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:hover:border-slate-600 dark:hover:bg-slate-800/50'
                   }`}
                 >
                   <span className={`mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs font-semibold ${
@@ -598,7 +598,7 @@ export function ExamRunner(props: ExamRunnerProps) {
 
       {/* Review & submit modal — replaces the old alert()-based flow */}
       {showReview && !timeUp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4" role="dialog" aria-modal="true" aria-label="Review and submit">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" role="dialog" aria-modal="true" aria-label="Review and submit">
           <div className="card max-h-[85vh] w-full max-w-lg overflow-y-auto p-6">
             <div className="flex items-start justify-between">
               <h2 className="text-lg font-bold">Review your {props.mode === 'EXAM' ? 'exam' : 'practice session'}</h2>

@@ -94,7 +94,7 @@ function FaqEditor({ row, onUpdate, onDelete }: { row: FaqRow; onUpdate: (row: F
         <input type="number" value={position} onChange={(event) => setPosition(Number(event.target.value) || 0)} className="input-sm w-20" />
         <label className="inline-flex items-center gap-1 text-[11px]"><input type="checkbox" checked={published} onChange={(event) => setPublished(event.target.checked)} /> Published</label>
         <button type="button" onClick={save} disabled={saving} className="ml-auto inline-flex h-7 items-center rounded-md bg-brand-700 px-3 text-[11px] font-medium text-white hover:bg-brand-800 disabled:opacity-50">{saving ? 'Saving…' : 'Save'}</button>
-        <button type="button" onClick={remove} className="inline-flex h-7 items-center gap-1 rounded text-[11px] text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40"><Trash2 className="h-3 w-3" /> Delete</button>
+        <button type="button" onClick={remove} className="inline-flex h-7 items-center gap-1 rounded text-[11px] text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"><Trash2 className="h-3 w-3" /> Delete</button>
         {message && <span className="text-[11px] text-slate-500">{message}</span>}
       </div>
     </div>

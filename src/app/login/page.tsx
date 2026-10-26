@@ -61,11 +61,11 @@ function LoginInner() {
     <div className="container-app grid gap-6 pb-12 pt-4 md:grid-cols-2 md:pb-20 md:pt-6">
       <div className="card p-8">
         <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
-        <p className="mt-1 text-sm text-slate-600">Sign in to continue your practice.</p>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Sign in to continue your practice.</p>
 
-        <div className="mt-6 inline-flex rounded-lg border border-slate-200 p-1 text-sm">
-          <button onClick={() => setTab('password')} className={`rounded-md px-3 py-1.5 ${tab === 'password' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>Password</button>
-          <button onClick={() => setTab('otp')} className={`rounded-md px-3 py-1.5 ${tab === 'otp' ? 'bg-slate-900 text-white' : 'text-slate-600'}`}>Email code</button>
+        <div className="mt-6 inline-flex rounded-lg border border-slate-200 p-1 text-sm dark:border-slate-700">
+          <button onClick={() => setTab('password')} className={`rounded-md px-3 py-1.5 ${tab === 'password' ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900' : 'text-slate-600 dark:text-slate-300'}`}>Password</button>
+          <button onClick={() => setTab('otp')} className={`rounded-md px-3 py-1.5 ${tab === 'otp' ? 'bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900' : 'text-slate-600 dark:text-slate-300'}`}>Email code</button>
         </div>
 
         {tab === 'password' ? (
@@ -81,7 +81,7 @@ function LoginInner() {
               </div>
             </div>
             {err && <p className="text-sm text-red-600">{err}</p>}
-            <button className="btn-primary w-full" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+            <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
             <div className="text-right text-sm"><Link href="/forgot-password" className="text-brand hover:underline">Forgot password?</Link></div>
           </form>
         ) : (
@@ -97,7 +97,7 @@ function LoginInner() {
                     <span className="font-semibold">Local/Demo Mode:</span> Code <b>{devNotice}</b> generated and auto-filled.
                   </div>
                 )}
-                <button className="btn-primary w-full" disabled={busy}>{busy ? 'Verifying…' : 'Sign in'}</button>
+                <button className="btn-primary-grad w-full" disabled={busy}>{busy ? 'Verifying…' : 'Sign in'}</button>
               </>
             )}
             {err && <p className="text-sm text-red-600">{err}</p>}
@@ -108,14 +108,14 @@ function LoginInner() {
       </div>
 
       <div className="card p-8">
-        <h1 className="text-2xl font-bold tracking-tight">New to ADC Exam Prep?</h1>
-        <p className="mt-1 text-sm text-slate-600">Create a free account to save your progress, take practice questions, and review your dental domain breakdown.</p>
-        <ul className="mt-4 space-y-2 text-sm text-slate-700">
+        <h2 className="text-2xl font-bold tracking-tight">New to ADC Exam Prep?</h2>
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Create a free account to save your progress, take practice questions, and review your dental domain breakdown.</p>
+        <ul className="mt-4 space-y-2 text-sm text-slate-700 dark:text-slate-300">
           <li>✓ Free practice teaser on every exam</li>
           <li>✓ Mark for review and revisit any time</li>
           <li>✓ Per-domain breakdown of your performance</li>
         </ul>
-        <Link href="/signup" className="btn-primary mt-6 inline-flex w-full">Create free account →</Link>
+        <Link href="/signup" className="btn-primary-grad mt-6 inline-flex w-full">Create free account →</Link>
       </div>
     </div>
   );

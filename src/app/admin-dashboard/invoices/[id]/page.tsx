@@ -139,7 +139,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             <a
               href={`/api/admin/invoices/${invoice.id}/pdf?download=1`}
               download
-              className="btn-sm bg-blue-600 text-white hover:bg-blue-700"
+              className="btn-sm bg-brand-700 text-white hover:bg-brand-800"
             >
               <Download className="mr-1 h-3.5 w-3.5" /> Download
             </a>
@@ -208,7 +208,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
               {invoice.creditNoteFor && (
                 <div className="mt-2 text-[12px]">
                   Credit-noted by{' '}
-                  <Link href={`/admin-dashboard/invoices/${invoice.creditNoteFor.id}`} className="text-blue-600 hover:underline">
+                  <Link href={`/admin-dashboard/invoices/${invoice.creditNoteFor.id}`} className="text-blue-600 hover:underline dark:text-blue-400">
                     {invoice.creditNoteFor.number}
                   </Link>
                 </div>
@@ -216,7 +216,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
               {invoice.creditNoteOf && (
                 <div className="mt-2 text-[12px]">
                   Credit-note for{' '}
-                  <Link href={`/admin-dashboard/invoices/${invoice.creditNoteOf.id}`} className="text-blue-600 hover:underline">
+                  <Link href={`/admin-dashboard/invoices/${invoice.creditNoteOf.id}`} className="text-blue-600 hover:underline dark:text-blue-400">
                     {invoice.creditNoteOf.number}
                   </Link>
                 </div>
@@ -230,7 +230,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
             <h2 className="text-[13px] font-semibold uppercase tracking-wider text-slate-500">Order</h2>
             <Link
               href={`/admin-dashboard/orders/${invoice.order.id}`}
-              className="mt-1 block font-mono text-[12px] text-blue-600 hover:underline dark:text-blue-400"
+              className="mt-1 block font-mono text-[12px] text-blue-600 hover:underline dark:text-blue-400 dark:text-blue-400"
             >
               {invoice.order.number ?? invoice.order.id}
             </Link>

@@ -92,7 +92,7 @@
       "title": "Clinical Scenario Question Pool & Domain Performance Breakdown",
       "description": "Audit and verify clinical examination attempt flow, autosave state management, question flagging, and post-exam domain performance score calculation for ADC Part 1 candidates.",
       "priority": "high",
-      "status": "ready",
+      "status": "in_progress",
       "dependencies": [
         "FEAT-001"
       ],
@@ -103,17 +103,20 @@
         "Results page displays domain-wise accuracy percentage and clinical explanations"
       ],
       "verificationCommands": [
-        "npx tsx scripts/test-exam-engine.ts",
-        "npm run typecheck"
+        "npm run test:scoring",
+        "npm run typecheck",
+        "npx tsx scripts/test-exam-engine.ts"
       ],
       "filesExpected": [
+        "src/lib/attempts.ts",
+        "src/app/api/attempts/submit/route.ts",
+        "scripts/test-exam-scoring-unit.ts",
         "src/app/api/attempts/start/route.ts",
         "src/app/api/attempts/autosave/route.ts",
-        "src/app/api/attempts/submit/route.ts",
         "src/app/exam/[attemptId]/page.tsx",
         "src/app/results/[attemptId]/page.tsx"
       ],
-      "notes": "Ready for execution in future session. Existing exam engine passes core tests."
+      "notes": "In-memory test suite passes 25/25 scoring, type correctness, malformed key, and denominator validation tests."
     },
     {
       "id": "FEAT-005",
@@ -224,6 +227,102 @@
         "src/app/p/[slug]/page.tsx"
       ],
       "notes": "Verified with npm run check:links passing all 56 crawled URLs with 0 errors, and npm run typecheck passing."
+    },
+    {
+      "id": "FEAT-009",
+      "title": "App-Wide UI Consistency & Design-Token Normalization",
+      "description": "Full-app UI audit and fix pass unifying buttons, cards, badges, headings, modals, dark-mode variants, and color tokens across public marketing, auth, user dashboard, study, exam, results, checkout, and admin dashboard surfaces.",
+      "priority": "high",
+      "status": "done",
+      "dependencies": [],
+      "acceptanceCriteria": [
+        "Global :focus-visible brand ring applied app-wide for keyboard accessibility",
+        "Complete brand teal palette in tailwind.config.ts (adds 200/400/950 shades; fixes silently-uncompiled brand-950 usages)",
+        "Single success/error token pair: green/red everywhere (emerald and rose eliminated)",
+        "Accent system formalized: brand teal = brand/CTA, blue = interactive selection/info, amber = pending, red = destructive",
+        "All start/open exam CTAs use btn-primary-grad; form/utility primaries use btn-primary; secondary uses btn-outline/btn-sm-outline",
+        "All status badges carry dark: variants; empty states standardized (card p-8 centered, dark-safe text)",
+        "Dashboard h1s unified to text-2xl font-bold tracking-tight; admin h1s to PageHeader scale (text-xl font-semibold tracking-tight)",
+        "Admin solid primaries (blue-600/emerald-600) migrated to brand; rose/violet off-token accents eliminated; settings inputs use .input",
+        "Modal overlays unified (bg-slate-950/60) and panels use .card; PayNow modal uses formatPrice()",
+        "npm run typecheck and npm run lint (0 errors) pass; all key routes return 200"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "npm run lint",
+        "Route smoke tests against npm run dev -- -p 3040"
+      ],
+      "filesExpected": [
+        "tailwind.config.ts",
+        "src/app/globals.css",
+        "src/app/layout.tsx",
+        "src/components/nav.tsx",
+        "src/components/footer.tsx",
+        "src/components/user-menu.tsx",
+        "src/components/user-chrome.tsx",
+        "src/components/admin-chrome.tsx",
+        "src/components/admin/filter-bar.tsx",
+        "src/components/exam-runner.tsx",
+        "src/components/review-form-modal.tsx",
+        "src/components/share-score.tsx",
+        "src/components/share-buttons.tsx",
+        "src/components/my-exams-list.tsx",
+        "src/components/booklet/*",
+        "src/components/checkout/*",
+        "src/app/page.tsx",
+        "src/app/results/[attemptId]/page.tsx",
+        "src/app/results/[attemptId]/share/page.tsx",
+        "src/app/login/page.tsx",
+        "src/app/signup/page.tsx",
+        "src/app/forgot-password/page.tsx",
+        "src/app/set-password/page.tsx",
+        "src/app/verify-otp/page.tsx",
+        "src/app/practice-exams/page.tsx",
+        "src/app/practice-exams/filters.tsx",
+        "src/app/practice-exams/[vendor]/[slug]/*",
+        "src/app/checkout/*",
+        "src/app/user-dashboard/**",
+        "src/app/admin-dashboard/**"
+      ],
+      "notes": "Audit executed via 4 parallel code audits + live browser baseline screenshots. Browser bridge broke mid-session (harness DeferredToolCall validation bug), so post-fix visual re-verification via screenshots is pending; changes verified via typecheck, lint, compiled CSS inspection, and route smoke tests. Known deferred: hand-rolled admin tables not migrated to DataTable; WhatsApp/social brand hexes intentionally kept; exam-runner header Submit remains gradient pill vs solid Next (deliberate hierarchy)."
+    },
+    {
+      "id": "FEAT-010",
+      "title": "Booklet Paid-Access Verification & Study Experience Redesign",
+      "description": "Verify server-side paid-access policy for study booklets, report the eTG booklet's true publication blockers without bypassing safeguards, and redesign the study library, booklet TOC, and chapter reader into a clean, responsive, professional reading experience.",
+      "priority": "high",
+      "status": "done",
+      "dependencies": ["FEAT-009"],
+      "acceptanceCriteria": [
+        "Entitled paid users reach published booklets via shared decideAccess/resolveViewer/hasBookletEntitlement logic; no license-flag gate on student visibility remains",
+        "Expired, revoked, and refunded entitlements denied server-side (covered by integration + HTTP tests)",
+        "eTG booklet publication/clinical-review safeguards NOT bypassed; blockers reported (DRAFT, unlicensed, 42 unreviewed chapters)",
+        "Library: search, access-filter pills with counts, clean cards with genuine access status, contextual CTAs, progress bar only when real progress exists",
+        "TOC: collapsible sections, current/completed/locked/free-preview states, reconstructed-groupings disclosure",
+        "Chapter reader: breadcrumbs, sticky mode switcher, constrained reading column, desktop chapter rail, prev/next navigation, polished locked/empty states",
+        "All 42 eTG chapters covered exactly once by the hierarchy (verified read-only: 9 groups, 42 unique, 0 unmatched)",
+        "No clinical content altered; no migrations; no payment/pricing/licensing changes",
+        "typecheck clean, test:booklet 27/27, integration 38/38, HTTP 21/21, lint 0 errors, production build passes"
+      ],
+      "verificationCommands": [
+        "npm run typecheck",
+        "npm run test:booklet",
+        "npx tsx scripts/test-booklet-integration.ts",
+        "HTTP e2e via scripts/test-booklet-http.ts against throwaway local DB",
+        "npm run lint",
+        "npm run build"
+      ],
+      "filesExpected": [
+        "src/components/booklet/library-browser.tsx",
+        "src/components/booklet/toc.tsx",
+        "src/app/user-dashboard/study/page.tsx",
+        "src/app/user-dashboard/study/[booklet]/page.tsx",
+        "src/app/user-dashboard/study/[booklet]/[chapter]/page.tsx",
+        "scripts/test-booklet-integration.ts",
+        "scripts/inspect-toc-readonly.ts",
+        "progress.md"
+      ],
+      "notes": "Access policy itself was implemented in FEAT-009 (license flag decoupled from visibility); this session re-verified it, added the hierarchy-completeness test, and redesigned the three student study surfaces. eTG remains blocked by its own DRAFT/unlicensed/unreviewed state per the publication workflow — requires user-authorized clinical review, licensing confirmation, and publication before paid students can see it."
     }
   ]
 }

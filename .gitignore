@@ -70,3 +70,17 @@ scripts/_*
 **/reference/
 .neon
 .worktrees/
+
+# eTG pilot output (copyrighted source material)
+scripts/pilot/out/
+
+# Private booklet PDFs / figures (never commit or serve directly)
+uploads/
+
+# Google service-account keys
+*service-account*.json
+adcproject-*.json
+gcp-key*.json
+
+# Persistent local Postgres for development (npm run db:local)
+.localdb/

@@ -76,7 +76,8 @@ export function toListItems(grouped: GroupedExams): MyExamsListItem[] {
 export async function getGroupedExams(userId: string): Promise<GroupedExams> {
   const [entitlements, bundles] = await Promise.all([
     db.entitlement.findMany({
-      where: { userId },
+      // Study-booklet access exams are internal (shown under Study, not here).
+      where: { userId, exam: { booklet: { is: null } } },
       include: { exam: { include: { vendor: true } } },
       orderBy: { grantedAt: 'desc' }
     }),

@@ -67,11 +67,11 @@ export function PromoCodeInput({
 
   if (applied) {
     return (
-      <div className="flex items-center justify-between rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-[12px] dark:border-emerald-900/40 dark:bg-emerald-950/30">
+      <div className="flex items-center justify-between rounded-md border border-green-200 bg-green-50 px-3 py-2 text-[12px] dark:border-green-900 dark:bg-green-950/30">
         <div className="flex items-center gap-2">
-          <Tag className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-300" />
-          <span className="font-medium text-emerald-800 dark:text-emerald-200">{applied.code}</span>
-          <span className="text-emerald-700 dark:text-emerald-300">
+          <Tag className="h-3.5 w-3.5 text-green-700 dark:text-green-300" />
+          <span className="font-medium text-green-800 dark:text-green-200">{applied.code}</span>
+          <span className="text-green-700 dark:text-green-300">
             −${(applied.discountCents / 100).toFixed(2)} applied
           </span>
         </div>
@@ -79,7 +79,7 @@ export function PromoCodeInput({
           type="button"
           onClick={clear}
           aria-label="Remove promo code"
-          className="text-emerald-700 hover:text-emerald-900 dark:text-emerald-300"
+          className="icon-btn"
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -107,7 +107,7 @@ export function PromoCodeInput({
           type="button"
           onClick={apply}
           disabled={busy || !value.trim()}
-          className="inline-flex h-8 items-center gap-1 rounded-md border border-slate-300 px-2.5 text-[12px] font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+          className="btn-sm-outline disabled:cursor-not-allowed disabled:opacity-50"
         >
           {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Tag className="h-3 w-3" />}
           Apply

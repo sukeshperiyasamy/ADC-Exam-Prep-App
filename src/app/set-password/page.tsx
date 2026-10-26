@@ -37,8 +37,8 @@ export default async function SetPasswordPage({ searchParams }: { searchParams: 
   return (
     <div className="container-app max-w-md py-16">
       <div className="card p-8">
-        <h1 className="text-2xl font-bold">Create your password</h1>
-        <p className="mt-2 text-sm text-slate-600">Your email {user.email} is verified. Choose a password for future sign-ins.</p>
+        <h1 className="text-2xl font-bold tracking-tight">Create your password</h1>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Your email {user.email} is verified. Choose a password for future sign-ins.</p>
         <form action={setPassword} className="mt-6 space-y-4">
           <div>
             <label htmlFor="password" className="label">Password</label>
@@ -49,7 +49,7 @@ export default async function SetPasswordPage({ searchParams }: { searchParams: 
             <input id="confirmation" name="confirmation" type="password" minLength={8} maxLength={128} required autoComplete="new-password" className="input" />
           </div>
           {error && <p role="alert" className="text-sm text-red-600">Passwords must match and contain 8–128 characters.</p>}
-          <button className="btn-primary w-full">Save password</button>
+          <button className="btn-primary-grad w-full">Save password</button>
         </form>
       </div>
     </div>

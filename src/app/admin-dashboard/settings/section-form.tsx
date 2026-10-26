@@ -69,7 +69,7 @@ export default function SectionForm({ group, initial }: { group: SettingsGroup; 
                 <div className="mb-1 flex items-center gap-2 text-slate-600 dark:text-slate-300">
                   <span>{f.label}</span>
                   {hasStored && (
-                    <span className="rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-medium text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300">
+                    <span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-medium text-green-800 dark:bg-green-950/50 dark:text-green-300">
                       SET
                     </span>
                   )}
@@ -78,9 +78,9 @@ export default function SectionForm({ group, initial }: { group: SettingsGroup; 
                   <input
                     type={f.secret && touched && !isRevealed ? 'password' : 'text'}
                     autoComplete="off"
-                    className={`w-full rounded border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-900 ${
-                      f.secret ? 'pr-10' : ''
-                    } ${!touched && f.secret && hasStored && !isRevealed ? 'font-mono tracking-wider' : ''}`}
+                    className={`input ${f.secret ? 'pr-10' : ''} ${
+                      !touched && f.secret && hasStored && !isRevealed ? 'font-mono tracking-wider' : ''
+                    }`}
                     placeholder={placeholder}
                     value={displayValue}
                     onChange={(e) => setValues((s) => ({ ...s, [f.key]: e.target.value }))}

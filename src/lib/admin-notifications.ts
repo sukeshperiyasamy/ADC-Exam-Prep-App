@@ -6,6 +6,7 @@ export type NotifyKind =
   | 'inventory.low'
   | 'generation.failed'
   | 'email.failed'
+  | 'payment.attention'
   | 'manual';
 
 export async function notify(input: {

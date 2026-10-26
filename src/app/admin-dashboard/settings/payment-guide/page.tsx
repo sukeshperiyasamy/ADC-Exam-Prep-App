@@ -96,7 +96,7 @@ export default async function PaymentGuidePage() {
     <div className="max-w-4xl">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Payment Setup Guide</h1>
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Payment Setup Guide</h1>
           <p className="mt-1 text-sm text-slate-500">
             Step-by-step configuration for PayPal, HitPay, and Stripe. Credentials are entered on the{' '}
             <Link href="/admin-dashboard/settings/payment" className="font-medium text-blue-700 underline hover:no-underline dark:text-blue-300">

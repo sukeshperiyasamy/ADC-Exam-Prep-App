@@ -45,14 +45,14 @@ export default async function MyProfilePage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold">My Profile</h1>
-      <p className="mt-1 text-sm text-slate-500">Manage your account details, password, and appearance.</p>
+      <h1 className="text-2xl font-bold tracking-tight">My Profile</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Manage your account details, password, and appearance.</p>
 
       {/* Theme preference */}
       <div className="card mt-6 flex flex-wrap items-center justify-between gap-3 p-4">
         <div>
           <h2 className="text-sm font-semibold">Theme</h2>
-          <p className="mt-0.5 text-xs text-slate-500">System follows your OS. Light/Dark force the choice.</p>
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">System follows your OS. Light/Dark force the choice.</p>
         </div>
         <ThemePreferenceSelect />
       </div>
@@ -80,7 +80,7 @@ export default async function MyProfilePage() {
                 disabled
                 className="input cursor-not-allowed opacity-70"
               />
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Email is used to sign in and cannot be changed here.
               </p>
             </div>
@@ -98,7 +98,7 @@ export default async function MyProfilePage() {
             </div>
 
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 Joined {me.createdAt.toLocaleDateString()} · Role {me.role}
               </span>
               <button className="btn-primary">Save changes</button>
@@ -109,7 +109,7 @@ export default async function MyProfilePage() {
         {/* Password */}
         <div className="card h-fit p-6">
           <h2 className="text-lg font-semibold">Reset password</h2>
-          <p className="mt-1 text-sm text-slate-500">Minimum 8 characters.</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Minimum 8 characters.</p>
           <form action={changePassword} className="mt-4 space-y-3">
             <input
               name="newPassword"

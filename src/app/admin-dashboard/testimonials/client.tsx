@@ -142,11 +142,11 @@ function TestimonialEditor({
           <input type="checkbox" checked={published} onChange={(e) => setPublished(e.target.checked)} />
           Published
         </label>
-        {row.sourceReviewId && <span className="rounded bg-violet-50 px-1.5 py-0.5 text-[10px] text-violet-700 dark:bg-violet-950/40 dark:text-violet-300">From review</span>}
+        {row.sourceReviewId && <span className="rounded bg-blue-50 px-1.5 py-0.5 text-[10px] text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">From review</span>}
         <button type="button" onClick={save} disabled={saving} className="ml-auto inline-flex h-7 items-center rounded-md bg-emerald-600 px-3 text-[11px] font-medium text-white hover:bg-emerald-700 disabled:opacity-50">
           {saving && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}{saving ? 'Saving…' : 'Save'}
         </button>
-        <button type="button" onClick={del} className="inline-flex h-7 items-center gap-1 rounded text-[11px] text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40">
+        <button type="button" onClick={del} className="inline-flex h-7 items-center gap-1 rounded text-[11px] text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40">
           <Trash2 className="h-3 w-3" /> Delete
         </button>
         {msg && <span className="text-[11px] text-slate-500">{msg}</span>}

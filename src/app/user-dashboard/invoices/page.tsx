@@ -20,13 +20,13 @@ export default async function MyInvoicesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Invoices</h1>
-      <p className="mt-1 text-sm text-slate-500">
+      <h1 className="text-2xl font-bold tracking-tight">Invoices</h1>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         Your tax invoices and credit notes. Each PDF is a tax receipt for your records.
       </p>
 
       {invoices.length === 0 ? (
-        <div className="card mt-6 p-8 text-center text-slate-500">
+        <div className="card mt-6 p-8 text-center text-sm text-slate-500 dark:text-slate-400">
           You don&apos;t have any invoices yet. They&apos;ll appear here after your first paid order.
         </div>
       ) : (
@@ -45,17 +45,17 @@ export default async function MyInvoicesPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-sm font-semibold text-slate-900 dark:text-slate-100">{inv.number}</span>
                     {isCredit && (
-                      <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
+                      <span className="badge bg-amber-100 text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
                         Credit Note
                       </span>
                     )}
                     {isVoid && (
-                      <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-red-800 dark:bg-red-950/40 dark:text-red-200">
+                      <span className="badge bg-red-100 text-red-800 dark:bg-red-950/50 dark:text-red-300">
                         Void
                       </span>
                     )}
                   </div>
-                  <div className="mt-0.5 text-xs text-slate-500">
+                  <div className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                     {product} · Issued {inv.issueDate.toISOString().slice(0, 10)}
                   </div>
                 </div>
@@ -63,7 +63,7 @@ export default async function MyInvoicesPage() {
                   <div className="text-right">
                     <div className="font-semibold">{formatPrice(inv.total, inv.currency)}</div>
                     {inv.taxAmount !== 0 && (
-                      <div className="text-[10px] text-slate-500">
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400">
                         incl. {inv.taxLabel} {formatPrice(inv.taxAmount, inv.currency)}
                       </div>
                     )}
@@ -71,7 +71,7 @@ export default async function MyInvoicesPage() {
                   <Link
                     href={`/api/invoices/${inv.id}/pdf`}
                     target="_blank"
-                    className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+                    className="btn-sm-outline"
                   >
                     <FileText className="h-3.5 w-3.5" /> PDF
                   </Link>

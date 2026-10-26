@@ -127,7 +127,7 @@ export function ExplanationView({
 
       {(p.correctTitle || p.correctBody) && (
         <div>
-          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-green-700 dark:text-green-400">
             Correct option
           </div>
           {p.correctTitle && (
@@ -155,7 +155,7 @@ export function ExplanationView({
 
       {p.incorrectBullets.length > 0 && (
         <div>
-          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-rose-700 dark:text-rose-400">
+          <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-red-700 dark:text-red-400">
             Incorrect options
           </div>
           <ul className="space-y-2 pl-4">

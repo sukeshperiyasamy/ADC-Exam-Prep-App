@@ -529,7 +529,7 @@ export default async function AdminUserDetailPage({
                         <span className="font-medium">{e.exam.vendor.name} · {e.exam.code}</span>
                         <span className="ml-2 text-slate-500">{e.exam.title}</span>
                         <span className="ml-2 text-[10px] text-slate-400">{e.tier}</span>
-                        {e.voucher && <span className="ml-2 rounded bg-violet-100 px-1.5 py-0.5 font-mono text-[10px] text-violet-800 dark:bg-violet-950/40 dark:text-violet-200">{e.voucher}</span>}
+                        {e.voucher && <span className="ml-2 rounded bg-blue-100 px-1.5 py-0.5 font-mono text-[10px] text-blue-800 dark:bg-blue-950/40 dark:text-blue-200">{e.voucher}</span>}
                       </div>
                       {e.delivery && <StatusBadge status={e.delivery.status} />}
                     </li>
@@ -727,7 +727,7 @@ export default async function AdminUserDetailPage({
             <div className="space-y-1.5">
               <form action={toggleActive}>
                 <input type="hidden" name="id" value={user.id} />
-                <button className={`inline-flex h-7 w-full items-center justify-center gap-1 rounded-md text-[11px] font-medium ${user.active ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-emerald-600 text-white hover:bg-emerald-700'}`}>
+                <button className={`inline-flex h-7 w-full items-center justify-center gap-1 rounded-md text-[11px] font-medium ${user.active ? 'bg-amber-600 text-white hover:bg-amber-700' : 'bg-brand-700 text-white hover:bg-brand-800'}`}>
                   {user.active ? <><Ban className="h-3 w-3" /> Suspend</> : <><CheckCircle2 className="h-3 w-3" /> Activate</>}
                 </button>
               </form>
