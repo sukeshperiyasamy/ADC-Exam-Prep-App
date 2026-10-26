@@ -253,6 +253,19 @@ class Client {
       await db.booklet.update({ where: { id: bookletId }, data: { licenseConfirmed: true } });
     }
   });
+  // Dashboard smoke: the pages that broke when Prisma schema and the live DB
+  // diverged (missing columns). They must render for the right sessions.
+  await t('dashboard smoke: admin orders/invoices/reports + user orders render', async () => {
+    for (const path of ['/admin-dashboard/orders', '/admin-dashboard/invoices', '/admin-dashboard/reports/revenue', '/admin-dashboard/reports/tax']) {
+      const r = await A.req(path);
+      assert.equal(r.status, 200, `admin ${path} -> ${r.status}`);
+    }
+    for (const path of ['/user-dashboard/orders', '/user-dashboard/invoices']) {
+      const r = await P.req(path);
+      assert.equal(r.status, 200, `user ${path} -> ${r.status}`);
+    }
+  });
+
   await t('student without entitlement: paid chapter locked, free-preview chapter open', async () => {
     const libText = await (await N.req('/user-dashboard/study')).text();
     assert.match(libText, /Unlock Full Dental Study Booklets/);

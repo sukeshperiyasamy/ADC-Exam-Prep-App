@@ -17,6 +17,7 @@ function register() {
       }).format(n / 100);
       return `₹${formatted}`;
     }
+    // Legacy only: pre-INR-migration orders (see formatPrice in lib/utils).
     if (cur === 'SGD') {
       const amount = new Intl.NumberFormat('en-SG', {
         minimumFractionDigits: 2,

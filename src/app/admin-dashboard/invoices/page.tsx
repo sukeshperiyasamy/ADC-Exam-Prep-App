@@ -68,7 +68,7 @@ export default async function AdminInvoicesPage({ searchParams }: { searchParams
   const [total, invoices, agg] = await Promise.all([
     db.invoice.count({ where }),
     loadInvoices(where, (page - 1) * PAGE_SIZE, PAGE_SIZE),
-    db.invoice.aggregate({ where, _sum: { totalSgd: true, taxAmount: true } })
+    db.invoice.aggregate({ where, _sum: { taxAmount: true } })
   ]);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -130,9 +130,6 @@ export default async function AdminInvoicesPage({ searchParams }: { searchParams
       cell: (i) => (
         <div className="text-right">
           <div className="font-semibold text-slate-900 dark:text-slate-100">{formatPrice(i.total, i.currency)}</div>
-          {i.totalSgd != null && i.currency.toUpperCase() !== 'SGD' && (
-            <div className="text-[10px] text-slate-500">≈ {formatPrice(i.totalSgd, 'SGD')}</div>
-          )}
         </div>
       )
     },
@@ -174,9 +171,8 @@ export default async function AdminInvoicesPage({ searchParams }: { searchParams
     <div>
       <PageHeader
         title="Invoices"
-        subtitle={`${total} invoice${total === 1 ? '' : 's'}${pages > 1 ? ` · page ${page} of ${pages}` : ''}${
-          agg._sum.totalSgd ? ` · SGD total ${formatPrice(agg._sum.totalSgd, 'SGD')}` : ''
-        }${agg._sum.taxAmount ? ` · tax ${formatPrice(agg._sum.taxAmount, 'SGD')}` : ''}`}
+        subtitle={`${total} invoice${total === 1 ? '' : 's'}${pages > 1 ? ` · page ${page} of ${pages}` : ''}
+          ${agg._sum.taxAmount ? ` · tax ${formatPrice(agg._sum.taxAmount, 'INR')}` : ''}`}
       />
 
       <FilterBar resetHref={activeFilters.length > 0 ? '/admin-dashboard/invoices' : undefined} activeFilters={activeFilters}>

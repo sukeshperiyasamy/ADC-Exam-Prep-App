@@ -71,7 +71,7 @@ async function buildReportEmail(key: string): Promise<string> {
   if (key === 'tax') {
     const r = await taxCollectedIn(Ranges.mtd());
     return `<h2>Tax (MTD) digest</h2>
-<p>SGD-equivalent tax collected: <b>${formatPrice(r.taxSgdTotal, 'SGD')}</b> across ${r.invoiceCount} invoices.</p>`;
+<p>GST collected across ${r.invoiceCount} invoices — see the admin tax report for per-currency totals.</p>`;
   }
   return `<p>Report ${key} has no template yet.</p>`;
 }

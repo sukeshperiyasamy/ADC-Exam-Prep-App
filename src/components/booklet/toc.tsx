@@ -92,8 +92,6 @@ export function BookletTableOfContents<T extends ChapterHierarchyItem>({
                       </h3>
                       <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500 dark:text-slate-400">
                         <span>{`${group.totalChapters} chapter${group.totalChapters === 1 ? '' : 's'}`}</span>
-                        <span aria-hidden>·</span>
-                        <span>{`PDF pp. ${group.pdfPageFrom}–${group.pdfPageTo}`}</span>
                         {group.completedCount > 0 && (
                           <>
                             <span aria-hidden>·</span>
@@ -126,9 +124,9 @@ export function BookletTableOfContents<T extends ChapterHierarchyItem>({
               {isExpanded && (
                 <div
                   id={`section-content-${group.id}`}
-                  className="border-t border-slate-100 bg-slate-50/50 p-2 sm:p-3 dark:border-slate-800/60 dark:bg-slate-950/30"
+                  className="border-t border-slate-100 bg-slate-50/40 p-1 sm:p-2 dark:border-slate-800/60 dark:bg-slate-950/20"
                 >
-                  <ul className="space-y-1.5">
+                  <ul className="divide-y divide-slate-100 dark:divide-slate-800/70">
                     {group.chapters.map((c) => {
                       const current = c.slug === currentChapterSlug;
                       const locked = !c.access.ok;
@@ -139,7 +137,7 @@ export function BookletTableOfContents<T extends ChapterHierarchyItem>({
                       const inner = (
                         <div className="flex items-center gap-3">
                           <span
-                            className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                            className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold tabular-nums ${
                               current
                                 ? 'bg-brand-600 text-white'
                                 : completed
@@ -150,57 +148,63 @@ export function BookletTableOfContents<T extends ChapterHierarchyItem>({
                             {nextNumber()}
                           </span>
                           <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
+                            <div className="flex items-center gap-2">
                               <span
-                                className={`text-sm font-medium ${
-                                  current ? 'text-brand-800 dark:text-brand-200' : 'text-slate-900 dark:text-slate-100'
+                                className={`truncate text-sm ${
+                                  current
+                                    ? 'font-semibold text-brand-800 dark:text-brand-200'
+                                    : 'font-medium text-slate-900 dark:text-slate-100'
                                 }`}
                               >
                                 {c.title}
                               </span>
                               {current && (
-                                <span className="badge bg-brand-50 text-brand-800 dark:bg-brand-950/60 dark:text-brand-200">
+                                <span className="badge shrink-0 bg-brand-50 px-1.5 py-0 text-[10px] text-brand-800 dark:bg-brand-950/60 dark:text-brand-200">
                                   Current
                                 </span>
                               )}
                               {c.isFreePreview && (
-                                <span className="badge bg-green-100 text-green-800 dark:bg-green-950/50 dark:text-green-300">
+                                <span className="badge shrink-0 bg-green-50 px-1.5 py-0 text-[10px] text-green-700 dark:bg-green-950/40 dark:text-green-300">
                                   Free preview
                                 </span>
                               )}
-                              {!c.live && <span className="badge">Draft (admin)</span>}
+                              {!c.live && <span className="badge shrink-0 px-1.5 py-0 text-[10px]">Draft</span>}
                             </div>
-                            <div className="text-xs text-slate-500 dark:text-slate-400">
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400">
                               PDF pp. {c.pdfPageFrom}–{c.pdfPageTo} · {c.mcqCount} MCQ{c.mcqCount === 1 ? '' : 's'}
                             </div>
+                          </div>
+                          <div className="flex shrink-0 items-center gap-2">
                             {!locked && pct > 0 && pct < 100 && (
-                              <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                              <div className="hidden h-1 w-12 overflow-hidden rounded-full bg-slate-100 sm:block dark:bg-slate-800">
                                 <div className="h-full bg-brand-600 transition-all duration-300" style={{ width: `${pct}%` }} />
                               </div>
                             )}
+                            {locked ? (
+                              <Lock className="h-4 w-4 text-slate-400" aria-label="Locked" />
+                            ) : completed ? (
+                              <CheckCircle2 className="h-4 w-4 text-green-600" aria-label="Completed" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4 text-slate-400" aria-hidden />
+                            )}
                           </div>
-                          {locked ? (
-                            <Lock className="h-4 w-4 text-slate-400" aria-label="Locked" />
-                          ) : completed ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" aria-label="Completed" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4 text-slate-400" aria-hidden />
-                          )}
                         </div>
                       );
 
                       return (
                         <li key={c.id}>
                           {locked ? (
-                            <div className={`rounded-lg p-3 ${current ? 'ring-1 ring-brand-400 dark:ring-brand-500' : ''} bg-white opacity-70 dark:bg-slate-900`}>
+                            <div className={`px-2 py-2.5 ${current ? 'ring-1 ring-brand-400 dark:ring-brand-500' : ''} opacity-60`}>
                               {inner}
                             </div>
                           ) : (
                             <Link
                               href={`/user-dashboard/study/${bookletSlug}/${c.slug}`}
                               aria-current={current ? 'page' : undefined}
-                              className={`card-hover block rounded-lg p-3 ${
-                                current ? 'ring-1 ring-brand-500 dark:ring-brand-400' : ''
+                              className={`block px-2 py-2.5 transition ${
+                                current
+                                  ? 'rounded-md bg-white ring-1 ring-brand-500 dark:bg-slate-900 dark:ring-brand-400'
+                                  : 'rounded-md hover:bg-white dark:hover:bg-slate-800/60'
                               }`}
                             >
                               {inner}

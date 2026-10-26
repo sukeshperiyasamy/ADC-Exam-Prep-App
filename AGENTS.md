@@ -16,6 +16,8 @@ Rules:
 
 # Permanent Engineering & Coding Agent Instructions
 
+> **START HERE:** read [`HANDOFF.md`](HANDOFF.md) first (current state, constraints, next steps), then this file, then [`FEATURE_STATUS.md`](FEATURE_STATUS.md) and [`TESTING_AND_DEPLOYMENT.md`](TESTING_AND_DEPLOYMENT.md). The full documentation pack: `PROJECT_OVERVIEW.md`, `DATABASE_AND_API.md`, `IMPLEMENTATION_HISTORY.md`, `KNOWN_ISSUES_AND_TODO.md`, `README.md`, `progress.md`.
+
 ## 1. Project Purpose & Architecture
 **ADC Exam Prep App** is a specialized, production SaaS platform tailored for overseas dental practitioners preparing for the Australian Dental Council (ADC) examination.
 
@@ -29,6 +31,14 @@ Rules:
 - **Active Payment Gateway:** Stripe Checkout (processing domestic INR charges)
 
 ---
+
+## 1.1 Currency Policy (Mandatory)
+
+- **India-only product.** The default and ONLY supported application currency is **INR (₹)**. Never introduce SGD, USD, or any other currency for display, storage, pricing, or payment processing without explicit user authorization.
+- All new monetary values are integer paise formatted via `formatPrice()` (`Intl.NumberFormat('en-IN')`). Never hand-roll currency strings.
+- Historical rows issued before the INR migration may carry legacy currencies (e.g. SGD). Display them with their explicit legacy label; **never relabel a legacy amount as INR and never convert without a real FX source.**
+- Payment processing is INR-only (Stripe). SGD-era rails (PayNow/HitPay) are disabled at `api/checkout/methods` and must stay disabled unless the user explicitly authorizes a change.
+- **Every AI coding agent MUST read this file (and `features.json` / `progress.md`) before starting any work.** Currency violations are release blockers.
 
 ## 2. Repository Structure & Key Entry Points
 
@@ -89,6 +99,7 @@ Every coding agent working on this codebase **MUST ALWAYS** follow these rules w
 10. **Respect Established Patterns:** Do not reinvent state management, styling utilities, or payment logic. Follow existing codebase conventions.
 11. **Keep Secrets Server-Side:** Never expose `.env` secrets, API keys, private tokens, or sensitive customer details in logs, commits, or client components.
 12. **Future-Planned Work Stays in Backlog:** Features marked as future-planned (e.g., Cashfree integration in `docs/future-plans/`) must remain in `backlog` until explicitly authorized.
+13. **Schema changes require migrations.** After editing `prisma/schema.prisma`, create and apply a versioned migration (`npx prisma migrate dev` locally; `migrate deploy` to shared/production DBs only with approval). Never rely on bare `db push` for shared databases — the `test:inr` Suite 9 drift guard fails when schema and migrations diverge.
 
 ---
 

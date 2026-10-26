@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { CreditCard, Landmark, QrCode, Wallet } from 'lucide-react';
+import { CreditCard, Landmark, Wallet } from 'lucide-react';
 
-export type MethodId = 'PAYPAL' | 'HITPAY' | 'PAYNOW' | 'STRIPE';
+// 'PAYNOW' remains in historical order.provider values; it is not an offered method.
+export type MethodId = 'PAYPAL' | 'HITPAY' | 'STRIPE';
 
 export type MethodInfo = { id: MethodId; enabled: boolean; currency?: string };
 
@@ -25,8 +26,7 @@ export function usePaymentMethods() {
 const META: Record<MethodId, { label: string; detail: string; icon: typeof CreditCard }> = {
   PAYPAL: { label: 'PayPal', detail: 'PayPal balance or credit / debit card', icon: Wallet },
   STRIPE: { label: 'Card via Stripe', detail: 'Card, Apple Pay, Google Pay', icon: CreditCard },
-  HITPAY: { label: 'HitPay', detail: 'Card, PayNow, GrabPay, Apple Pay', icon: Landmark },
-  PAYNOW: { label: 'PayNow QR', detail: 'Scan with any Singapore banking app', icon: QrCode }
+  HITPAY: { label: 'HitPay', detail: 'Card, GrabPay, Apple Pay (disabled — INR-only checkout)', icon: Landmark }
 };
 
 type Props = {

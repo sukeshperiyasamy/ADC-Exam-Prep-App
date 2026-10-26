@@ -1,4 +1,5 @@
 import { db } from '@/lib/db';
+import type { Prisma } from '@prisma/client';
 
 export type Range = { from: Date; to: Date };
 
@@ -28,15 +29,21 @@ export const Ranges = {
 
 /** Sum + count of PAID orders in a window. */
 export async function paidOrdersIn(range: Range) {
+  // Headline totals are INR-only. Legacy non-INR orders (pre-INR-migration)
+  // are counted separately so they are never summed into INR totals.
+  const where: Prisma.OrderWhereInput = { status: 'PAID', capturedAt: { gte: range.from, lte: range.to } };
   const r = await db.order.aggregate({
-    where: { status: 'PAID', capturedAt: { gte: range.from, lte: range.to } },
+    where: { ...where, currency: 'INR' },
     _sum: { amount: true, discount: true, refundAmount: true },
     _count: true
   });
   const refunds = await db.refund.aggregate({
-    where: { status: 'SUCCEEDED', createdAt: { gte: range.from, lte: range.to } },
+    where: { status: 'SUCCEEDED', order: { currency: 'INR' }, createdAt: { gte: range.from, lte: range.to } },
     _sum: { amount: true },
     _count: true
+  });
+  const nonInrOrders = await db.order.count({
+    where: { ...where, currency: { not: 'INR' } }
   });
   const ordersCount = (r._count as unknown as number) ?? 0;
   const refundCount = (refunds._count as unknown as number) ?? 0;
@@ -51,7 +58,8 @@ export async function paidOrdersIn(range: Range) {
     netCents,
     discountCents: r._sum.discount ?? 0,
     refundCount,
-    aovCents
+    aovCents,
+    nonInrOrders
   };
 }
 
@@ -79,29 +87,19 @@ export async function taxCollectedIn(range: Range) {
       currency: true,
       taxAmount: true,
       total: true,
-      totalSgd: true,
-      fxRateBpsToSgd: true,
       taxRate: true,
       taxLabel: true
     }
   });
   const byCurrency: Record<string, { tax: number; total: number; count: number; rate: number; label: string }> = {};
-  let taxSgdTotal = 0;
-  let totalSgd = 0;
   for (const r of rows) {
     const entry = byCurrency[r.currency] || { tax: 0, total: 0, count: 0, rate: r.taxRate, label: r.taxLabel };
     entry.tax += r.taxAmount;
     entry.total += r.total;
     entry.count += 1;
     byCurrency[r.currency] = entry;
-    if (r.totalSgd != null) totalSgd += r.totalSgd;
-    if (r.totalSgd != null && r.fxRateBpsToSgd) {
-      taxSgdTotal += Math.round((r.taxAmount * r.fxRateBpsToSgd) / 10000);
-    } else if (r.currency === 'SGD') {
-      taxSgdTotal += r.taxAmount;
-    }
   }
-  return { byCurrency, taxSgdTotal, totalSgd, invoiceCount: rows.length };
+  return { byCurrency, invoiceCount: rows.length };
 }
 
 /** Revenue breakdown grouped by a chosen dimension. */
@@ -147,10 +145,13 @@ export async function revenueBy(dim: RevenueBy, range: Range) {
       key = d.toISOString().slice(0, 7);
       label = key;
     }
-    const cur = buckets.get(key) ?? { label, amount: 0, count: 0, currency: o.currency };
+    // Buckets are per-currency: legacy SGD amounts must never be summed
+    // together with INR amounts under one label.
+    const bucketKey = `${key}:${o.currency}`;
+    const cur = buckets.get(bucketKey) ?? { label, amount: 0, count: 0, currency: o.currency };
     cur.amount += o.amount;
     cur.count += 1;
-    buckets.set(key, cur);
+    buckets.set(bucketKey, cur);
   }
   return Array.from(buckets.entries())
     .map(([key, v]) => ({ key, ...v }))

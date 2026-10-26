@@ -235,7 +235,7 @@ export default async function VoucherInventoryPage({ searchParams }: { searchPar
       {/* Upload form */}
       <details className="card mb-3 p-4">
         <summary className="cursor-pointer text-[13px] font-semibold">Upload codes (CSV or one per line)</summary>
-        <form action={uploadInventory} className="mt-3 grid gap-3 md:grid-cols-2" encType="multipart/form-data">
+        <form action={uploadInventory} className="mt-3 grid gap-3 md:grid-cols-2">
           <label className="block md:col-span-1">
             <span className="mb-1 block text-[10px] font-medium uppercase tracking-wider text-slate-500">Vendor</span>
             <select name="vendorId" required className="input-sm" defaultValue="">

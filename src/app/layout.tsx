@@ -137,7 +137,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
-      <body className="min-h-screen flex flex-col text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject
+          data-* attributes on <body> before React hydrates — not an app bug. */}
+      <body
+        suppressHydrationWarning
+        className="min-h-screen flex flex-col text-slate-900 dark:bg-slate-950 dark:text-slate-100"
+      >
         {/* Raw inline script (not next/script): React 19 warns on hydration
             when <Script> renders an inline child script, and beforeInteractive
             adds no timing benefit over a first-child-of-body inline script,

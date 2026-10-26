@@ -2,7 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+**Before making any changes:** read [`HANDOFF.md`](HANDOFF.md) (current state, constraints, next steps) and [`AGENTS.md`](AGENTS.md) (mandatory rules, including the currency policy below). The full documentation pack (architecture, feature matrix with evidence, database/API map, testing and deployment) is indexed in [`README.md`](README.md).
+
 **Keep this file up to date.** Whenever a change touches routes, the Prisma schema, auth, payments, or deployment, update the matching section here in the same commit. Stale guidance is worse than none — it has already caused wrong assumptions (e.g. this file claimed PayPal was the only payment provider long after Stripe/HitPay/PayNow shipped).
+
+## Currency policy (mandatory)
+
+**India-only product.** INR (₹) is the default and only supported application currency — display, storage (integer paise via `formatPrice()`, `Intl.NumberFormat('en-IN')`), pricing, and payment processing (Stripe). Never introduce SGD or any other currency without explicit user authorization. Pre-migration records may carry legacy currencies (e.g. SGD): display them with their explicit legacy label, never relabel them as INR. See `AGENTS.md` §1.1 — read it before starting work.
 
 ## Common commands
 
@@ -152,21 +158,21 @@ For every new bundle `xyz` (mirror [src/lib/seed/ckad-questions.ts](src/lib/seed
 
 ```bash
 # 1. CSRF
-curl -sS -c /tmp/cookies.txt https://exams.tertiaryinfotech.com/api/auth/csrf -o /tmp/csrf.json
+curl -sS -c /tmp/cookies.txt https://YOUR-DEPLOYMENT.example.com/api/auth/csrf -o /tmp/csrf.json
 CSRF=$(jq -r .csrfToken /tmp/csrf.json)
 
 # 2. Admin login via NextAuth credentials provider id `password`
 curl -sS -c /tmp/cookies.txt -b /tmp/cookies.txt \
-  -X POST https://exams.tertiaryinfotech.com/api/auth/callback/password \
+  -X POST https://YOUR-DEPLOYMENT.example.com/api/auth/callback/password \
   -H "Content-Type: application/x-www-form-urlencoded" \
   --data-urlencode "csrfToken=$CSRF" \
-  --data-urlencode "email=angch@tertiaryinfotech.com" \
+  --data-urlencode "email=$ADMIN_EMAIL" \
   --data-urlencode "password=$PROD_ADMIN_PASSWORD" \
-  --data-urlencode "callbackUrl=https://exams.tertiaryinfotech.com/admin-dashboard"
+  --data-urlencode "callbackUrl=https://YOUR-DEPLOYMENT.example.com/admin-dashboard"
 
 # 3. Fire the seed (idempotent)
 curl -sS -b /tmp/cookies.txt -X POST \
-  https://exams.tertiaryinfotech.com/api/admin/seed-xyz \
+  https://YOUR-DEPLOYMENT.example.com/api/admin/<seed-route> \
   -w "\nHTTP_STATUS=%{http_code}\n"
 ```
 

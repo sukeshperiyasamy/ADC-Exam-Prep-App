@@ -194,11 +194,6 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
                 <span>Total</span>
                 <span>{formatPrice(invoice.total, invoice.currency)}</span>
               </div>
-              {invoice.totalSgd != null && invoice.currency.toUpperCase() !== 'SGD' && (
-                <div className="text-right text-[10px] text-slate-500">
-                  ≈ {formatPrice(invoice.totalSgd, 'SGD')} @ {(invoice.fxRateBpsToSgd ?? 10000) / 10000}
-                </div>
-              )}
             </div>
           </div>
 

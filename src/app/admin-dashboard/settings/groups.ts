@@ -83,7 +83,7 @@ export const PAYMENT_SUBGROUPS: SettingsGroup[] = [
 // configurable without diverging from the copy.
 export const PAYMENT_FULFILLMENT_FIELDS: FieldDef[] = [
   { key: 'VOUCHER_DELAY_DAYS', label: 'Voucher delay (days)', placeholder: '5' },
-  { key: 'FULFILLMENT_TIMEZONE', label: 'Fulfillment timezone', placeholder: 'Asia/Singapore' }
+  { key: 'FULFILLMENT_TIMEZONE', label: 'Fulfillment timezone', placeholder: 'Asia/Kolkata' }
 ];
 
 // Email transport sub-groups shown as collapsible cards on the
@@ -188,7 +188,7 @@ export const GROUPS: SettingsGroup[] = [
   {
     slug: 'tax-invoice',
     title: 'Tax & Invoice',
-    description: 'Tax engine, invoice numbering, and SGD-equivalent FX rates for reporting.',
+    description: 'Tax engine (GST) and invoice numbering for INR reporting.',
     compact: true,
     fields: [
       { key: 'TAX_ENABLED', label: 'Tax enabled (true/false)', placeholder: 'true' },
@@ -197,10 +197,6 @@ export const GROUPS: SettingsGroup[] = [
       { key: 'TAX_INCLUSIVE', label: 'Tax inclusive in price? (true/false)', placeholder: 'false' },
       { key: 'COMPANY_GST_REG', label: 'GST registration number', placeholder: 'M2-1234567-8' },
       { key: 'INVOICE_PREFIX', label: 'Invoice number prefix', placeholder: 'INV' },
-      { key: 'FX_TO_SGD_USD_BPS', label: 'USD → SGD FX (basis points, 13500 = 1.3500)', placeholder: '13500' },
-      { key: 'FX_TO_SGD_EUR_BPS', label: 'EUR → SGD FX (basis points)' },
-      { key: 'FX_TO_SGD_GBP_BPS', label: 'GBP → SGD FX (basis points)' },
-      { key: 'FX_TO_SGD_AUD_BPS', label: 'AUD → SGD FX (basis points)' }
     ]
   },
   {

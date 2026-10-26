@@ -14,6 +14,9 @@ export function formatPrice(cents: number, currency = 'INR') {
     }).format(cents / 100);
     return `₹${formatted}`;
   }
+  // Legacy only: pre-INR-migration orders store their original currency.
+  // Their labels must stay explicit (never relabeled as INR, never dropped —
+  // Intl renders SGD as a bare "$" in many locales, which would be ambiguous).
   if (cur === 'SGD') {
     const amount = new Intl.NumberFormat('en-SG', {
       minimumFractionDigits: 2,

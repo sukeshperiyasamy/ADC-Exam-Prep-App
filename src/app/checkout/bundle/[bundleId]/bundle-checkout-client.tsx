@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { Loader2, Lock, ShieldCheck } from 'lucide-react';
 import { BillingAddressCard } from '@/components/checkout/billing-address-card';
 import { PaymentMethodsPicker, usePaymentMethods, type MethodId } from '@/components/checkout/payment-methods';
-import { PayNowModal } from '@/components/checkout/paynow-modal';
 import { PromoCodeInput, type PromoApplied } from '@/components/checkout/promo-code';
 import { formatPrice } from '@/lib/utils';
 
@@ -13,7 +12,6 @@ const TRUST_COPY: Record<MethodId, string> = {
   PAYPAL: 'Encrypted payment via PayPal. We never see your card details.',
   STRIPE: 'Encrypted payment via Stripe Checkout. We never see your card details.',
   HITPAY: 'Encrypted payment via HitPay. We never see your card details.',
-  PAYNOW: 'Direct bank transfer via PayNow QR — scan with your banking app.'
 };
 
 export function BundleCheckoutClient({
@@ -33,7 +31,6 @@ export function BundleCheckoutClient({
   const [method, setMethod] = useState<MethodId>('STRIPE');
   const [busy, setBusy] = useState<MethodId | null>(null);
   const [promo, setPromo] = useState<PromoApplied | null>(null);
-  const [paynowSession, setPaynowSession] = useState<{ orderId: string; qrDataUrl: string; reference: string; amount: number; currency: string } | null>(null);
   const data = usePaymentMethods();
   const methods = data?.methods ?? null;
 
@@ -45,10 +42,10 @@ export function BundleCheckoutClient({
   const total = promo ? promo.totalCents : amount;
   const couponCode = promo?.code ?? null;
 
-  async function createRedirectOrder(kind: 'HITPAY' | 'STRIPE' | 'PAYNOW') {
+  async function createRedirectOrder(kind: 'HITPAY' | 'STRIPE') {
     setErr('');
     setBusy(kind);
-    const url = kind === 'HITPAY' ? '/api/hitpay/create-order' : kind === 'STRIPE' ? '/api/stripe/create-order' : '/api/paynow/create-order';
+    const url = kind === 'HITPAY' ? '/api/hitpay/create-order' : '/api/stripe/create-order';
     let d: any = null;
     try {
       const r = await fetch(url, {
@@ -58,7 +55,7 @@ export function BundleCheckoutClient({
       });
       d = await r.json().catch(() => null);
       if (!r.ok) {
-        setErr(d?.message || `Could not start ${kind === 'PAYNOW' ? 'PayNow' : kind === 'HITPAY' ? 'HitPay' : 'Stripe'} checkout. Please try again.`);
+        setErr(d?.message || `Could not start ${kind === 'HITPAY' ? 'HitPay' : 'Stripe'} checkout. Please try again.`);
         return;
       }
     } catch {
@@ -67,11 +64,7 @@ export function BundleCheckoutClient({
     } finally {
       setBusy(null);
     }
-    if (kind === 'PAYNOW') {
-      setPaynowSession({ orderId: d.orderId, qrDataUrl: d.qrDataUrl, reference: d.reference, amount: d.amount, currency: d.currency });
-    } else {
-      window.location.href = d.url;
-    }
+    window.location.href = d.url;
   }
 
   const paypalReady = !!data?.paypalClientId;
@@ -167,11 +160,6 @@ export function BundleCheckoutClient({
               {busy === 'HITPAY' ? 'Redirecting to HitPay…' : `Pay ${formatPrice(total)} with HitPay`}
             </button>
           )}
-          {selectedMethod === 'PAYNOW' && (
-            <button type="button" disabled={!addressId || busy === 'PAYNOW'} onClick={() => createRedirectOrder('PAYNOW')} className="btn-primary-grad w-full">
-              {busy === 'PAYNOW' ? 'Generating QR…' : 'Pay with PayNow'}
-            </button>
-          )}
           {selectedMethod === 'STRIPE' && (
             <button type="button" disabled={!addressId || busy === 'STRIPE'} onClick={() => createRedirectOrder('STRIPE')} className="btn-primary-grad w-full">
               {busy === 'STRIPE' ? 'Redirecting to Stripe…' : `Pay ${formatPrice(total)} with card`}
@@ -193,16 +181,6 @@ export function BundleCheckoutClient({
         </div>
       </div>
 
-      {paynowSession && (
-        <PayNowModal
-          orderId={paynowSession.orderId}
-          qrDataUrl={paynowSession.qrDataUrl}
-          reference={paynowSession.reference}
-          amount={paynowSession.amount}
-          currency={paynowSession.currency}
-          onClose={() => setPaynowSession(null)}
-        />
-      )}
     </div>
   );
 }

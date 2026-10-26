@@ -318,3 +318,52 @@
 - **Tests:** `scripts/test-booklet-integration.ts` adds "hierarchy groups cover every chapter exactly once (no duplicates or omissions)" (5-chapter booklet → flat hierarchy = 5 unique); `scripts/inspect-toc-readonly.ts` (NEW, read-only) verified the real eTG booklet: **42 chapters → 9 groups → 42 flattened, 42 unique ids, zero unmatched**.
 - **Verification:** `npm run typecheck` clean ✓ · `npm run test:booklet` 27/27 ✓ · integration **38/38** ✓ · HTTP e2e **21/21** ✓ (throwaway DB + dev server 3041, Gemini vars emptied at shell) · `npm run lint` 0 errors (24 pre-existing warnings) · **`npm run build` succeeded** (all study routes compiled dynamic). Database: only read-only SELECTs on the local dev DB; no migrations, no production contact, no payment/pricing changes, no licensing/publication flag changes.
 
+
+---
+
+## 28. INR Enforcement Across the Application (FEAT-011)
+- **Underlying logic fix (write-side):** `src/lib/invoice/issue.ts` no longer computes or stores SGD-equivalent snapshots (`fxRateBpsToSgd` / `totalSgd`) for new invoices — INR-only product. Historical rows keep their stored values; credit notes still mirror legacy originals for accounting consistency. `FX_TO_SGD_*` settings keys removed from `src/lib/settings.ts` + admin settings UI.
+- **SGD display removed:** admin invoices list (≈ SGD rows + aggregate suffix), invoice detail page, tax report (SGD-equivalent summary row, Total (SGD) column, per-invoice cell), invoice PDF (SGD footnote), weekly worker report email, revenue analytics aggregation (taxSgdTotal/totalSgd dropped; honest byCurrency breakdown kept). Checkout methods API already INR-only (Stripe authoritative; PayNow/HitPay/PayPal hard-disabled).
+- **Dead PayNow UI path removed:** paynow-modal.tsx + lib/payments/paynow.ts deleted; picker META entry + MethodId member removed; checkout client PAYNOW branches/state removed. /api/paynow/confirm (legacy reconciliation) and /api/paynow/create-order (INR-only rejection guard) retained.
+- **Legacy formatters preserved with comments:** formatPrice (lib/utils), email handlebars, PDF money formatter render historical rows with explicit SGD labels — never relabeled, never silently converted (Intl renders SGD as bare "$" in many locales).
+- **Rules:** AGENTS.md §1.1 Currency Policy (mandatory, read-before-work directive); CLAUDE.md "Currency policy" section; README currency note.
+- **Regression guard:** test-inr-migration.ts Test Suite 8 scans src/ for SGD/S$ display strings outside a documented allowlist (legacy formatters + policy text) — fails the suite on any new SGD reference. Suite 3 made informational on fresh DBs.
+- **Verification:** typecheck clean · test:inr 19/19 · test:booklet 27/27 · production build passes. No production data touched; no migrations; no payment-provider settings changed; Stripe INR routing untouched.
+
+---
+
+## 29. Permanent Fixes: Migration Reconciliation, Form Warning, Honest Revenue Reports
+- **Prisma mismatch root cause:** the dev server was pointed at the REMOTE Neon DB (shared with production) which lacks `Order.providerStatus`; the LOCAL DB (adc_local, :55434) is fully migration-managed — `prisma migrate status`: 71 migrations, schema up to date. Fix: .env now targets the local DB (previous remote URLs preserved as commented lines), local schema verified via migrations. Production Neon untouched — applying migration 20261022000000_add_cashfree there remains an approval-gated deploy step.
+- **Form warning root cause:** the vouchers-inventory server-action form carried a manual encType attribute (React sets multipart automatically). Removed; CSV upload behavior preserved (uploadInventory reads FormData file).
+- **Revenue reporting honesty:** paidOrdersIn() now aggregates INR orders only and counts legacy non-INR orders separately (nonInrOrders); refunds filtered to INR via the order relation; revenueBy() buckets are per-currency (key includes currency) so legacy SGD amounts can never be summed under an INR label; revenue report headline stats were hardcoded USD — now INR with a legacy-exclusion note; %-of-gross column only for INR buckets. CSV export already carried per-row currency.
+- **Regression suites added to test-inr-migration.ts:** Suite 9 schema-vs-migrations drift guard (prisma migrate diff --exit-code on a disposable shadow DB); Suite 10 per-currency revenue honesty (synthetic INR + legacy SGD orders, asserts isolated buckets and clean deltas, self-cleaning); Suite 11 server-action form guard (no encType/method on action forms).
+- **Verification:** prisma validate pass; typecheck clean; test:inr 25/25 (incl. new suites); test:booklet 27/27; production build pass; admin orders query healthy on local DB. No production changes; no resets; no provider settings touched.
+
+---
+
+## 30. App-Wide Prisma/Database Mismatch Repair
+- **Root cause:** a `.env.local` override (Next.js precedence > `.env`) pointed the dev server at the shared Neon DB, which lacks the uncommitted-schema columns (e.g. `Order.providerStatus`). The local DB (adc_local) was verified fully consistent: `prisma migrate status` (71 migrations, up to date), `migrate diff` live-DB↔schema = no difference, migrations↔schema = no drift.
+- **Fix:** `.env` and `.env.local` now both target the local DB (previous remote URLs preserved as commented  lines); dev server restarted. Production Neon untouched — its pending migration (`20261022000000_add_cashfree`, adds `providerStatus` + payment lifecycle columns) remains approval-gated via `npm run db:deploy`.
+- **New permanent safeguards:** `test:inr` Suite 12 (live-DB↔schema drift guard, local-only); booklet HTTP e2e dashboard smoke (admin orders/invoices/reports/tax + user orders must render); new permanent tool `scripts/smoke-core-routes.ts` (authenticated 17-route smoke using seeded admin credentials from .env, values never printed — incl. quote-stripping for .env parsing).
+- **Also fixed this session:** vouchers-inventory server-action form `encType` warning removed (CSV upload preserved); revenue report honesty (INR-only headline totals via `paidOrdersIn` currency filter + `nonInrOrders` count; per-currency `revenueBy` buckets; hardcoded USD labels → INR; legacy-exclusion note); `AGENTS.md` rule 13 (schema changes require migrations).
+- **Verification:** prisma validate pass; migrate status up-to-date; migrate diff (live↔schema) no difference; typecheck clean; test:inr **26/26**; test:booklet **27/27**; booklet HTTP e2e **22/22** (incl. dashboard smoke); production build pass; authenticated smoke **17/17 routes OK** on the running dev server — both reported pages (`/admin-dashboard/invoices`, `/user-dashboard/orders`) verified loading. No resets, no data loss, no production changes.
+
+---
+
+## 31. Chapter Page + TOC Visual Refinement
+- Chapter header: title with right-aligned meta chips (PDF page-range chip, Completed/N-of-7-modes status), compact breadcrumbs retained.
+- Study-mode nav: pill badges replaced with a segmented tab strip (underline-active brand accent, per-mode count chip, completed check).
+- Reading area: section headings restyled (15px semibold, slate-950/white), notes use brand list markers, key-concept chips slimmed; PDF citation is now a single compact chip-button opening the source inspector.
+- ModeCompleteButton: footer action row with helper text, solid/outline + Completed state.
+- TOC: chapter rows converted from nested mini-cards to flat divide-y rows (number chip, title, PDF range + MCQ count, inline progress, status icons); section header slimmed (PDF range moved into rows); Draft badge simplified.
+- Mobile: collapsible Chapters list (details/summary with ChapterRail) below xl; desktop keeps the sticky right rail — no duplicated info per breakpoint.
+- Files: [chapter]/page.tsx, components/booklet/toc.tsx, components/booklet/client.tsx (ModeCompleteButton + CheckCircle2 import), components/booklet/source-inspector.tsx (citation chip).
+- Verified: typecheck clean; test:booklet 27/27; booklet HTTP e2e 22/22 (all modes, locked state, progress, citations render); production build pass; authenticated smoke 17/17. No clinical content, flags, or routes changed.
+
+---
+
+## 32. OTP Abuse-Protection Hardening (Next Session Task)
+- **Selected task:** KNOWN_ISSUES P1 #5 (security-first per handoff ordering). Audit found request-side caps already existed (per-IP in-memory + route-level verify limiter) but two gaps remained: (1) the per-email request cap was in-memory only — weak across serverless instances; (2) `verifyOtp()` was callable via the NextAuth otp provider (lib/auth.ts) without any brute-force cap — an unthrottled 6-digit guess surface on LOGIN.
+- **Fix:** DB-backed per-email hourly request cap in `issueOtp()` (counts OtpCode rows, authoritative across instances); verify brute-force cap (10/hour/email) moved into `verifyOtp()` itself so both call paths are covered.
+- **Tests:** new `scripts/test-otp-rate-limit.ts` — correct-code-rejected-after-10-wrong-attempts, DB-count cap refusal, fresh-email non-blocking — 3/3 pass. Also reworked the INR suite's historical-order check to be data-driven (per-order currency-label preservation instead of the stale ORD-000001=SGD fixture assumption that failed on local DBs with real INR orders).
+- **Verified:** typecheck clean; test:otp 3/3; test:inr **28/28**; test:booklet 27/27; production build pass; dev server healthy.

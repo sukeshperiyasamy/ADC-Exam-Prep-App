@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bookmark, BookmarkCheck, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { Bookmark, BookmarkCheck, CheckCircle2, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 
 async function post(url: string, body: unknown) {
   const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -52,10 +52,17 @@ export function ModeCompleteButton({ chapterId, mode, done }: { chapterId: strin
   const [isDone, setDone] = useState(done);
   const [err, setErr] = useState('');
   return (
-    <div className="mt-6 flex items-center gap-3">
+    <div className="mt-8 flex flex-col items-start gap-2 border-t border-slate-200 pt-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+      <span className="text-xs text-slate-500 dark:text-slate-400">
+        Finished with this section? Marking it complete feeds your chapter progress.
+      </span>
       <button
         type="button"
-        className={isDone ? 'btn-outline' : 'btn-primary-grad'}
+        className={
+          isDone
+            ? 'btn-outline inline-flex shrink-0 items-center gap-1.5 text-green-700 dark:text-green-400'
+            : 'btn-primary inline-flex shrink-0 items-center gap-1.5'
+        }
         onClick={async () => {
           setErr('');
           const r = await post(`/api/booklets/chapters/${chapterId}/progress`, { mode, completed: true });
@@ -63,7 +70,13 @@ export function ModeCompleteButton({ chapterId, mode, done }: { chapterId: strin
           else setErr('Could not save progress. Check your connection and retry.');
         }}
       >
-        {isDone ? '✓ Completed' : 'Mark this section complete'}
+        {isDone ? (
+          <>
+            <CheckCircle2 className="h-4 w-4" /> Completed
+          </>
+        ) : (
+          'Mark section complete'
+        )}
       </button>
       {err && <span role="alert" className="text-xs text-red-600 dark:text-red-400">{err}</span>}
     </div>

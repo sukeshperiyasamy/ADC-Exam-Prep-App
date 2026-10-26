@@ -117,13 +117,8 @@ export async function renderInvoicePdf({ invoice, lines, orderNumber }: RenderIn
     thickness: 1
   });
   totalRow('Total', moneyLine(invoice.total, invoice.currency), true);
-  if (invoice.totalSgd != null && invoice.currency.toUpperCase() !== 'SGD') {
-    drawText(page, fonts, `≈ ${moneyLine(invoice.totalSgd, 'SGD')} (FX ${(invoice.fxRateBpsToSgd ?? 10000) / 10000})`, 380, rowY, {
-      size: 9,
-      color: COLORS.muted
-    });
-    rowY -= 14;
-  }
+  // Legacy invoices may carry stored SGD-equivalent columns; the PDF renders
+  // only the invoice's own currency so amounts are never mixed or relabeled.
 
   // Footer
   const footerY = 60;

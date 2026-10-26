@@ -9,10 +9,6 @@ export type IssueInput = {
 
 type DbClient = PrismaClient | Prisma.TransactionClient;
 
-function fxKeyFor(currency: string): string {
-  return `FX_TO_SGD_${currency.toUpperCase()}_BPS`;
-}
-
 /**
  * Issue (or return existing) Invoice for the given paid Order.
  *
@@ -66,21 +62,12 @@ export async function issueInvoiceForOrder(orderId: string, dbc?: DbClient) {
     taxAmount = total - subtotal;
   }
 
-  // SGD-equivalent (for reporting in mixed-currency stores)
-  let fxRateBpsToSgd: number | null = null;
-  let totalSgd: number | null = null;
+  // India-only product: no FX snapshot is computed for new invoices. The
+  // nullable columns remain for historical records issued before the
+  // INR-only migration; those values are preserved and never relabeled.
+  const fxRateBpsToSgd: number | null = null;
+  const totalSgd: number | null = null;
   const currency = order.currency || 'INR';
-  if (currency.toUpperCase() === 'SGD') {
-    fxRateBpsToSgd = 10000; // 1.0000
-    totalSgd = total;
-  } else {
-    const fxStr = settings[fxKeyFor(currency) as keyof typeof settings];
-    const fxBps = Number(fxStr || 0);
-    if (fxBps > 0) {
-      fxRateBpsToSgd = fxBps;
-      totalSgd = Math.round((total * fxBps) / 10000);
-    }
-  }
 
   // Sequential number across all years
   const number = await nextNumber('INVOICE', prefix, client);

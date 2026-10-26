@@ -32,22 +32,19 @@ export function PdfSourceCitation({
 
   return (
     <>
-      <span className={className || 'inline-flex flex-wrap items-center gap-1.5 ml-2 text-[11px] font-normal text-slate-400'}>
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(true);
+        }}
+        className={className || 'inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700 transition hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900/60'}
+        title="Inspect original source page in PDF"
+        aria-label={`View ${citationText} in source PDF`}
+      >
+        <FileText className="h-3 w-3 shrink-0" aria-hidden="true" />
         <span>{citationText}</span>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsOpen(true);
-          }}
-          className="inline-flex items-center gap-1 rounded bg-blue-50 px-1.5 py-0.5 text-[11px] font-medium text-blue-700 hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-900/60"
-          title="Inspect original source page in PDF"
-          aria-label={`View ${citationText} in source PDF`}
-        >
-          <FileText className="h-3 w-3" aria-hidden="true" />
-          <span>View in PDF</span>
-        </button>
-      </span>
+      </button>
 
       {isOpen && (
         <PdfSourceModal

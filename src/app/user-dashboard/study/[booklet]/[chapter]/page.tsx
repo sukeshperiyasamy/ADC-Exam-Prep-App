@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
-import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Lock } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, ChevronDown, ChevronRight, FileText, Lock } from 'lucide-react';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { loadChapterForStudent, loadBookletForStudent, resolveViewer } from '@/lib/booklet/queries';
@@ -109,41 +109,81 @@ export default async function ChapterPage({
           <span className="max-w-[28ch] truncate font-medium text-slate-900 dark:text-slate-100" aria-current="page">{chapter.title}</span>
         </nav>
 
-        <div className="mt-3 max-w-3xl">
-          <h1 className="text-2xl font-bold tracking-tight">{chapter.title}</h1>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            PDF pages {chapter.pdfPageFrom}–{chapter.pdfPageTo}
-            {progress?.completedAt ? ' · Chapter completed ✓' : ''}
-          </p>
+        {/* Chapter header */}
+        <header className="mt-3 max-w-3xl">
+          <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+            <h1 className="text-2xl font-bold tracking-tight">{chapter.title}</h1>
+            <div className="flex shrink-0 items-center gap-1.5 text-xs">
+              <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 px-2 py-0.5 text-slate-600 dark:border-slate-700 dark:text-slate-300">
+                <FileText className="h-3 w-3" aria-hidden />
+                PDF pp. {chapter.pdfPageFrom}–{chapter.pdfPageTo}
+              </span>
+              {progress?.completedAt ? (
+                <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-0.5 font-medium text-green-700 dark:bg-green-950/50 dark:text-green-300">
+                  <CheckCircle2 className="h-3 w-3" aria-hidden /> Completed
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full border border-slate-200 px-2 py-0.5 text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                  {done.size}/7 modes done
+                </span>
+              )}
+            </div>
+          </div>
           {!chapter.publishedAt && (
             <p className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200">
               Admin preview — this chapter is not published. Students cannot see it.
             </p>
           )}
-        </div>
+        </header>
 
-        {/* Study-mode switcher */}
-        <nav
-          aria-label="Study modes"
-          className="sticky top-16 z-20 -mx-4 mt-4 bg-[#f7fbfb]/95 px-4 py-2 backdrop-blur sm:top-20 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 dark:bg-slate-950/95"
-        >
-          <div className="flex max-w-3xl gap-1 overflow-x-auto pb-1">
-            {MODES.map((m) => (
-              <Link
-                key={m.key}
-                href={`?mode=${m.key}`}
-                aria-current={m.key === mode ? 'page' : undefined}
-                className={`badge shrink-0 whitespace-nowrap px-3 py-1.5 text-sm transition ${
-                  m.key === mode
-                    ? 'bg-brand-700 text-white dark:bg-brand-600'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
-                }`}
-              >
-                {`${m.label} · ${counts[m.key]}${done.has(m.key) ? ' ✓' : ''}`}
-              </Link>
-            ))}
+        {/* Mobile chapter list (desktop uses the right-hand rail) */}
+        <details className="mt-4 max-w-3xl xl:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium dark:border-slate-700 dark:bg-slate-900">
+            <span className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-brand-700 dark:text-brand-300" aria-hidden />
+              Chapters
+            </span>
+            <ChevronDown className="h-4 w-4 text-slate-400" aria-hidden />
+          </summary>
+          <div className="mt-2">
+            <ChapterRail bookletSlug={booklet.slug} groups={groups} currentChapterSlug={chapter.slug} />
           </div>
-        </nav>
+        </details>
+
+        {/* Study-mode tabs */}
+        <div className="sticky top-16 z-20 -mx-4 mt-5 bg-[#f7fbfb]/95 px-4 backdrop-blur sm:top-20 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 dark:bg-slate-950/95">
+          <div className="max-w-3xl">
+            <nav aria-label="Study modes" className="flex gap-1 overflow-x-auto border-b border-slate-200 dark:border-slate-800">
+              {MODES.map((m) => {
+                const active = m.key === mode;
+                return (
+                  <Link
+                    key={m.key}
+                    href={`?mode=${m.key}`}
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-sm transition ${
+                      active
+                        ? 'border-brand-600 font-semibold text-brand-700 dark:border-brand-400 dark:text-brand-300'
+                        : 'border-transparent text-slate-500 hover:border-slate-300 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    {m.label}
+                    <span
+                      className={`rounded-full px-1.5 text-[11px] tabular-nums ${
+                        active
+                          ? 'bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300'
+                          : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                      }`}
+                    >
+                      {counts[m.key]}
+                    </span>
+                    {done.has(m.key) && <CheckCircle2 className="h-3.5 w-3.5 text-green-600" aria-label="mode completed" />}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
 
         <div className="mt-6 max-w-3xl">
           {counts[mode] === 0 && (
@@ -157,10 +197,12 @@ export default async function ChapterPage({
               {of('SUMMARY').map((s) => (
                 <section key={s.id} className="card p-5">
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="font-semibold">Summary{cite(s.pages)}</h2>
+                    <h2 className="text-[15px] font-semibold text-slate-950 dark:text-white">
+                      Short Summary{cite(s.pages)}
+                    </h2>
                     <BookmarkButton chapterId={chapter.id} itemId={s.id} label="Summary" pdfPage={s.pages[0]} initial={bm.has(s.id)} />
                   </div>
-                  <p className="mt-2 text-sm leading-relaxed">{data(s).text}</p>
+                  <p className="mt-2.5 text-sm leading-relaxed text-slate-700 dark:text-slate-200">{data(s).text}</p>
                 </section>
               ))}
             </div>
@@ -171,10 +213,12 @@ export default async function ChapterPage({
               {of('NOTE').map((n) => (
                 <section key={n.id} className="card p-5">
                   <div className="flex items-start justify-between gap-2">
-                    <h2 className="font-semibold">{data(n).heading}{cite(n.pages)}</h2>
+                    <h2 className="text-[15px] font-semibold text-slate-950 dark:text-white">{data(n).heading}{cite(n.pages)}</h2>
                     <BookmarkButton chapterId={chapter.id} itemId={n.id} label={data(n).heading} pdfPage={n.pages[0]} initial={bm.has(n.id)} />
                   </div>
-                  <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-relaxed">{(data(n).bullets as string[]).map((b, i) => <li key={i}>{b}</li>)}</ul>
+                  <ul className="mt-2.5 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700 marker:text-brand-600 dark:text-slate-200 dark:marker:text-brand-400">
+                    {(data(n).bullets as string[]).map((b, i) => <li key={i}>{b}</li>)}
+                  </ul>
                   {figuresByPage(n.pages).map((f) => (
                     <figure key={f.id} className="mt-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -191,8 +235,8 @@ export default async function ChapterPage({
             <ol className="space-y-2">
               {of('KEY_CONCEPT').map((k, i) => (
                 <li key={k.id} className="card flex items-start gap-3 p-4 text-sm">
-                  <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-600 text-xs font-semibold text-white">{i + 1}</span>
-                  <span className="min-w-0 flex-1 leading-relaxed">{data(k).point}{cite(k.pages)}</span>
+                  <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[11px] font-semibold text-white">{i + 1}</span>
+                  <span className="min-w-0 flex-1 leading-relaxed text-slate-700 dark:text-slate-200">{data(k).point}{cite(k.pages)}</span>
                   <BookmarkButton chapterId={chapter.id} itemId={k.id} label={data(k).point.slice(0, 120)} pdfPage={k.pages[0]} initial={bm.has(k.id)} />
                 </li>
               ))}
@@ -203,7 +247,7 @@ export default async function ChapterPage({
             <div className="space-y-6">
               {of('TABLE').map((t) => (
                 <section key={t.id}>
-                  <h2 className="mb-2 font-semibold">{data(t).title}{cite(t.pages)}</h2>
+                  <h2 className="mb-2 text-[15px] font-semibold text-slate-950 dark:text-white">{data(t).title}{cite(t.pages)}</h2>
                   <div className="overflow-x-auto rounded-md border border-slate-200 dark:border-slate-700">
                     <table className="w-full min-w-[480px] text-left text-sm">
                       <thead className="bg-slate-50 dark:bg-slate-800/60">
@@ -225,7 +269,7 @@ export default async function ChapterPage({
             <div className="space-y-8">
               {of('FLOWCHART').map((f) => (
                 <section key={f.id}>
-                  <h2 className="mb-3 font-semibold">{data(f).title}{cite(f.pages)}</h2>
+                  <h2 className="mb-3 text-[15px] font-semibold text-slate-950 dark:text-white">{data(f).title}{cite(f.pages)}</h2>
                   <ol className="space-y-1">
                     {(data(f).steps as { title: string; detail: string }[]).map((s, i, a) => (
                       <li key={i}>
@@ -255,7 +299,7 @@ export default async function ChapterPage({
 
           {mode === 'mcqs' && counts.mcqs > 0 && (
             <div className="card p-6">
-              <h2 className="flex items-center gap-2 font-semibold">
+              <h2 className="flex items-center gap-2 text-[15px] font-semibold text-slate-950 dark:text-white">
                 <BookOpen className="h-4 w-4 text-brand-700 dark:text-brand-300" /> Chapter questions
               </h2>
               <p className="mt-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">

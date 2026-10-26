@@ -29,7 +29,7 @@ export default async function RevenueReportPage({ searchParams }: { searchParams
     <div>
       <PageHeader
         title="Revenue"
-        subtitle={`${label} · ${totals.ordersCount} order${totals.ordersCount === 1 ? '' : 's'}`}
+        subtitle={`${label} · ${totals.ordersCount} INR order${totals.ordersCount === 1 ? '' : 's'}${totals.nonInrOrders ? ` · ${totals.nonInrOrders} legacy non-INR order${totals.nonInrOrders === 1 ? '' : 's'} excluded` : ''}`}
         actions={
           <a href={exportHref} download className="btn-sm bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-200">
             <Download className="mr-1 h-3.5 w-3.5" /> Export CSV
@@ -70,10 +70,10 @@ export default async function RevenueReportPage({ searchParams }: { searchParams
 
       {/* Totals strip */}
       <div className="mb-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Gross" value={formatPrice(totals.grossCents, 'USD')} />
-        <Stat label="Discounts" value={`−${formatPrice(totals.discountCents, 'USD')}`} />
-        <Stat label="Refunds" value={`−${formatPrice(totals.refundedCents, 'USD')}`} />
-        <Stat label="Net" value={formatPrice(totals.netCents, 'USD')} accent="emerald" />
+        <Stat label="Gross (INR)" value={formatPrice(totals.grossCents, 'INR')} />
+        <Stat label="Discounts" value={`−${formatPrice(totals.discountCents, 'INR')}`} />
+        <Stat label="Refunds" value={`−${formatPrice(totals.refundedCents, 'INR')}`} />
+        <Stat label="Net (INR)" value={formatPrice(totals.netCents, 'INR')} accent="emerald" />
       </div>
 
       {/* Breakdown table */}
@@ -97,7 +97,7 @@ export default async function RevenueReportPage({ searchParams }: { searchParams
                 <td className="px-3 py-1.5 text-right">{b.count}</td>
                 <td className="px-3 py-1.5 text-right font-semibold">{formatPrice(b.amount, b.currency)}</td>
                 <td className="px-3 py-1.5 text-right text-slate-500">
-                  {totals.grossCents > 0 ? `${((b.amount / totals.grossCents) * 100).toFixed(1)}%` : '—'}
+                  {b.currency === 'INR' && totals.grossCents > 0 ? `${((b.amount / totals.grossCents) * 100).toFixed(1)}%` : '—'}
                 </td>
               </tr>
             ))}

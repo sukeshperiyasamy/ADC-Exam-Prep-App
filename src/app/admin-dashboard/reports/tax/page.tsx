@@ -24,7 +24,7 @@ export default async function TaxReportPage({ searchParams }: { searchParams: Se
     select: {
       id: true, number: true, issueDate: true, currency: true,
       subtotal: true, taxAmount: true, taxRate: true, taxLabel: true,
-      total: true, totalSgd: true, fxRateBpsToSgd: true, billingName: true, billingEmail: true
+      total: true, billingName: true, billingEmail: true
     }
   });
 
@@ -88,13 +88,6 @@ export default async function TaxReportPage({ searchParams }: { searchParams: Se
                 <td className="py-1.5 text-right text-slate-500">{(v.rate / 100).toFixed(2)}% {v.label}</td>
               </tr>
             ))}
-            <tr className="font-semibold">
-              <td className="py-2 text-slate-500">SGD equivalent</td>
-              <td className="py-2 text-right">{tax.invoiceCount}</td>
-              <td className="py-2 text-right">{formatPrice(tax.totalSgd, 'SGD')}</td>
-              <td className="py-2 text-right">{formatPrice(tax.taxSgdTotal, 'SGD')}</td>
-              <td />
-            </tr>
           </tbody>
         </table>
       </div>
@@ -110,7 +103,6 @@ export default async function TaxReportPage({ searchParams }: { searchParams: Se
               <th className="px-3 py-2 text-right">Subtotal</th>
               <th className="px-3 py-2 text-right">Tax</th>
               <th className="px-3 py-2 text-right">Total</th>
-              <th className="px-3 py-2 text-right">Total (SGD)</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/70">
@@ -125,11 +117,10 @@ export default async function TaxReportPage({ searchParams }: { searchParams: Se
                 <td className="px-3 py-1.5 text-right">{formatPrice(inv.subtotal, inv.currency)}</td>
                 <td className="px-3 py-1.5 text-right">{formatPrice(inv.taxAmount, inv.currency)}</td>
                 <td className="px-3 py-1.5 text-right font-semibold">{formatPrice(inv.total, inv.currency)}</td>
-                <td className="px-3 py-1.5 text-right text-slate-500">{inv.totalSgd != null ? formatPrice(inv.totalSgd, 'SGD') : '—'}</td>
               </tr>
             ))}
             {invoices.length === 0 && (
-              <tr><td colSpan={7} className="px-3 py-6 text-center text-[12px] text-slate-500">No invoices in this range.</td></tr>
+              <tr><td colSpan={6} className="px-3 py-6 text-center text-[12px] text-slate-500">No invoices in this range.</td></tr>
             )}
           </tbody>
         </table>
