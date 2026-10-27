@@ -367,3 +367,10 @@
 - **Fix:** DB-backed per-email hourly request cap in `issueOtp()` (counts OtpCode rows, authoritative across instances); verify brute-force cap (10/hour/email) moved into `verifyOtp()` itself so both call paths are covered.
 - **Tests:** new `scripts/test-otp-rate-limit.ts` — correct-code-rejected-after-10-wrong-attempts, DB-count cap refusal, fresh-email non-blocking — 3/3 pass. Also reworked the INR suite's historical-order check to be data-driven (per-order currency-label preservation instead of the stale ORD-000001=SGD fixture assumption that failed on local DBs with real INR orders).
 - **Verified:** typecheck clean; test:otp 3/3; test:inr **28/28**; test:booklet 27/27; production build pass; dev server healthy.
+
+---
+
+## 33. Production-Readiness Audit — Blocked Pending User-Provided Phase 0 Results
+- Verified: production up (200s on /, /login, /api/checkout/methods); Vercel CLI logged out (no auth.json); Neon URLs in .env/.env.local remain credential-masked; no user-provided Phase 0 results or result files present. Production commit identity therefore still unconfirmed (public fingerprints suggest pre-d1d8310).
+- Completed the approval-independent deliverable: cashfree migration SQL review documented in DEPLOYMENT_CHECKLIST.md (additive-only, nullable columns, metadata-only default change, new table not idempotent, forward-only rollback via code promotion, no data modifications).
+- Blocked on: Vercel deployment commit confirmation + Neon Phase 0 query results (migration state, providerStatus, PAID-order baseline, PITR status). No production access was used; no changes beyond documentation.

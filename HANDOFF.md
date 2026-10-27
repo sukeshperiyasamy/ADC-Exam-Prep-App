@@ -32,6 +32,8 @@
 
 ## 4. Recommended next steps, in order
 
+> **Production-readiness audit for `6568a24`:** see `DEPLOYMENT_CHECKLIST.md` — verified local facts, the approval-gated Neon migration + Vercel deploy runbook, rollback plan, and the auto-deploy risk (check Vercel BEFORE promoting: the admin orders/invoices pages require the Neon migration first).
+
 1. **Verify + commit the working tree** (INR enforcement + doc pack): `npm run typecheck && npm run lint && npm run build`, then commit (suggested message: "feat(currency): enforce INR-only across the app; remove legacy SGD display and dead PayNow UI; add currency rules + regression guard") and push.
 2. **Visual QA pass** (desktop 1440×900 + mobile 390×844, light/dark): study library/TOC/reader redesign and the INR-touched admin invoices/tax pages. Fix anything visually off using the design tokens in `globals.css`.
 3. **CI workflow** (`.github/workflows/ci.yml`): typecheck, lint, unit suites; optionally the integration suite with a Postgres service.
